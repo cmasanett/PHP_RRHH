@@ -1,0 +1,44 @@
+<?php
+	$this->headTitle("Login de usuarios");
+	$form = $this->form;
+	$formLabel = $this->plugin('formLabel');
+	$form->prepare();
+	echo $this->form()->openTag($form);
+?>
+<h2 class="form-signin-heading">Ingresar al sistema</h2>
+<div class="form-signin">
+<?php
+    $userName = $form->get('usuario');
+    echo "Usuario: ".$this->formInput($userName);
+    if(isset($error["usuario"])){
+      echo $error["usuario"]['usuarioInvalid'];
+    }
+?>
+</div>
+<div class="form-signin">
+<?php
+    $pass = $form->get('clave');
+    echo "Clave: ".$this->formInput($pass);   
+    echo $this->formElementErrors($pass);
+?>
+</div>
+<?php
+$flash = $this->flashMessenger();
+$flash->setMessageOpenFormat('<div%s>
+     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+         &times;
+     </button>
+     <ul><li>')
+     ->setMessageSeparatorString('</li><li>')
+     ->setMessageCloseString('</li></ul></div>');
+
+echo $flash->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+echo $flash->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
+<br></br>
+<?php
+echo $this->formElement($form->get('submit'));
+echo $this->form()->closeTag();
+?>

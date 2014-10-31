@@ -1,0 +1,32 @@
+<hr>
+	<h1><?php echo $this->titulo?></h1>
+<hr/>
+
+<?php
+$this->headTitle("Login de usuarios");
+$form = $this->form;
+
+$form->setAttributes(array(
+    'action' => $this->url.'/usuarios/main',
+    'method' => 'post'
+));
+ 
+$formLabel = $this->plugin('formLabel');
+$form->prepare();
+echo $this->form()->openTag($form);
+?>
+
+<div class="">
+<?php
+    $empresa = $form->get('empresa');
+    echo $formLabel->openTag().$empresa->getOption('label')." ";
+    echo $this->formSelect($empresa);
+    echo $formLabel->closeTag();
+?>
+</div>
+<br></br>
+
+<?php
+echo $this->formElement($form->get('submit'));
+echo $this->form()->closeTag();
+ ?>
