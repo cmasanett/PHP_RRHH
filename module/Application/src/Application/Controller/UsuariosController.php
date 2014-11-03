@@ -34,11 +34,16 @@ class UsuariosController extends AbstractActionController
 	private $dbAdapter;
 	private $auth;
 	 
-	public function __construct() {
+	public function __construct() 
+	{
 		$this->auth = new AuthenticationService();
 	}
 	 
-	public function loginAction(){
+	public function loginAction()
+	{
+		$this->layout('layout/layout_login');		
+		//$this->layout()->title="Login de usuarios";
+		
 		$auth = $this->auth;
 		$identi = $auth->getStorage()->read();
 		if($identi!=false && $identi!=null){
@@ -105,6 +110,9 @@ class UsuariosController extends AbstractActionController
 
 	public function mainAction()
 	{
+		//$this->layout('layout/layout_dashboard');
+		//$this->layout()->title="Index";
+		
 		if($this->request->getPost("submit")){
 			$empresa_seleccionada = $this->request->getPost();
 			if($empresa_seleccionada){
@@ -137,7 +145,10 @@ class UsuariosController extends AbstractActionController
 	}
 	
 	
-	public function empresaAction(){
+	public function empresaAction()
+	{	
+		//$this->layout('layout/layout_dashboard');
+		//$this->layout()->title="Selección de empresa";
 		
 		$identi = $this->auth->getStorage()->read();
 		if($identi != false && $identi != null){
