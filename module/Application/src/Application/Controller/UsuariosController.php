@@ -110,7 +110,7 @@ class UsuariosController extends AbstractActionController
 
 	public function mainAction()
 	{
-		$this->layout('layout/layout_dashboard');
+		//$this->layout('layout/layout_dashboard');
 		//$this->layout()->title="Index";
 		
 		if($this->request->getPost("submit")){
@@ -147,7 +147,7 @@ class UsuariosController extends AbstractActionController
 	
 	public function empresaAction()
 	{	
-		//$this->layout('layout/layout_dashboard');
+		$this->layout('layout/layout_login');
 		//$this->layout()->title="Selección de empresa";
 		
 		$identi = $this->auth->getStorage()->read();
