@@ -1,11 +1,7 @@
 <?php
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
+
+namespace Application;
+
 return array (
 		'router' => array (
 				'routes' => array (
@@ -70,22 +66,22 @@ return array (
 												) 
 										) 
 								) 
-						) ,
-						
-						'propiedades'=>array(
-								'type'=>'Segment',
-								'options'=>array(
-										'route' => '/propiedades[/[:action][/:id]]',
-										'constraints' => array(
-												'action'  =>  '[a-zA-Z][a-zA-Z0-9_-]*',
-										),
-										'defaults'  =>  array(
-												'controller' => 'Application\Controller\Propiedades',
-												'action'     => 'index'
-						
-										)
-								)
 						),
+						
+						'propempliq' => array (
+								'type' => 'Segment',
+								'options' => array (
+										'route' => '/propempliq[/[:action][/:id]]',
+										'constraints' => array (
+												'action' => '[a-zA-Z][a-zA-Z0-9_-]*' 
+										),
+										'defaults' => array (
+												'controller' => 'Application\Controller\PropEmpLiq',
+												'action' => 'index' 
+										) 
+								)
+								 
+						) 
 				) 
 		),
 		'service_manager' => array (
@@ -109,9 +105,10 @@ return array (
 		),
 		'controllers' => array (
 				'invokables' => array (
-						//'Application\Controller\Index' => 'Application\Controller\IndexController',
+						
+						// 'Application\Controller\Index' => 'Application\Controller\IndexController',
 						'Application\Controller\Usuarios' => 'Application\Controller\UsuariosController',
-						'Application\Controller\Propiedades' => 'Application\Controller\PropiedadesController',
+						'Application\Controller\PropEmpLiq' => 'Application\Controller\PropEmpLiqController' 
 				) 
 		),
 		'view_manager' => array (
@@ -122,7 +119,8 @@ return array (
 				'exception_template' => 'error/index',
 				'template_map' => array (
 						'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
-						//'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
+						
+						// 'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
 						'application/usuarios/login' => __DIR__ . '/../view/application/usuarios/login.phtml',
 						'error/404' => __DIR__ . '/../view/error/404.phtml',
 						'error/index' => __DIR__ . '/../view/error/index.phtml' 
@@ -137,5 +135,33 @@ return array (
 				'router' => array (
 						'routes' => array () 
 				) 
-		) 
+		),
+		
+		// Doctrine config
+		'doctrine' => array (
+				'driver' => array (
+						__NAMESPACE__ . '_driver' => array (
+								'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+								'cache' => 'array',
+								'paths' => array (
+										__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity' 
+								) 
+						),
+						'orm_default' => array (
+								'drivers' => array (
+										__NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver' 
+								) 
+						) 
+				) 
+		),
+		
+// 		'strategies' => array(
+// 				'ViewJsonStrategy',
+// 		)
+		
+// 		'synergy' => array (
+// 				'logger' => array (
+// 						'directory' => __DIR__ . '/../data/logs' 
+// 				) 
+// 		) 
 );

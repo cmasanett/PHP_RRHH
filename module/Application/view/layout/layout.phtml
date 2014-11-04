@@ -2,7 +2,7 @@
 
 <!-- <html lang="en"> -->
 <html lang="es_ES">
-    <head>
+<head>
     	<?php echo $this->headMeta()->setCharset('utf8')?>  
         <?php echo $this->headMeta()
             ->appendName('viewport', 'width=device-width, initial-scale=1.0')
@@ -23,15 +23,17 @@
                         ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
                         ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') 
                         
-                        ->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui.css')
-                        ->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui-theme.css')
+                        //->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui.css')
+                        //->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui-theme.css')
         ?>
 
         <!-- Scripts -->
-        
-        <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-	    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-	    <script src="../../js/ie-emulation-modes-warning.js"></script>
+
+<!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+<!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+	    <?php echo $this->headScript()
+            ->prependFile($this->basePath() . '/js/ie-emulation-modes-warning.js')
+        ?>
 	    
 		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <?php echo $this->headScript()
@@ -44,53 +46,59 @@
 	      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	    <![endif]-->
 
-    </head>
-    <body>
-		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-			<div class="container-fluid">
-		        <div class="navbar-header">
-		          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-		            <span class="sr-only">Toggle navigation</span>
-		            <span class="icon-bar"></span>
-		            <span class="icon-bar"></span>
-		            <span class="icon-bar"></span>
-		          </button>
-		          <a class="navbar-brand" href="#">Nominas PHP</a>
-		          <a class="navbar-brand" href="<?=$this->basePath("usuarios/cerrar")?>">Cerrar sesión</a>
-		        </div>
-		        <div id="navbar" class="navbar-collapse collapse">
-		          <ul class="nav navbar-nav navbar-right">
-		          	<!--  <li class="active"><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home') ?></a></li>
-		          	-->
-		            <li><a href="#">Dashboard</a></li>
-		            <li><a href="#">Settings</a></li>
-		            <li><a href="#">Profile</a></li>
-		            <li><a href="#">Help</a></li>
-		          </ul>
-		          <form class="navbar-form navbar-right">
-		            <input type="text" class="form-control" placeholder="Search...">
-		          </form>
-		        </div>
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+					aria-controls="navbar">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Nominas PHP</a> <a
+					class="navbar-brand"
+					href="<?=$this->basePath("usuarios/cerrar")?>">Cerrar
+					sesiÃ³n</a>
 			</div>
-    	</nav>
-        <div class="container">
+			<div id="navbar" class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right">
+					<!--  <li class="active"><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home') ?></a></li>
+		          	-->
+					<li><a href="#">Dashboard</a></li>
+					<li><a href="#">Settings</a></li>
+					<li><a href="#">Profile</a></li>
+					<li><a href="#">Help</a></li>
+				</ul>
+				<form class="navbar-form navbar-right" action="">
+					<input type="text" class="form-control" placeholder="Search...">
+				</form>
+			</div>
+		</div>
+	</nav>
+	<div class="container">
             <?php echo $this->content; ?>
             <hr>
-        </div> <!-- /container -->
-<!--         <footer>&copy; 2014</footer>         -->
+	</div>
+	<!-- /container -->
+	<!--         <footer>&copy; 2014</footer>         -->
         <?php echo $this->inlineScript() ?>
         
         <!-- Bootstrap core JavaScript
 	    ================================================== -->
-	    <!-- Placed at the end of the document so the pages load faster -->
-	    <?php echo $this->headScript()
-	    //<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-	    //<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-	    	//https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js
-	    	->prependFile($this->basePath() . '/js/jquery.min.js')
+	<!-- Placed at the end of the document so the pages load faster -->
+	<!-- 	    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script> -->
+	<!-- 	    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script> -->
+	    	    
+	    <?php echo $this->headScript ()->
+					// https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js
+					prependFile ( $this->basePath () . '/js/jqueryUI/jquery-ui.js' )
+	    	//->prependFile($this->basePath() . '/js/jquery.min.js')
             ->prependFile($this->basePath() . '/js/bootstrap.min.js')
-            ->prependFile($this->basePath() . '/js/docs.min.js')
-            ->prependFile($this->basePath() . '/js/jqueryUI/jquery-ui.js')
+            //->prependFile($this->basePath() . '/js/docs.min.js')
+            
             //<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
 			->prependFile($this->basePath() . '/js/ie10-viewport-bug-workaround.js')
         ?>

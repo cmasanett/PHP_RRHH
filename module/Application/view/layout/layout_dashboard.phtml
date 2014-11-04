@@ -12,13 +12,13 @@
         ?>
         
         <?php //echo $this->headTitle('ZF2 '. $this->translate('Skeleton Application'))->setSeparator(' - ')->setAutoEscape(false) ?>
-        <?php echo $this->headTitle('Nominas PHP - '. $this->title)->setSeparator(' - ')->setAutoEscape(false)?>
+        <?php echo $this->headTitle(':: Nominas PHP ::'. $this->title)->setSeparator(' - ')->setAutoEscape(false)?>
         
         <!-- Le styles -->
         <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
                         ->prependStylesheet($this->basePath() . '/css/style.css')
                         //<!-- Custom styles for this template -->
-                        ->prependStylesheet($this->basePath() . '/css/signin.css')
+                        ->prependStylesheet($this->basePath() . '/css/dashboard.css')
                         //<!-- Bootstrap core CSS -->
                         ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
                         ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') 
@@ -48,15 +48,6 @@
 
     </head>
     <body>
-        <!--<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li class="active"><a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Home') ?></a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav> -->
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<div class="container-fluid">
 		        <div class="navbar-header">
@@ -120,7 +111,6 @@
         <!-- Bootstrap core JavaScript
 	    ================================================== -->
 	    <!-- Placed at the end of the document so the pages load faster -->
-	    
 	    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
 	    <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 	    	    

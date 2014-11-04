@@ -1,0 +1,190 @@
+<?php
+// module/Album/view/album/album/index.phtml:
+$title = 'Propiedades de Empresa o Liquidación';
+// $this->headTitle($title);
+?>
+
+<link rel="stylesheet" type="text/css" media="screen"
+	href="../js/jqueryUI/jquery-ui.theme.min.css" />
+<link rel="stylesheet" type="text/css" media="screen"
+	href="../js/jqGrid/css/ui.jqgrid.css" />
+
+<!-- <script src="../js/jqGrid/jquery-1.4.2.min.js" type="text/javascript"></script> -->
+<script src="//code.jquery.com/jquery-1.11.0.min.js"
+	type="text/javascript"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"
+	type="text/javascript"></script>
+<script src="../js/jqGrid/js/i18n/grid.locale-es.js"
+	type="text/javascript"></script>
+<script src="../js/jqGrid/js/minified/jquery.jqGrid.min.js"
+	type="text/javascript"></script>
+
+<h1><?php echo $this->escapeHtml($title); ?></h1>
+<?php
+$flash = $this->flashMessenger ()->setMessageOpenFormat ( '<div%s>' )->setMessageSeparatorString ( '' )->setMessageCloseString ( '</div>' );
+?>
+
+<br>
+<div class="content">
+	<div class="row">
+		<div class="col-xs-6">
+			<div class="row">
+				<div class="col-xs-6 col-md-4">
+				 	<!-- <a href="<?php echo $this->url('propempliq', array('action'=>'add'));?>">Añadir propiedad</a>  -->
+					<a class="btn btn-success" id="btnAddPropiedadEmpLiq">Alta</a>
+					<!-- this points to your action below.. -->
+					<a id="loadModalBtn" title="title here" href="<?php echo $this->url('propempliq', array('action'=>'add'));?>">testing</a>
+			              <?php echo $flash->render('add_correcto',array('btn', 'btn-success'));?>
+			              <?php echo $flash->render('eliminado',array('btn', 'btn-success'));?>
+			  </div>
+				<div class="col-xs-6 col-md-4">
+					<a class="btn btn-danger" id="btnDelPropiedadEmpLiq">Baja</a>
+			              <?php echo $flash->render('add_correcto',array('btn', 'btn-success'));?>
+			              <?php echo $flash->render('eliminado',array('btn', 'btn-success'));?>
+			  
+			  </div>
+				<div class="col-xs-6 col-md-4">
+					<a class="btn btn-primary" id="btnEditPropiedadEmpLiq">Modificación</a>
+			              <?php echo $flash->render('add_correcto',array('btn', 'btn-success'));?>
+			              <?php echo $flash->render('eliminado',array('btn', 'btn-success'));?>
+			  </div>
+			</div>
+			<br>
+			<div id="grid">
+				<table id="gridPropEmpLiq"></table>
+				<div id="pagerPropEmpLiq"></div>
+			</div>
+		</div>
+		<div class="col-xs-6">.col-xs-6</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    $("#gridPropEmpLiq").jqGrid({
+    	width: 900,
+        height: 240,
+        autowidth: true,
+        rownumbers: true,
+        rownumWidth: 40, 
+        url:"<?php echo $this->url('propempliq', array('action'=>'loadDataGrid'));?>",
+        datatype: 'json',
+        mtype: 'POST',
+        colNames: ["Id", "Propiedad", "Tipo"],
+        colModel: [
+            {name:'id', index:'id',
+                width:55,
+                align: "center",
+                hidden:false
+            },
+            {name:'descripcion', index:'descripcion',
+                width:50,
+                align: "center",
+                sortable:true,
+                editable:true,
+                editoptions:{size:30}
+            },
+            {name:'tipo_de_campo', index:'tipo_de_campo',
+                width:50,
+                align: "center",
+                sortable:true,
+                editable:true,
+                editoptions:{size:30}
+            }
+        ],
+        pager: "#pagerPropEmpLiq",
+        rowNum: 10,
+        rowList: [10, 20, 30],
+        sortname: "id",
+        sortorder: "asc",
+        viewrecords: true,
+        viewsortcols: [true,'horizontal',true],
+        gridview: true,
+        hidegrid: false,
+        autoencode: true,
+        forceFit : true,
+        pgbuttons: false,
+   		editurl:"<?php echo $this->url('propempliq', array('action'=>'addGridItem'));?>",
+        caption: "Propiedades de Empresa/Liquidación"
+    });
+
+    $("#gridPropEmpLiq").navGrid("#pagerPropEmpLiq",
+                {edit:false,add:false,del:false,search:false,refresh:true,view:false
+//                 {jqModal:true, beforeShowForm: function(form) {
+//                       // "editmodlist"
+//                       var dlgDiv = $("#editmod" + grid[0].id);
+//                       var parentDiv = dlgDiv.parent(); // div#gbox_list
+//                       var dlgWidth = dlgDiv.width();
+//                       var parentWidth = parentDiv.width();
+//                       var dlgHeight = dlgDiv.height();
+//                       var parentHeight = parentDiv.height();
+//                       // TODO: change parentWidth and parentHeight in case of the grid
+//                       //       is larger as the browser window
+//                       dlgDiv[0].style.top = Math.round((parentHeight-dlgHeight)/2) + "px";
+//                       dlgDiv[0].style.left = Math.round((parentWidth-dlgWidth)/2) + "px";
+//                   }
+                });
+//     $("#gridPropEmpLiq").navGrid("#pagerPropEmpLiq",
+//             {view:true},
+//             {top:20,left:150,dataheight:200,width:400,reloadAfterSubmit:false,jqModal:false, closeOnEscape:true,bottominfo:"Fields marked with (*) are required"}, // edit options
+//             {top:20,left:150,dataheight:200,width:400,reloadAfterSubmit:false,jqModal:false, closeOnEscape:true,bottominfo:"Fields marked with (*) are required"}, // add options
+//             {top:20,left:150,reloadAfterSubmit:false,jqModal:false, closeOnEscape:true}, // del options
+//             {top:20,left:150,jqModal:false,closeOnEscape:true}, // search options
+//             {top:20,left:150,dataheight:200,width:400,jqModal:false,closeOnEscape:true} // view options
+// 	);
+
+    $("#btnAddPropiedadEmpLiq").click(function(){ 
+    	//jQuery("#gridPropEmpLiq").jqGrid('editGridRow', "new", properties );
+        jQuery("#gridPropEmpLiq").jqGrid('editGridRow',"new",
+                {
+            	dataheight:110,
+            	width:440,
+            	jqModal:true,
+            	reloadAfterSubmit:true,
+            	closeAfterAdd:true,
+            	clearAfterAdd:true,
+            	onclickSubmit: function(params, posdata) {
+            		//alert(posdata);
+            		//return {add_data}
+            		}
+                }); 
+    });
+
+    $("#btnDelPropiedadEmpLiq").click(function(){ 
+    	//jQuery("#gridPropEmpLiq").jqGrid('editGridRow', "new", properties );
+    	var gr = jQuery("#delgrid").jqGrid('getGridParam','selrow'); 
+        if( gr != null ) jQuery("#delgrid").jqGrid('delGridRow',gr,{reloadAfterSubmit:false}); 
+        else alert("Please Select Row to delete!"); 
+    	alert("Deleting Row");
+        row_ids = $grid.getGridParam('selarrrow');
+        $grid.delGridRow(row_ids, {
+            dataType: 'json',
+            mtype: 'GET',
+            url: '<?php echo $_SERVER['PHP_SELF'].'?app=my_app&action=record_delete'; ?>'
+        });
+        $("#dedata").click(function(){ 
+            
+            });
+        jQuery("#gridPropEmpLiq").jqGrid('delGridRow', row_id_s,
+                {
+            	dataheight:110,
+            	width:440,
+            	jqModal:true,
+            	reloadAfterSubmit:true,
+            	closeAfterDel:true,
+            	clearAfterDel:true,
+            	}); 
+    });
+
+    $("#btnEditPropiedadEmpLiq").click(function(){ 
+    	//jQuery("#gridPropEmpLiq").jqGrid('editGridRow', "new", properties );
+        jQuery("#gridPropEmpLiq").jqGrid('editGridRow', rowid,
+                {
+            	dataheight:110,
+            	width:440,
+            	jqModal:true,
+            	reloadAfterSubmit:false
+            	}); 
+    });
+}); 
+</script>
