@@ -71,8 +71,7 @@ return array (
 						'propempliq' => array (
 								'type' => 'Segment',
 								'options' => array (
-										//'route' => '/propempliq[/[:action][/:id]]',
-										'route' => '/propempliq[/:action][/:id]',
+										'route' => '/propempliq[/[:action][/:id]]',
 										'constraints' => array (
 												'action' => '[a-zA-Z][a-zA-Z0-9_-]*' 
 										),
@@ -80,10 +79,10 @@ return array (
 												'controller' => 'Application\Controller\PropEmpLiq',
 												'action' => 'index' 
 										) 
-								)
-								 
+								) 
 						) 
-				) 
+				)
+				 
 		),
 		'service_manager' => array (
 				'abstract_factories' => array (
@@ -106,8 +105,6 @@ return array (
 		),
 		'controllers' => array (
 				'invokables' => array (
-						
-						// 'Application\Controller\Index' => 'Application\Controller\IndexController',
 						'Application\Controller\Usuarios' => 'Application\Controller\UsuariosController',
 						'Application\Controller\PropEmpLiq' => 'Application\Controller\PropEmpLiqController' 
 				) 
@@ -120,8 +117,6 @@ return array (
 				'exception_template' => 'error/index',
 				'template_map' => array (
 						'layout/layout' => __DIR__ . '/../view/layout/layout.phtml',
-						
-						// 'application/index/index' => __DIR__ . '/../view/application/index/index.phtml',
 						'application/usuarios/login' => __DIR__ . '/../view/application/usuarios/login.phtml',
 						'error/404' => __DIR__ . '/../view/error/404.phtml',
 						'error/index' => __DIR__ . '/../view/error/index.phtml' 
@@ -156,13 +151,7 @@ return array (
 				) 
 		),
 		
-// 		'strategies' => array(
-// 				'ViewJsonStrategy',
-// 		)
-		
-// 		'synergy' => array (
-// 				'logger' => array (
-// 						'directory' => __DIR__ . '/../data/logs' 
-// 				) 
-// 		) 
+		'strategies' => array (
+				'ViewJsonStrategy' 
+		) 
 );

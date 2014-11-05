@@ -18,7 +18,7 @@ body {
 }
 
 /*
- * Top navigation
+ * Top navigation-
  * Hide default border to remove 1px line.
  */
 .navbar-fixed-top {
@@ -66,6 +66,20 @@ body {
   background-color: #428bca;
 }
 
+.nav-sidebar > .active1 > a,
+.nav-sidebar > .active1 > a:hover,
+.nav-sidebar > .active1 > a:focus {
+  color: #fff;
+  background-color: #787878;
+}
+
+.nav-sidebar > .active2 > a,
+.nav-sidebar > .active2 > a:hover,
+.nav-sidebar > .active2 > a:focus {
+  color: #fff;
+  background-color: #888888;
+}
+
 
 /*
  * Main content
@@ -102,4 +116,9 @@ body {
 .placeholder img {
   display: inline-block;
   border-radius: 50%;
+}
+.nav > li > a {
+  position: relative;
+  display: block;
+  padding: 1px 15px;
 }

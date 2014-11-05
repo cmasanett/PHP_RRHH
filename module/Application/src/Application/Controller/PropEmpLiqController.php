@@ -4,6 +4,7 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Zend\View\Model\JsonModel;
 use Zend\Http\Request;
 use Zend\Json\Json;
 
@@ -88,8 +89,11 @@ class PropEmpLiqController extends AbstractActionController {
 	}
 	public function loadDataGridValAction() {
 		$request = $this->getRequest ();
-		var_dump($request->isPost ());
-		$id = ( int ) $request->getPost ( 'id' );
+		//var_dump($request->isPost ());
+		//var_dump($request->getPost());
+		//$id = ( int ) $request->getPost ( 'id' );
+		$id = $this->params()->fromRoute("id",null);
+		//var_dump($id);
 		$sidx = "id";
 		$sord = "id";
 		$page = 1;
@@ -133,157 +137,48 @@ class PropEmpLiqController extends AbstractActionController {
 	
 		return $this->response->setContent ( Json::encode ( $response ) );
 	}
-	
-	public function addAction() {
-		if ($this->getRequest ()->isXmlHttpRequest ()) {
-			$this->layout ( 'application/prop-emp-liq/add' );
-		}
-		
-		$form = new AddPropiedadEmpresaLiquidacionForm ();
-		$form->get ( 'submit' )->setValue ( 'Add' );
-		
-		$request = $this->getRequest ();
-		if ($request->isPost ()) {
-			$propiedadEmpresaLiquidacion = new PropiedadEmpresaLiquidacion ();
-			$form->setInputFilter ( $propiedadEmpresaLiquidacion->getInputFilter () );
-			$form->setData ( $request->getPost () );
-			
-			if ($form->isValid ()) {
-				$propiedadEmpresaLiquidacion->exchangeArray ( $form->getData () );
-				$this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacion );
-				$this->getEntityManager ()->flush ();
-				
-				// Redirect to list of albums
-				return $this->redirect ()->toRoute ( 'propiedadEmpresaLiquidacion' );
-			}
-		}
-		return array (
-				'form' => $form 
-		);
-	}
-	public function addGridItemAction() {
+	public function editGridItemAction() {
 		if ($this->request->isXmlHttpRequest ()) {
 			$request = $this->getRequest ();
 			if ($request->isPost ()) {
-				$id = ( int ) $request->getPost ( 'id' );
-				// var_dump($id);
-				if ($id) {
-					$propiedadEmpresaLiquidacion = new PropiedadEmpresaLiquidacion ();
-					$propiedadEmpresaLiquidacion = $this->getEntityManager ()->find ( 'Application\Entity\PropiedadEmpresaLiquidacion', $id );
-					if ($propiedadEmpresaLiquidacion) {
-						// var_dump($propiedadEmpresaLiquidacion);
-						$propiedadEmpresaLiquidacion->setDescripcion ( $request->getPost ( 'descripcion' ) );
-						$propiedadEmpresaLiquidacion->setTipo ( $request->getPost ( 'tipo_de_campo' ));
-						// $propiedadEmpresaLiquidacion->exchangeArray ( $request->getPost () );
+				$data = $request->getPost ('data') ;
+				$data = Json::decode($data, true);
+				if ($data) {
+					if(isset($data['id'])){
+						//Edit
+						$propiedadEmpresaLiquidacion = new PropiedadEmpresaLiquidacion ();
+						$propiedadEmpresaLiquidacion = $this->getEntityManager ()->find ( 'Application\Entity\PropiedadEmpresaLiquidacion', $data['id'] );
+						if ($propiedadEmpresaLiquidacion) {
+							$propiedadEmpresaLiquidacion->setDescripcion ($data['descripcion']);
+							$propiedadEmpresaLiquidacion->setTipo ( $data['tipo_de_campo']);
+							$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacion );
+							$statusFlush = $this->getEntityManager ()->flush ();
+
+							$result = new JsonJsonModel ( array (
+									'type' => 'edit',
+									'success' => true
+							) );
+							return $result;
+						}	
+					} else{
+						//Add
+						$propiedadEmpresaLiquidacion = new PropiedadEmpresaLiquidacion ();
+						//$propiedadEmpresaLiquidacion->exchangeArray ( $request->getPost () );
+						$propiedadEmpresaLiquidacion->setDescripcion ($data['descripcion']);
+						$propiedadEmpresaLiquidacion->setTipo ( $data['tipo_de_campo']);
 						$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacion );
 						$statusFlush = $this->getEntityManager ()->flush ();
 						$result = new JsonModel ( array (
-								'type' => 'edit',
-								// 'statusPersist' => $statusPersist,
-								// 'statusFlush' => $statusFlush,
-								'success' => true 
+								'type' => 'add',
+								'success' => true
 						) );
 						return $result;
 					}
-				} else {
-					$propiedadEmpresaLiquidacion = new PropiedadEmpresaLiquidacion ();
-					$propiedadEmpresaLiquidacion->exchangeArray ( $request->getPost () );
-					$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacion );
-					$statusFlush = $this->getEntityManager ()->flush ();
-					
-					// return $this->response->setContent(Json::encode(array('type'=>'success','msj'=>'ok')));
-					// echo json_encode(array('type'=>'success','msj'=>'ok'));
-					// $this->getResponse()->getHeaders()->addHeaders(array('Content-Type'=>'application/json;charset=UTF-8'));
-					// return $this->getResponse()->setContent(Json::encode(array('type'=>'success','msj'=>'ok')));
-					$result = new JsonModel ( array (
-							'type' => 'add',
-							// 'statusPersist' => $statusPersist,
-							// 'statusFlush' => $statusFlush,
-							'success' => true 
-					) );
-					return $result;
 				}
 			}
 		} else {
 			return $this->redirect ()->toUrl ( $this->getRequest ()->getBaseUrl () );
 		}
-		// try{
-		// if($data["id"]>0){
-		// echo json_encode(array('type'=>'success','msj'=>$Service_Adminoperador->updateOperadorById($data)));
-		// }
-		// else{
-		// echo json_encode(array('type'=>'success','msj'=>$Service_Adminoperador->insertOperador($data)));
-		// }
-		// }
-		// catch(Exception $e){
-		// echo json_encode(array('type'=>'error','msj'=>$e->getMessage()));
-		// }
-		// return new ViewModel();
-	}
-	public function editAction() {
-		$id = ( int ) $this->params ()->fromRoute ( 'id', 0 );
-		if (! $id) {
-			return $this->redirect ()->toRoute ( 'propiedadEmpresaLiquidacion', array (
-					'action' => 'add' 
-			) );
-		}
-		
-		$propiedadEmpresaLiquidacion = $this->getEntityManager ()->find ( 'Application\Entity\PropiedadEmpresaLiquidacion', $id );
-		if (! $propiedadEmpresaLiquidacion) {
-			return $this->redirect ()->toRoute ( 'propiedadEmpresaLiquidacion', array (
-					'action' => 'index' 
-			) );
-		}
-		
-		$form = new AddPropiedadEmpresaLiquidacionForm ();
-		$form->bind ( $propiedadEmpresaLiquidacion );
-		$form->get ( 'submit' )->setAttribute ( 'value', 'Edit' );
-		
-		$request = $this->getRequest ();
-		if ($request->isPost ()) {
-			$form->setInputFilter ( $propiedadEmpresaLiquidacion->getInputFilter () );
-			$form->setData ( $request->getPost () );
-			
-			if ($form->isValid ()) {
-				$this->getEntityManager ()->flush ();
-				
-				// Redirect to list of albums
-				return $this->redirect ()->toRoute ( 'propiedadEmpresaLiquidacion' );
-			}
-		}
-		
-		return array (
-				'id' => $id,
-				'form' => $form 
-		);
-	}
-	public function deleteAction() {
-		$id = ( int ) $this->params ()->fromRoute ( 'id', 0 );
-		if (! $id) {
-			return $this->redirect ()->toRoute ( 'propiedadEmpresaLiquidacion' );
-		}
-		
-		$request = $this->getRequest ();
-		if ($request->isPost ()) {
-			$del = $request->getPost ( 'del', 'No' );
-			
-			if ($del == 'Yes') {
-				$id = ( int ) $request->getPost ( 'id' );
-				$propiedadEmpresaLiquidacion = $this->getEntityManager ()->find ( 'Application\Entity\PropiedadEmpresaLiquidacion', $id );
-				if ($propiedadEmpresaLiquidacion) {
-					$this->getEntityManager ()->remove ( $propiedadEmpresaLiquidacion );
-					$this->getEntityManager ()->flush ();
-				}
-			}
-			
-			// Redirect to list of albums
-			return $this->redirect ()->toRoute ( 'propiedadEmpresaLiquidacion' );
-		}
-		
-		return array (
-				'id' => $id,
-				'propiedadEmpresaLiquidacion' => $this->getEntityManager ()->find ( 'Application\Entity\PropiedadEmpresaLiquidacion', $id ) 
-		);
 	}
 	public function deleteGridItemAction() {
 		if ($this->request->isXmlHttpRequest ()) {
@@ -300,6 +195,75 @@ class PropEmpLiqController extends AbstractActionController {
 							// 'statusRemove' => $statusRemove,
 							// 'statusFlush' => $statusFlush,
 							'success' => true 
+					) );
+					return $result;
+				}
+			}
+		} else {
+			return $this->redirect ()->toUrl ( $this->getRequest ()->getBaseUrl () );
+		}
+	}
+	public function editGridItemValAction() {
+		if ($this->request->isXmlHttpRequest ()) {
+			$request = $this->getRequest ();
+			if ($request->isPost ()) {
+				$data = $request->getPost ('data') ;
+				$data = Json::decode($data, true);
+				if ($data) {
+					if(isset($data['propiedad_id'])){
+						//Add
+						$propiedadEmpresaLiquidacionValores = new PropiedadEmpresaLiquidacionValores ();
+						$propiedadEmpresaLiquidacionValores->setPropiedadId (  $data['propiedad_id'] );
+						$propiedadEmpresaLiquidacionValores->setValorPosible (  $data['valor_posible'] );
+						$propiedadEmpresaLiquidacionValores->setSignificado (  $data['significado'] );
+						$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacionValores );
+						$statusFlush = $this->getEntityManager ()->flush ();
+						
+						$result = new JsonModel ( array (
+								'type' => 'addVal',
+								'success' => true
+						) );
+						return $result;
+					} else{
+							if(isset($data['id'])){
+							//Edit
+							$propiedadEmpresaLiquidacionValores = $this->getEntityManager ()->find ( 'Application\Entity\PropiedadEmpresaLiquidacionValores', $data['id'] );
+							if ($propiedadEmpresaLiquidacionValores) {
+								$propiedadEmpresaLiquidacionValores->setValorPosible (  $data['valor_posible'] );
+								$propiedadEmpresaLiquidacionValores->setSignificado (  $data['significado'] );
+								$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacionValores );
+								$statusFlush = $this->getEntityManager ()->flush ();
+							
+								$result = new JsonModel ( array (
+										'type' => 'editVal',
+										'success' => true
+								) );
+								return $result;
+							}
+						}
+					}
+				}
+			}
+		} else {
+			echo "Error";
+			//return $this->redirect ()->toUrl ( $this->getRequest ()->getBaseUrl () );
+		}
+	}
+	public function deleteGridItemValAction() {
+		if ($this->request->isXmlHttpRequest ()) {
+			$request = $this->getRequest ();
+			if ($request->isPost ()) {
+				$id = ( int ) $request->getPost ( 'id' );
+				$propiedadEmpresaLiquidacionValores = new PropiedadEmpresaLiquidacionValores ();
+				$propiedadEmpresaLiquidacionValores = $this->getEntityManager ()->find ( 'Application\Entity\PropiedadEmpresaLiquidacionValores', $id );
+				if ($propiedadEmpresaLiquidacionValores) {
+					$statusRemove = $this->getEntityManager ()->remove ( $propiedadEmpresaLiquidacionValores );
+					$statusFlush = $this->getEntityManager ()->flush ();
+					$result = new JsonModel ( array (
+							'type' => 'delVal',
+							// 'statusRemove' => $statusRemove,
+							// 'statusFlush' => $statusFlush,
+							'success' => true
 					) );
 					return $result;
 				}

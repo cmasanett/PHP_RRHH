@@ -23,7 +23,8 @@ use Zend\Authentication\Storage\Session as SessionStorage;
 use Zend\Session\Container;
 
 //Incluir modelos
-use Application\Model\UsuariosModel;
+//use Application\Model\UsuariosModel;
+use Application\Model\EmpresaModel;
 
 //Incluir formularios
 use Application\Form\LoginForm;
@@ -42,8 +43,6 @@ class UsuariosController extends AbstractActionController
 	public function loginAction()
 	{
 		$this->layout('layout/layout_login');		
-		//$this->layout()->title="Login de usuarios";
-		
 		$auth = $this->auth;
 		$identi = $auth->getStorage()->read();
 		if($identi!=false && $identi!=null){
@@ -88,7 +87,11 @@ class UsuariosController extends AbstractActionController
 						$session = new \stdClass();
 						$session->userInfo = $authAdapter->getResultRowObject(null, 'clave');
 						$session->usuarioActual = $authAdapter->getResultRowObject('id')->id;
-						$session->empresaCorriente =  $result[0]["empresa_id"];
+						$session->empresaCorrienteId =  $result[0]["empresa_id"];
+						$this->dbAdapter = $this->getServiceLocator ()->get ( 'Zend\Db\Adapter' );
+						$empresa = new EmpresaModel ( $this->dbAdapter );
+						$result = $empresa->getEmpresaById($result[0]["empresa_id"]);
+						$session->empresaCorriente = $result['nombre'];
 						$auth->getStorage()->write($session);
 						return $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/usuarios/main');
 						
@@ -96,6 +99,7 @@ class UsuariosController extends AbstractActionController
 							{
 								$session = new \stdClass();
 								$session->userInfo = $authAdapter->getResultRowObject(null, 'clave');
+								$session->usuarioActual = $authAdapter->getResultRowObject('id')->id;
 								$auth->getStorage()->write($session);
 								return $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/usuarios/empresa');
 							}		
@@ -110,22 +114,33 @@ class UsuariosController extends AbstractActionController
 
 	public function mainAction()
 	{
-		//$this->layout('layout/layout_dashboard');
-		//$this->layout()->title="Index";
-		
 		if($this->request->getPost("submit")){
 			$empresa_seleccionada = $this->request->getPost();
 			if($empresa_seleccionada){
 				$identi = $this->auth->getStorage()->read();
 				if($identi != false && $identi != null)
 				{
-					$userInfo['usuario_actual'] = $identi->userInfo->id;
-					$userInfo['empresa_corriente'] = $empresa_seleccionada->empresa;
-					$this->auth->getStorage()->write($userInfo);
+					$session = new \stdClass();
+					$session->userInfo = $identi->userInfo;
+					$session->usuarioActual = $identi->userInfo->id;
+					$session->empresaCorrienteId =  $empresa_seleccionada->empresa;
+					$this->dbAdapter = $this->getServiceLocator ()->get ( 'Zend\Db\Adapter' );
+					$empresa = new EmpresaModel ( $this->dbAdapter );
+					$result = $empresa->getEmpresaById($empresa_seleccionada->empresa);
+					$session->empresaCorriente = $result['nombre'];
+					$this->auth->getStorage()->write($session);
+					//$userInfo['usuarioActualId'] = $identi->userInfo->id;
+					//$userInfo['usuarioActual'] = $identi->userInfo->usuario;
+					//$userInfo['empresaCorrienteId'] = $empresa_seleccionada->empresa;
+					//$this->dbAdapter = $this->getServiceLocator ()->get ( 'Zend\Db\Adapter' );
+					//$empresa = new EmpresaModel ( $this->dbAdapter );
+					//$result = $empresa->getEmpresaById($empresa_seleccionada->empresa);
+					//$userInfo['empresaCorriente'] = $result['nombre'];
+					//$this->auth->getStorage()->write($userInfo);
 					return new ViewModel(
-							array("titulo"=>"Bienvenido usuario ".$identi->userInfo->usuario,
+							array("titulo"=>"Bienvenido usuario ".$identi->userInfo->usuario/*,
 									"datos"=>$identi,
-									"empresa"=>$empresa_seleccionada->empresa
+									"empresa"=>$empresa_seleccionada->empresa*/
 							));
 				}
 			}
@@ -133,9 +148,9 @@ class UsuariosController extends AbstractActionController
 			$identi = $this->auth->getStorage()->read();
 			if($identi != false && $identi != null){
 				return new ViewModel(
-						array("titulo"=>"Bienvenido usuario ".$identi->userInfo->usuario,
+						array("titulo"=>"Bienvenido usuario ".$identi->userInfo->usuario/*,
 								"datos"=>$identi,
-								"empresa"=>$identi->empresaCorriente
+								"empresa"=>$identi->empresaCorriente*/
 						));
 			}else{
 				$this->auth->clearIdentity();
@@ -148,8 +163,6 @@ class UsuariosController extends AbstractActionController
 	public function empresaAction()
 	{	
 		$this->layout('layout/layout_login');
-		//$this->layout()->title="Selección de empresa";
-		
 		$identi = $this->auth->getStorage()->read();
 		if($identi != false && $identi != null){
 			$this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');

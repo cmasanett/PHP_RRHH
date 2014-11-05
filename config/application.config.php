@@ -5,8 +5,6 @@ return array(
         'Application',
 		'DoctrineModule',
 		'DoctrineORMModule',
-    	//'ZfcDatagrid',
-    	'SynergyDataGrid',
     ),
 
     // These are various options for the listeners attached to the ModuleManager

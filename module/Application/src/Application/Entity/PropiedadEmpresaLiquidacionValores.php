@@ -30,10 +30,6 @@ class PropiedadEmpresaLiquidacionValores implements InputFilterAwareInterface {
 	protected $id;
 	
 	/**
-	 * @ORM\Column(type="string")
-	 */
-	/**
-	 * @ORM\Id
 	 * @ORM\Column(type="integer");
 	 */
 	protected $propiedad_id;

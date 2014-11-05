@@ -5,16 +5,12 @@
 <?php
 if($this->identity()){
 	$iden = $this->identity();
-		if(!is_string($this->datos) || !is_string($this->empresa))
-		{
-		//echo "Bienvenido usuario ".$this->datos->usuario."<br/>";
-		echo "Estas identificado con la empresa id ".$this->empresa;
-		}
+// 		if(!is_string($this->datos) || !is_string($this->empresa))
+// 		{
+// 		//echo "Bienvenido usuario ".$this->datos->usuario."<br/>";
+// 		echo "Estas identificado con la empresa id ".$this->empresa;
+// 		}
 	?>
-	<br></br>
-	<p>
-	    <a href="<?=$this->basePath("propempliq/index")?>">ABM Propiedades de Empresa o Liquidación</a>
-	</p>  
 	<br></br>
 	<p>
 	    <a class="btn btn-lg btn-primary" href="<?=$this->basePath("usuarios/cerrar")?>">Cerrar sesion</a>
