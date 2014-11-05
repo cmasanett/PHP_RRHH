@@ -9,16 +9,17 @@ use Zend\InputFilter\InputFilterAwareInterface;
 use Zend\InputFilter\InputFilterInterface;
 
 /**
- * Propiedad EmpresaLiquidacion.
+ * Propiedad EmpresaLiquidacionValores.
  *
  * @ORM\Entity
- * @ORM\Table(name="n7_propiedades_e")
- *
+ * @ORM\Table(name="n7_valores_posibles_empresas")
+ * 
  * @property int $id
- * @property string $descripcion
- * @property string $tipo_de_campo
+ * @property int $propiedad_id
+ * @property string $valor_posible
+ * @property string $significado
  */
-class PropiedadEmpresaLiquidacion implements InputFilterAwareInterface {
+class PropiedadEmpresaLiquidacionValores implements InputFilterAwareInterface {
 	protected $inputFilter;
 	
 	/**
@@ -31,62 +32,99 @@ class PropiedadEmpresaLiquidacion implements InputFilterAwareInterface {
 	/**
 	 * @ORM\Column(type="string")
 	 */
-	protected $descripcion;
+	/**
+	 * @ORM\Id
+	 * @ORM\Column(type="integer");
+	 */
+	protected $propiedad_id;
 	
 	/**
 	 * @ORM\Column(type="string")
 	 */
-	protected $tipo_de_campo;
+	protected $valor_posible;
+	
+	/**
+	 * @ORM\Column(type="string")
+	 */
+	protected $significado;
 	
 	/**
 	 * Get id
 	 *
 	 * @return integer
 	 */
-	public function getId() {
+	public function getId()
+	{
 		return $this->id;
 	}
 	
 	/**
-	 * Set descripcion
+	 * Set propiedad_id
 	 *
-	 * @param string $descripcion        	
-	 * @return PropiedadEmpresaLiquidacion
+	 * @param int $propiedad_id
+	 * @return PropiedadEmpresaLiquidacionValores
 	 */
-	public function setDescripcion($descripcion) {
-		$this->descripcion = $descripcion;
-		
+	public function setPropiedadId($propiedad_id)
+	{
+		$this->propiedad_id = $propiedad_id;
+		 
 		return $this;
 	}
 	
 	/**
-	 * Get descripcion
+	 * Get propiedad_id
 	 *
-	 * @return string
+	 * @return int
 	 */
-	public function getDescripcion() {
-		return $this->descripcion;
+	public function getPropiedadId()
+	{
+		return $this->propiedad_id;
 	}
 	
 	/**
-	 * Set tipo_de_campo
+	 * Set valor_posible
 	 *
-	 * @param string $tipo_de_campo        	
-	 * @return PropiedadEmpresaLiquidacion
+	 * @param string $valor_posible
+	 * @return PropiedadEmpresaLiquidacionValores
 	 */
-	public function setTipo($tipo_de_campo) {
-		$this->tipo_de_campo = $tipo_de_campo;
-		
+	public function setValorPosible($valor_posible)
+	{
+		$this->valor_posible = $valor_posible;
+		 
 		return $this;
 	}
 	
 	/**
-	 * Get tipo_de_campo
+	 * Get valor_posible
 	 *
 	 * @return string
 	 */
-	public function getTipo() {
-		return $this->tipo_de_campo;
+	public function getValorPosible()
+	{
+		return $this->valor_posible;
+	}
+	
+	/**
+	 * Set significado
+	 *
+	 * @param string $significado
+	 * @return PropiedadEmpresaLiquidacionValores
+	 */
+	public function setSignificado($significado)
+	{
+		$this->significado = $significado;
+		 
+		return $this;
+	}
+	
+	/**
+	 * Get significado
+	 *
+	 * @return string
+	 */
+	public function getSignificado()
+	{
+		return $this->significado;
 	}
 	
 	/**
@@ -125,8 +163,9 @@ class PropiedadEmpresaLiquidacion implements InputFilterAwareInterface {
 	 */
 	public function exchangeArray($data) {
 		$this->id = $data ['id'];
-		$this->descripcion = $data ['descripcion'];
-		$this->tipo_de_campo = $data ['tipo_de_campo'];
+		$this->propiedad_id = $data ['propiedad_id'];
+		$this->valor_posible = $data ['valor_posible'];
+		$this->significado = $data ['significado'];
 	}
 	public function setInputFilter(InputFilterInterface $inputFilter) {
 		throw new \Exception ( "Not used" );
@@ -135,18 +174,28 @@ class PropiedadEmpresaLiquidacion implements InputFilterAwareInterface {
 		if (! $this->inputFilter) {
 			$inputFilter = new InputFilter ();
 			
-			// $inputFilter->add ( array (
-			// 'name' => 'id',
-			// 'required' => true,
-			// 'filters' => array (
-			// array (
-			// 'name' => 'Int'
-			// )
-			// )
-			// ) );
+// 			$inputFilter->add ( array (
+// 					'name' => 'id',
+// 					'required' => true,
+// 					'filters' => array (
+// 							array (
+// 									'name' => 'Int' 
+// 							) 
+// 					) 
+// 			) );
+
+			$inputFilter->add ( array (
+					'name' => 'propiedad_id',
+					'required' => true,
+					'filters' => array (
+							array (
+									'name' => 'Int'
+							)
+					)
+			) );
 			
 			$inputFilter->add ( array (
-					'name' => 'descripcion',
+					'name' => 'valor_posible',
 					'required' => true,
 					'filters' => array (
 							array (
@@ -162,14 +211,14 @@ class PropiedadEmpresaLiquidacion implements InputFilterAwareInterface {
 									'options' => array (
 											'encoding' => 'UTF-8',
 											'min' => 1,
-											'max' => 80
+											'max' => 120 
 									) 
 							) 
 					) 
 			) );
 			
 			$inputFilter->add ( array (
-					'name' => 'tipo_de_campo',
+					'name' => 'significado',
 					'required' => true,
 					'filters' => array (
 							array (
@@ -185,7 +234,7 @@ class PropiedadEmpresaLiquidacion implements InputFilterAwareInterface {
 									'options' => array (
 											'encoding' => 'UTF-8',
 											'min' => 1,
-											'max' => 1 
+											'max' => 120 
 									) 
 							) 
 					) 

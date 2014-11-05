@@ -71,7 +71,8 @@ return array (
 						'propempliq' => array (
 								'type' => 'Segment',
 								'options' => array (
-										'route' => '/propempliq[/[:action][/:id]]',
+										//'route' => '/propempliq[/[:action][/:id]]',
+										'route' => '/propempliq[/:action][/:id]',
 										'constraints' => array (
 												'action' => '[a-zA-Z][a-zA-Z0-9_-]*' 
 										),

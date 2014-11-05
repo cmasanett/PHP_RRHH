@@ -14,12 +14,21 @@ use Zend\I18n\Validator as I18nValidator;
 // Adaptador de la db
 use Zend\Db\Adapter\Adapter;
 
+// Incluir modelos
+use Application\Model\PropiedadEmpresaLiquidacionModel;
+
 // Incluir entidades
 use Application\Entity\PropiedadEmpresaLiquidacion;
-use Application\Entity\PropiedadEmpresaLiquidacionValores;
+
+// Incluir formularios
+use Application\Form\AddPropiedadEmpresaLiquidacionForm;
 
 // Doctrine ORM
 use Doctrine\ORM\EntityManager;
+
+// SynergyDataGrid (ZF2 module)
+use SynergyDataGrid\Grid\JqGrid;
+use Zend\View\Model\JsonModel;
 
 class PropEmpLiqController extends AbstractActionController {
 	public function __construct() {
@@ -37,10 +46,21 @@ class PropEmpLiqController extends AbstractActionController {
 	}
 	public function indexAction() {
 		return new ViewModel ( array () );
+		// 'propiedades' => $this->getEntityManager ()->getRepository ( 'Application\Entity\PropiedadEmpresaLiquidacion' )->findAll ()
+		
+	}
+	public function gridAction() {
+		// replace {Entity_Name} with your entity name e.g. 'Application\Entity\User'
+		$serviceManager = $this->getServiceLocator ();
+		$grid = $serviceManager->get ( 'jqgrid' )->setGridIdentity ( 'Application\Entity\PropiedadEmpresaLiquidacion' );
+		
+		$grid->setUrl ( 'your_custom_crun_url' ); // optional, if not set the default CRUD controller would be used
+		
+		return array (
+				'grid' => $grid 
+		);
 	}
 	public function loadDataGridAction() {
-// 		$request = $this->getRequest ();
-// 		var_dump($request->isPost ());
 		// $sidx = $this->getRequest ()->getParam ( 'sidx' );
 		// $sord = $this->getRequest ()->getParam ( 'sord' );
 		// $page = $this->getRequest ()->getParam ( 'page' );
@@ -86,54 +106,6 @@ class PropEmpLiqController extends AbstractActionController {
 		
 		return $this->response->setContent ( Json::encode ( $response ) );
 	}
-	public function loadDataGridValAction() {
-		$request = $this->getRequest ();
-		var_dump($request->isPost ());
-		$id = ( int ) $request->getPost ( 'id' );
-		$sidx = "id";
-		$sord = "id";
-		$page = 1;
-		$limit = 10;
-	
-		// $s = new modelClass($this->db);
-		// $count = $s->getNbrContact();
-		//$data = $this->getEntityManager ()->getRepository ( 'Application\Entity\PropiedadEmpresaLiquidacionValores' )->findAll ();
-		// All users that are 20 years old
-		$data = $this->getEntityManager ()->getRepository ( 'Application\Entity\PropiedadEmpresaLiquidacionValores' )->findBy(array('propiedad_id' => $id));
-		$count = count ( $data );
-	
-		if ($count > 0) {
-			$total_pages = ceil ( $count / $limit );
-		} else {
-			$total_pages = 0;
-		}
-		if ($page > $total_pages)
-			$page = $total_pages;
-	
-		$start = $limit * $page - $limit;
-		if ($start < 0)
-			$start = 0;
-			
-		// $row = $s->getListContact ( $sidx, $sord, $start, $limit );
-		$row = $data;
-		$response ['page'] = $page;
-		$response ['total'] = $total_pages;
-		$response ['records'] = $count;
-		$i = 0;
-		foreach ( $row as $r ) {
-			$response ['rows'] [$i] ['id'] = $r->id; // id
-			$response ['rows'] [$i] ['cell'] = array (
-					$r->id,
-					$r->propiedad_id,
-					$r->valor_posible,
-					$r->significado
-			);
-			$i ++;
-		}
-	
-		return $this->response->setContent ( Json::encode ( $response ) );
-	}
-	
 	public function addAction() {
 		if ($this->getRequest ()->isXmlHttpRequest ()) {
 			$this->layout ( 'application/prop-emp-liq/add' );
