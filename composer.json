@@ -10,9 +10,6 @@
     "require": {
         "php": ">=5.3.3",
         "zendframework/zendframework": "2.3.*",
-        "doctrine/doctrine-orm-module": "0.*",
-        "thadafinser/zfc-datagrid": "dev-master",
-		"synergy/synergydatagrid": "dev-master",
-		"synergy/common": "dev-master"
+        "doctrine/doctrine-orm-module": "0.*"
     }
 }
