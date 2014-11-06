@@ -5,23 +5,43 @@ $title = 'Propiedades de Empresa o Liquidación';
 <hr>
 	<h1 class="page-header"><?php echo $this->escapeHtml($title); ?></h1>
 <hr/>
+
 <?php
-	$flash = $this->flashMessenger ()->setMessageOpenFormat ( '<div%s>' )->setMessageSeparatorString ( '' )->setMessageCloseString ( '</div>' );
+	$flash = $this->flashMessenger();
+	$flash->setMessageOpenFormat('<div%s>
+							     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							         &times;
+							     </button>
+							     <ul><li>')
+								     ->setMessageSeparatorString('</li><li>')
+								     ->setMessageCloseString('</li></ul></div>');
+		
+	echo $flash->render('error',   array('alert', 'alert-dismissable', 'alert-danger'));
+	echo $flash->render('info',    array('alert', 'alert-dismissable', 'alert-info'));
+	echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+	echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
 ?>
+
+
+
+<div class="alert alert-warning" id="myAlert" style="display:none">
+	<a href="#" class="close" data-dismiss="alert">&times;</a>
+	<strong><span class="dataAlert"></span></strong>
+</div>
 
 <br>
 <div class="content">
 	<div class="row">
 		<div class="col-xs-6">
 			<div class="row">
-				<div class="col-xs-6 col-md-4">
-					<a class="btn btn-success" id="btnAddPropiedadEmpLiq">Alta</a>
+				<div class="col-xs-6 col-md-2">
+					<button type="button" class="btn btn-success" id="btnAddPropiedadEmpLiq">Alta</button>
 			  </div>
-				<div class="col-xs-6 col-md-4">
-					<a class="btn btn-danger" id="btnDelPropiedadEmpLiq">Baja</a>			  
+				<div class="col-xs-6 col-md-2">
+					<button type="button" class="btn btn-danger" id="btnDelPropiedadEmpLiq">Baja</button>			  
 			  </div>
-				<div class="col-xs-6 col-md-4">
-					<a class="btn btn-primary" id="btnEditPropiedadEmpLiq">Modificación</a>
+				<div class="col-xs-6 col-md-2">
+					<button type="button" class="btn btn-primary" id="btnEditPropiedadEmpLiq">Modificación</button>
 			  </div>
 			</div>
 			<br>
@@ -32,14 +52,14 @@ $title = 'Propiedades de Empresa o Liquidación';
 		</div>
 		<div class="col-xs-6">
 			<div class="row">
-				<div class="col-xs-6 col-md-4">
-					<a class="btn btn-success" id="btnAddPropiedadEmpLiqVal">Alta</a>
+				<div class="col-xs-6 col-md-2">
+					<button type="button" class="btn btn-success" id="btnAddPropiedadEmpLiqVal">Alta</button>
 			  </div>
-				<div class="col-xs-6 col-md-4">
-					<a class="btn btn-danger" id="btnDelPropiedadEmpLiqVal">Baja</a>
+				<div class="col-xs-6 col-md-2">
+					<button type="button" class="btn btn-danger" id="btnDelPropiedadEmpLiqVal">Baja</button>
 			  </div>
-				<div class="col-xs-6 col-md-4">
-					<a class="btn btn-primary" id="btnEditPropiedadEmpLiqVal">Modificación</a>
+				<div class="col-xs-6 col-md-2">
+					<button type="button" class="btn btn-primary" id="btnEditPropiedadEmpLiqVal">Modificación</button>
 			  </div>
 			</div>
 			<br>
@@ -105,7 +125,7 @@ $(document).ready(function () {
     });
 
     $("#gridPropEmpLiq").navGrid("#pagerPropEmpLiq",
-                {edit:false,add:false,del:false,search:false,refresh:false,view:false});
+                {edit:false,add:false,del:false,search:false,refresh:true,view:false});
 
     $("#gridPropEmpLiqVal").jqGrid({
     	width: 100,
@@ -131,7 +151,7 @@ $(document).ready(function () {
             {name:'valor_posible', index:'valor_posible',
                 width:15,
                 align: "center",
-                //sortable:true,
+                sortable:false,
                 editable:true,
                 editrules:{required:false,custom:true,custom_func:allcheck}, 
                 editoptions:{size:30}
@@ -139,7 +159,7 @@ $(document).ready(function () {
             {name:'significado', index:'significado',
                 width:15,
                 align: "center",
-                //sortable:true,
+                sortable:false,
                 editable:true,
                 editrules:{required:false,custom:true,custom_func:allcheck}, 
                 editoptions:{size:30}
@@ -147,21 +167,21 @@ $(document).ready(function () {
         ],
         pager: "#pagerPropEmpLiqVal",
         rowNum: 10,
-        rowList: [10, 20, 30],
-        sortname: "id",
-        sortorder: "asc",
+        //rowList: [10, 20, 30],
+        //sortname: "propiedad_id",
+        //sortorder: "asc",
         viewrecords: true,
-        viewsortcols: [true,'horizontal',true],
-        gridview: true,
-        hidegrid: false,
-        autoencode: true,
-        forceFit : false,
+        //viewsortcols: [true,'horizontal',true],
+        //gridview: true,
+       // hidegrid: false,
+        //autoencode: true,
+        //forceFit : false,
    		editurl:"<?php echo $this->url('propempliq', array('action'=>'editGridItemVal'));?>",
         caption: "Valores Posibles" 
     });
 
     $("#gridPropEmpLiqVal").navGrid("#pagerPropEmpLiqVal",
-                {edit:false,add:false,del:false,search:false,refresh:false,view:false});
+                {edit:false,add:false,del:false,search:false,refresh:true,view:false});
 
     $("#btnAddPropiedadEmpLiq").click(function(){  
     	openDiagPropEmpLiq("form-add-PropEmpLiq","add","","");
@@ -170,21 +190,26 @@ $(document).ready(function () {
     $("#btnDelPropiedadEmpLiq").click(function(){ 
     	var rowid = jQuery("#gridPropEmpLiq").jqGrid('getGridParam','selrow'); 
         if( rowid != null ) {
-        	$.ajax({
-  		      url: "<?php echo $this->url('propempliq', array('action'=>'deleteGridItem'));?>",
-  		      global: false,
-  		      type: "POST",
-  		      data: "id="+rowid,
-  		      dataType: "json",
-  		      async:false,
-  		      success: function(msg){
-  		    	 gridReload('gridPropEmpLiq');
-  		    	 gridReload('gridPropEmpLiqVal');	      		      
-  				}						  
-  			}); 
+        	var dataGridHijos = jQuery("#gridPropEmpLiqVal").jqGrid('getDataIDs');
+        	if(dataGridHijos.lenght == 0){
+	        	$.ajax({
+	  		      url: "<?php echo $this->url('propempliq', array('action'=>'deleteGridItem'));?>",
+	  		      global: false,
+	  		      type: "POST",
+	  		      data: "id="+rowid,
+	  		      dataType: "json",
+	  		      async:false,
+	  		      success: function(msg){
+	  		    	 gridReload('gridPropEmpLiq');
+	  		    	 gridReload('gridPropEmpLiqVal');	      		      
+	  				}						  
+	  			}); 
+        	}else{
+        		msgAlert("myAlert","dataAlert","No se puede eliminar la propiedad porque tiene valores asociados.");
+            	}
         }
         else {
-            alert("Por favor seleccione una fila."); 
+        	msgAlert("myAlert","dataAlert","Por favor seleccione una fila.");
         }
     });
 
@@ -194,7 +219,7 @@ $(document).ready(function () {
         	openDiagPropEmpLiq("form-edit-PropEmpLiq","edit","gridPropEmpLiq",rowid);
         }
         else {
-            alert("Por favor seleccione una fila."); 
+        	msgAlert("myAlert","dataAlert","Por favor seleccione una fila.");
         }
     });
 
@@ -205,7 +230,7 @@ $(document).ready(function () {
         	openDiagPropEmpLiqVal("form-add-PropEmpLiqVal","add","gridPropEmpLiqVal",rowidVal);
         }
         else {
-            alert("Por favor seleccione una fila."); 
+        	msgAlert("myAlert","dataAlert","Por favor seleccione una fila.");
         }   	
     });
 
@@ -225,7 +250,7 @@ $(document).ready(function () {
   			});
         }
         else {
-            alert("Please Select Row to delete!"); 
+        	msgAlert("myAlert","dataAlert","Por favor seleccione una fila.");
         }
     });
 
@@ -235,7 +260,7 @@ $(document).ready(function () {
         	openDiagPropEmpLiqVal("form-edit-PropEmpLiqVal","edit","gridPropEmpLiqVal",rowid);
         }
         else {
-            alert("Por favor seleccione una fila."); 
+        	msgAlert("myAlert","dataAlert","Por favor seleccione una fila.");
         }
     });
 
@@ -244,17 +269,86 @@ $(document).ready(function () {
         autoOpen: false,
         resizable: false,
         height: 'auto',
-        width: 350,
+        width: 600,
         modal: true,
         buttons: {
             'Aceptar': function() {
-            	var rowid = jQuery("#gridPropEmpLiq").jqGrid('getGridParam','selrow');
-            	var dataGrid   = jQuery("#gridPropEmpLiq").jqGrid('getRowData', rowid);	
-            	if($("#valor-posible-add-PropEmpLiq").val() != dataGrid.valor_posible){
-	                if( rowid != null ) {
+            	var ids = $("#gridPropEmpLiq").jqGrid('getDataIDs'); 
+                ids = ids.toString();
+                ids = ids.split(",");
+                var e = 0;
+                
+                for(var i=0;i < ids.length;i++){ 
+                    var data = $("#gridPropEmpLiq").jqGrid('getRowData',ids[i]);
+                    if(data['descripcion'] == $("#descripcion-add-PropEmpLiq").val()){ 
+                    	e++;
+                    }
+                }	
+                
+            	if(e == 0)
+                {
+	                var mydata = {
+                        "descripcion": $("#descripcion-add-PropEmpLiq").val(),
+                        "tipo_de_campo": $("#tipo-add-PropEmpLiq").val(),
+                      };
+                    
+			        $.ajax({
+					      url: "<?php echo $this->url('propempliq', array('action'=>'editGridItem'));?>",
+					      global: false,
+					      type: "POST",
+					      data: "data="+JSON.stringify(mydata),
+					      dataType: "json",
+					      async:false,
+					      success: function(msg){
+					    	  gridReload('gridPropEmpLiq');
+					    	  $("#form-add-PropEmpLiq").dialog('close');      		      
+							}						  
+					});	
+					
+            	}else{
+            		$(this).dialog('close');
+            		msgAlert("myAlert","dataAlert","Ya existe un registro con esa combinacion.");
+				}
+            },
+            
+            'Cancelar': function() {
+                $(this).dialog('close');
+            }
+        },
+        close: function() {
+            //nada por ahora
+        }   
+    });
+
+  	//Dialog edit
+    $("#form-edit-PropEmpLiq").dialog({
+        autoOpen: false,
+        resizable: false,
+        height: 'auto',
+        width: 600,
+        modal: true,
+        buttons: {
+            'Aceptar': function() {
+            	var rowid = jQuery("#gridPropEmpLiq").jqGrid('getGridParam','selrow'); 
+                if( rowid != null ) {  
+                	var ids = $("#gridPropEmpLiq").jqGrid('getDataIDs'); 
+                    ids = ids.toString();
+                    ids = ids.split(",");
+                    var e = 0;
+                    
+                    for(var i=0;i < ids.length;i++){ 
+                        var data = $("#gridPropEmpLiq").jqGrid('getRowData',ids[i]);
+                        if(data['descripcion'] == $("#descripcion-edit-PropEmpLiq").val() && data['id'] != rowid){ 
+                        	e++;
+                        }
+                    }	
+                    
+                	if(e == 0)
+                    {  
 		                var mydata = {
-		                                "decripcion": $("#decripcion-add-PropEmpLiq").val(),
-		                                "tipo_de_campo": $("#tipo-add-PropEmpLiq").val(),
+		                                "id": rowid,
+		                                "descripcion": $("#descripcion-edit-PropEmpLiq").val(),
+		                                "tipo_de_campo": $("#tipo-edit-PropEmpLiq").val(),
 		                              };
 		                $.ajax({
 		        		      url: "<?php echo $this->url('propempliq', array('action'=>'editGridItem'));?>",
@@ -265,12 +359,70 @@ $(document).ready(function () {
 		        		      async:false,
 		        		      success: function(msg){
 		        		    	  gridReload('gridPropEmpLiq');
-		        		    	  $("#form-add-PropEmpLiq").dialog('close');      		      
+		        		    	  $("#form-edit-PropEmpLiq").dialog('close');      		      
 		        				}						  
 		        			});
-	                }
+        			
+                    }else{
+                		$(this).dialog('close');
+                		msgAlert("myAlert","dataAlert","Ya existe un registro con esa combinacion.");
+    				}
+                }
+            },
+            
+            'Cancelar': function() {
+                $(this).dialog('close');
+            }
+        },
+        close: function() {
+            //nada por ahora
+        } 
+    });
+    
+	//Dialog addVal
+    $("#form-add-PropEmpLiqVal").dialog({
+        autoOpen: false,
+        resizable: false,
+        height: 'auto',
+        width: 620,
+        modal: true,
+        buttons: {
+            'Aceptar': function() {
+            	var rowid = jQuery("#gridPropEmpLiq").jqGrid('getGridParam','selrow');
+            	var ids = $("#gridPropEmpLiqVal").jqGrid('getDataIDs'); 
+                ids = ids.toString();
+                ids = ids.split(",");
+                var e = 0;
+                
+                for(var i=0;i < ids.length;i++){ 
+                    var data = $("#gridPropEmpLiqVal").jqGrid('getRowData',ids[i]);
+                    if(data['propiedad_id'] == rowid && data['valor_posible'] == $("#valor-posible-add-PropEmpLiqVal").val()){ 
+                    	e++;
+                    }
+                }	
+                
+            	if(e == 0)
+                {
+            		var mydata = {
+                            "propiedad_id": rowid,
+                            "valor_posible": $("#valor-posible-add-PropEmpLiqVal").val(),
+                            "significado": $("#significado-add-PropEmpLiqVal").val(),
+                          };
+		            $.ajax({
+		    		      url: "<?php echo $this->url('propempliq', array('action'=>'editGridItemVal'));?>",
+		    		      global: false,
+		    		      type: "POST",
+		    		      data: "data="+JSON.stringify(mydata),
+		    		      dataType: "json",
+		    		      async:false,
+		    		      success: function(msg){
+		    		    	  loadGridPropEmpLiqVal(rowid);
+		    		    	  $("#form-add-PropEmpLiqVal").dialog('close');      		      
+		    				}						  
+		    			});
             	}else{
-						alert("Ya existe un registro con esa combinacion.")
+            			$(this).dialog('close');
+            			msgAlert("myAlert","dataAlert","Ya existe un registro con esa combinacion.");
                 	}
             },
             
@@ -280,68 +432,38 @@ $(document).ready(function () {
         },
         close: function() {
             //nada por ahora
-        }
-        
+        }        
     });
 
-  	//Dialog edit
-    $("#form-edit-PropEmpLiq").dialog({
+  	//Dialog editVal
+    $("#form-edit-PropEmpLiqVal").dialog({
         autoOpen: false,
         resizable: false,
         height: 'auto',
-        width: 350,
+        width: 620,
         modal: true,
         buttons: {
             'Aceptar': function() {
             	var rowid = jQuery("#gridPropEmpLiqVal").jqGrid('getGridParam','selrow'); 
-                if( rowid != null ) {    
-	                var mydata = {
-	                                "id": rowid,
-	                                "decripcion": $("#decripcion-edit-PropEmpLiq").val(),
-	                                "tipo_de_campo": $("#tipo-edit-PropEmpLiq").val(),
-	                              };
-	                $.ajax({
-	        		      url: "<?php echo $this->url('propempliq', array('action'=>'editGridItem'));?>",
-	        		      global: false,
-	        		      type: "POST",
-	        		      data: "data="+JSON.stringify(mydata),
-	        		      dataType: "json",
-	        		      async:false,
-	        		      success: function(msg){
-	        		    	  gridReload('gridPropEmpLiq');
-	        		    	  $("#form-edit-PropEmpLiq").dialog('close');      		      
-	        				}						  
-	        			});
-                }
-            },
-            
-            Cancel: function() {
-                $(this).dialog('close');
-            }
-        },
-        close: function() {
-            //nada por ahora
-        }
-        
-    });
-    
-	//Dialog addVal
-    $("#form-add-PropEmpLiqVal").dialog({
-        autoOpen: false,
-        resizable: false,
-        height: 'auto',
-        width: 350,
-        modal: true,
-        buttons: {
-            'Aceptar': function() {
-            	var rowid = jQuery("#gridPropEmpLiq").jqGrid('getGridParam','selrow');
-            	var dataGrid   = jQuery("#gridPropEmpLiqVal").jqGrid('getRowData', rowid);	
-            	if($("#valor-posible-add-PropEmpLiqVal").val() != dataGrid.valor_posible){
-	                if( rowid != null ) {
+                if( rowid != null ) {  
+                	var ids = $("#gridPropEmpLiqVal").jqGrid('getDataIDs'); 
+                    ids = ids.toString();
+                    ids = ids.split(",");
+                    var e = 0;
+                    
+                    for(var i=0;i < ids.length;i++){ 
+                        var data = $("#gridPropEmpLiqVal").jqGrid('getRowData',ids[i]);
+                        if(data['valor_posible'] == $("#valor-posible-edit-PropEmpLiqVal").val() && data['id'] != rowid){ 
+                        	e++;
+                        }
+                    }	
+                    
+                	if(e == 0)
+                    {    
 		                var mydata = {
-		                                "propiedad_id": rowid,
-		                                "valor_posible": $("#valor-posible-add-PropEmpLiqVal").val(),
-		                                "significado": $("#significado-add-PropEmpLiqVal").val(),
+		                                "id": rowid,
+		                                "valor_posible": $("#valor-posible-edit-PropEmpLiqVal").val(),
+		                                "significado": $("#significado-edit-PropEmpLiqVal").val(),
 		                              };
 		                $.ajax({
 		        		      url: "<?php echo $this->url('propempliq', array('action'=>'editGridItemVal'));?>",
@@ -351,55 +473,14 @@ $(document).ready(function () {
 		        		      dataType: "json",
 		        		      async:false,
 		        		      success: function(msg){
-		        		    	  loadGridPropEmpLiqVal(rowid);
-		        		    	  $("#form-add-PropEmpLiqVal").dialog('close');      		      
+		        		    	  loadGridPropEmpLiqVal(dataGrid.propiedad_id);
+		        		    	  $("#form-edit-PropEmpLiqVal").dialog('close');      		      
 		        				}						  
 		        			});
-	                }
-            	}else{
-						alert("Ya existe un registro con esa combinacion.")
+                    }else{
+            			$(this).dialog('close');
+            			msgAlert("myAlert","dataAlert","Ya existe un registro con esa combinacion.");
                 	}
-            },
-            
-            Cancel: function() {
-                $(this).dialog('close');
-            }
-        },
-        close: function() {
-            //nada por ahora
-        }
-        
-    });
-
-  	//Dialog editVal
-    $("#form-edit-PropEmpLiqVal").dialog({
-        autoOpen: false,
-        resizable: false,
-        height: 'auto',
-        width: 350,
-        modal: true,
-        buttons: {
-            'Aceptar': function() {
-            	var rowid = jQuery("#gridPropEmpLiqVal").jqGrid('getGridParam','selrow'); 
-				var dataGrid   = jQuery("#gridPropEmpLiqVal").jqGrid('getRowData', rowid);	
-                if( rowid != null ) {    
-	                var mydata = {
-	                                "id": rowid,
-	                                "valor_posible": $("#valor-posible-edit-PropEmpLiqVal").val(),
-	                                "significado": $("#significado-edit-PropEmpLiqVal").val(),
-	                              };
-	                $.ajax({
-	        		      url: "<?php echo $this->url('propempliq', array('action'=>'editGridItemVal'));?>",
-	        		      global: false,
-	        		      type: "POST",
-	        		      data: "data="+JSON.stringify(mydata),
-	        		      dataType: "json",
-	        		      async:false,
-	        		      success: function(msg){
-	        		    	  loadGridPropEmpLiqVal(dataGrid.propiedad_id);
-	        		    	  $("#form-edit-PropEmpLiqVal").dialog('close');      		      
-	        				}						  
-	        			});
                 }
             },
             
@@ -409,11 +490,9 @@ $(document).ready(function () {
         },
         close: function() {
             //nada por ahora
-        }
-        
-    }); 
+        }    
+    });
 }); 
-
 
 function allcheck(value, colname){
     var permitidos =/^[0-9a-zA-Z|ñ|Ñ|\s|\_|\-|\.]*$/; //La cadena ha de estar compuesta únicamente por letras
@@ -436,7 +515,7 @@ function loadGridPropEmpLiqVal(id){
 			).trigger('reloadGrid');
 	}
 	else {
-	    alert("Por favor seleccione una fila."); 
+		msgAlert("myAlert","dataAlert","Por favor seleccione una fila.");
 	}
 }
         
@@ -444,11 +523,12 @@ function openDiagPropEmpLiq(diagName, op, grid, id){
 	clearDataPropEmpLiq();
 	if(op == "edit"){
 		rowdata = jQuery("#"+grid).getRowData(id);
-		$('#decripcion-edit-PropEmpLiq').val(rowdata['descripcion']);
+		$('#descripcion-edit-PropEmpLiq').val(rowdata['descripcion']);
 		$('#tipo-edit-PropEmpLiq').val(rowdata['tipo_de_campo']);
 	    $('#'+diagName).dialog('open');
 	}else{
 		$('#'+diagName).dialog('open');
+		$('#tipo-add-PropEmpLiq option:contains("N")').prop('selected', true);
 		}
 }
 
@@ -464,11 +544,10 @@ function openDiagPropEmpLiqVal(diagName, op, grid, id){
 		}
 }
 
-
 function clearDataPropEmpLiq(){
-	$('#decripcion-add-PropEmpLiq').val("");
+	$('#descripcion-add-PropEmpLiq').val("");
 	$('#tipo-add-PropEmpLiq').val("");
-	$('#decripcion-edit-PropEmpLiq').val("");
+	$('#descripcion-edit-PropEmpLiq').val("");
 	$('#tipo-edit-PropEmpLiq').val("");
 }
 
@@ -478,84 +557,94 @@ function clearDataPropEmpLiqVal(){
 	$('#valor-posible-edit-PropEmpLiqVal').val("");
 	$('#significado-edit-PropEmpLiqVal').val("");
 }
+
+function msgAlert(diagName, selectorName, msg){
+	$('#'+diagName).show();
+	$('.'+selectorName).html(msg);
+	setTimeout(function(){
+			$('#'+diagName).hide();
+			$('.'+selectorName).html("");
+		},3000)
+}
+
 </script>
 
 <!-- Dialogo -->
 <div id="form-add-PropEmpLiq"  title="Agregar registro">
-        <table>
-            <tr>
-                <td class="flab">Propiedad: </td>
-                <td class="fcon">
-                    <input type="text" id="decripcion-add-PropEmpLiq"  name="decripcion-add-PropEmpLiq" value="" style="width:162px;">
-                </td>
-            </tr>
-            <tr>
-                <td class="flab">Tipo: </td>
-                <td class="fcon"> 
-                    <select id="tipo-add-PropEmpLiq" name="tipo-add-PropEmpLiqVal">
-					  <option value="N" selected>N</option>
-					  <option value="C">C</option>
-					  <option value="F">F</option>
-					</select> 
-                </td>
-            </tr>
-        </table>
+	<form class="form-horizontal" role="form">
+	  <div class="form-group">
+	    <label for="input-descripcion-add-PropEmpLiq" class="col-sm-2 control-label">Propiedad:</label>
+	    <div class="col-sm-10">
+	      <input type="text" class="form-control" id="descripcion-add-PropEmpLiq" placeholder="">
+	    </div>
+	  </div>
+	  <div class="form-group">
+	    <label for="input-tipo-add-PropEmpLiq" class="col-sm-2 control-label">Tipo:</label>
+	    <div class="col-sm-10">
+	      <select class="form-control" id="tipo-add-PropEmpLiq">
+			  <option value="N">N</option>
+			  <option value="C">C</option>
+			  <option value="F">F</option>
+			</select>
+	    </div>
+	  </div>
+	</form>
 </div>
 
 <!-- Dialogo -->
 <div id="form-edit-PropEmpLiq"  title="Editar registro">
-        <table>
-            <tr>
-                <td class="flab">Propiedad: </td>
-                <td class="fcon">
-                    <input type="text" id="decripcion-edit-PropEmpLiq"  name="decripcion-edit-PropEmpLiq" value="" style="width:162px;">
-                </td>
-            </tr>
-            <tr>
-                <td class="flab">Tipo: </td>
-                <td class="fcon">
-                	<select id="tipo-edit-PropEmpLiq" name="tipo-edit-PropEmpLiq">
-					  <option value="N" selected>N</option>
-					  <option value="C">C</option>
-					  <option value="F">F</option>
-					</select> 
-                </td>
-            </tr>
-        </table>
+	<form class="form-horizontal" role="form">
+		  <div class="form-group">
+		    <label for="input-descripcion-edit-PropEmpLiq" class="col-sm-2 control-label">Propiedad:</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="descripcion-edit-PropEmpLiq" placeholder="">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="input-tipo-edit-PropEmpLiq" class="col-sm-2 control-label">Tipo:</label>
+		    <div class="col-sm-10">
+		      <select class="form-control" id="tipo-edit-PropEmpLiq">
+				  <option value="N">N</option>
+				  <option value="C">C</option>
+				  <option value="F">F</option>
+				</select>
+		    </div>
+		</div>
+	</form>
 </div>
 
 <!-- Dialogo -->
 <div id="form-add-PropEmpLiqVal"  title="Agregar registro">
-        <table>
-            <tr>
-                <td class="flab">Valor: </td>
-                <td class="fcon">
-                    <input type="text" id="valor-posible-add-PropEmpLiqVal"  name="valor-posible-add-PropEmpLiqVal" value="" style="width:162px;">
-                </td>
-            </tr>
-            <tr>
-                <td class="flab">Significado: </td>
-                <td class="fcon">
-                    <input type="text" id="significado-add-PropEmpLiqVal"  name="significado-add-PropEmpLiqVal"  value="" style="width:162px;" >
-                </td>
-            </tr>
-        </table>
+	<form class="form-horizontal" role="form">
+		  <div class="form-group">
+		    <label for="input-valor-posible-add-PropEmpLiqVal" class="col-sm-2 control-label">Valor:</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="valor-posible-add-PropEmpLiqVal" placeholder="">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="input-significado-add-PropEmpLiqVal" class="col-sm-2 control-label">Significado:</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="significado-add-PropEmpLiqVal" placeholder="">
+		    </div>
+		</div>
+	</form>
 </div>
 
 <!-- Dialogo -->
 <div id="form-edit-PropEmpLiqVal"  title="Editar registro">
-        <table>
-            <tr>
-                <td class="flab">Valor: </td>
-                <td class="fcon">
-                    <input type="text" id="valor-posible-edit-PropEmpLiqVal"  name="valor-posible-edit-PropEmpLiqVal" value="" style="width:162px;">
-                </td>
-            </tr>
-            <tr>
-                <td class="flab">Significado: </td>
-                <td class="fcon">
-                    <input type="text" id="significado-edit-PropEmpLiqVal"  name="significado-edit-PropEmpLiqVal"  value="" style="width:162px;" >
-                </td>
-            </tr>
-        </table>
-</div>
+	<form class="form-horizontal" role="form">
+		  <div class="form-group">
+		    <label for="input-valor-posible-edit-PropEmpLiqVal" class="col-sm-2 control-label">Valor:</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="valor-posible-edit-PropEmpLiqVal" placeholder="">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="input-significado-edit-PropEmpLiqVal" class="col-sm-2 control-label">Significado:</label>
+		    <div class="col-sm-10">
+		      <input type="text" class="form-control" id="significado-edit-PropEmpLiqVal" placeholder="">
+		    </div>
+		</div>
+	</form>
+</div>		

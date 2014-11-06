@@ -1,22 +1,18 @@
-<hr>
-	<h1><?php echo $this->titulo?></h1>
-<hr/>
-
 <?php
-$this->headTitle("Login de usuarios");
-$form = $this->form;
-
-$form->setAttributes(array(
-    'action' => $this->url.'/usuarios/main',
-    'method' => 'post'
-));
- 
-$formLabel = $this->plugin('formLabel');
-$form->prepare();
-echo $this->form()->openTag($form);
+	$this->headTitle("Login de usuarios");
+	$form = $this->form;
+	
+	$form->setAttributes(array(
+	    'action' => $this->url.'/usuarios/main',
+	    'method' => 'post'
+	));
+	 
+	$formLabel = $this->plugin('formLabel');
+	$form->prepare();
+	echo $this->form()->openTag($form);
 ?>
-
-<div class="">
+<h2 class="form-signin-heading">Seleccionar empresa</h2>
+<div class="form-signin">
 <?php
     $empresa = $form->get('empresa');
     echo $formLabel->openTag().$empresa->getOption('label')." ";
@@ -25,8 +21,7 @@ echo $this->form()->openTag($form);
 ?>
 </div>
 <br></br>
-
 <?php
-echo $this->formElement($form->get('submit'));
-echo $this->form()->closeTag();
+	echo $this->formElement($form->get('submit'));
+	echo $this->form()->closeTag();
  ?>

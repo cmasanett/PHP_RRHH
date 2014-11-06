@@ -107,7 +107,7 @@ class UsuariosController extends AbstractActionController
 			}
 
 		return new ViewModel(
-				array("form"=>$form//,"datos"=>$datos
+				array("form"=>$form
 				)
 		);
 	}
@@ -129,18 +129,8 @@ class UsuariosController extends AbstractActionController
 					$result = $empresa->getEmpresaById($empresa_seleccionada->empresa);
 					$session->empresaCorriente = $result['nombre'];
 					$this->auth->getStorage()->write($session);
-					//$userInfo['usuarioActualId'] = $identi->userInfo->id;
-					//$userInfo['usuarioActual'] = $identi->userInfo->usuario;
-					//$userInfo['empresaCorrienteId'] = $empresa_seleccionada->empresa;
-					//$this->dbAdapter = $this->getServiceLocator ()->get ( 'Zend\Db\Adapter' );
-					//$empresa = new EmpresaModel ( $this->dbAdapter );
-					//$result = $empresa->getEmpresaById($empresa_seleccionada->empresa);
-					//$userInfo['empresaCorriente'] = $result['nombre'];
-					//$this->auth->getStorage()->write($userInfo);
 					return new ViewModel(
-							array("titulo"=>"Bienvenido usuario ".$identi->userInfo->usuario/*,
-									"datos"=>$identi,
-									"empresa"=>$empresa_seleccionada->empresa*/
+							array("titulo"=>"Bienvenido usuario ".$identi->userInfo->usuario
 							));
 				}
 			}
@@ -148,9 +138,7 @@ class UsuariosController extends AbstractActionController
 			$identi = $this->auth->getStorage()->read();
 			if($identi != false && $identi != null){
 				return new ViewModel(
-						array("titulo"=>"Bienvenido usuario ".$identi->userInfo->usuario/*,
-								"datos"=>$identi,
-								"empresa"=>$identi->empresaCorriente*/
+						array("titulo"=>"Bienvenido usuario ".$identi->userInfo->usuario
 						));
 			}else{
 				$this->auth->clearIdentity();
@@ -170,7 +158,6 @@ class UsuariosController extends AbstractActionController
 			$form = new EmpresaForm($this->dbAdapter, intval($identi->userInfo->id));
 			
 			return new ViewModel(array(
-					"titulo"=>"Seleccionar empresa",
 					"form"=>$form,
 					"datos"=>$identi,
 					'url'=>$this->getRequest()->getBaseUrl())

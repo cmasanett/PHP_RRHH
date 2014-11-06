@@ -40,21 +40,14 @@ class PropEmpLiqController extends AbstractActionController {
 		return new ViewModel ( array () );
 	}
 	public function loadDataGridAction() {
-// 		$request = $this->getRequest ();
-// 		var_dump($request->isPost ());
-		// $sidx = $this->getRequest ()->getParam ( 'sidx' );
-		// $sord = $this->getRequest ()->getParam ( 'sord' );
-		// $page = $this->getRequest ()->getParam ( 'page' );
-		// $limit = $this->getRequest ()->getParam ( 'rows' );
-		$sidx = "id";
-		$sord = "id";
-		$page = 1;
-		$limit = 10;
+		$request = $this->getRequest ();
+
+		$sidx = $request->getPost ( 'sidx', 'id' );
+		$sord = $request->getPost ( 'sord', 'asc' );
+		$page = $request->getPost ( 'page', 1 );
+		$limit = $request->getPost ( 'rows', 10 );
 		
-		// $s = new modelClass($this->db);
-		// $count = $s->getNbrContact();
 		$data = $this->getEntityManager ()->getRepository ( 'Application\Entity\PropiedadEmpresaLiquidacion' )->findAll ();
-		
 		$count = count ( $data );
 		
 		if ($count > 0) {
@@ -69,8 +62,7 @@ class PropEmpLiqController extends AbstractActionController {
 		if ($start < 0)
 			$start = 0;
 			
-			// $row = $s->getListContact ( $sidx, $sord, $start, $limit );
-		$row = $data;
+		$row = $this->getEntityManager ()->getRepository ( 'Application\Entity\PropiedadEmpresaLiquidacion' )->findAll (array($sidx => $sord), $start, $limit);
 		$response ['page'] = $page;
 		$response ['total'] = $total_pages;
 		$response ['records'] = $count;
@@ -89,20 +81,14 @@ class PropEmpLiqController extends AbstractActionController {
 	}
 	public function loadDataGridValAction() {
 		$request = $this->getRequest ();
-		//var_dump($request->isPost ());
-		//var_dump($request->getPost());
-		//$id = ( int ) $request->getPost ( 'id' );
-		$id = $this->params()->fromRoute("id",null);
-		//var_dump($id);
-		$sidx = "id";
-		$sord = "id";
-		$page = 1;
-		$limit = 10;
+		
+		$id = $this->params()->fromRoute("id", null);
+		
+		$sidx = $request->getPost ( 'sidx', 'propiedad_id' );
+		$sord = $request->getPost ( 'sord', 'asc' );
+		$page = $request->getPost ( 'page', 1 );
+		$limit = $request->getPost ( 'rows', 10 );
 	
-		// $s = new modelClass($this->db);
-		// $count = $s->getNbrContact();
-		//$data = $this->getEntityManager ()->getRepository ( 'Application\Entity\PropiedadEmpresaLiquidacionValores' )->findAll ();
-		// All users that are 20 years old
 		$data = $this->getEntityManager ()->getRepository ( 'Application\Entity\PropiedadEmpresaLiquidacionValores' )->findBy(array('propiedad_id' => $id));
 		$count = count ( $data );
 	
@@ -118,8 +104,7 @@ class PropEmpLiqController extends AbstractActionController {
 		if ($start < 0)
 			$start = 0;
 			
-		// $row = $s->getListContact ( $sidx, $sord, $start, $limit );
-		$row = $data;
+		$row = $data; //$this->getEntityManager ()->getRepository ( 'Application\Entity\PropiedadEmpresaLiquidacionValores' )->findBy(array('propiedad_id' => $id, array($sidx => $sord), $start, $limit));
 		$response ['page'] = $page;
 		$response ['total'] = $total_pages;
 		$response ['records'] = $count;
@@ -154,11 +139,10 @@ class PropEmpLiqController extends AbstractActionController {
 							$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacion );
 							$statusFlush = $this->getEntityManager ()->flush ();
 
-							$result = new JsonJsonModel ( array (
-									'type' => 'edit',
+							return $this->response->setContent ( Json::encode ( array (
+									'type' => 'editProp',
 									'success' => true
-							) );
-							return $result;
+							) ) );
 						}	
 					} else{
 						//Add
@@ -168,11 +152,11 @@ class PropEmpLiqController extends AbstractActionController {
 						$propiedadEmpresaLiquidacion->setTipo ( $data['tipo_de_campo']);
 						$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacion );
 						$statusFlush = $this->getEntityManager ()->flush ();
-						$result = new JsonModel ( array (
-								'type' => 'add',
+
+						return $this->response->setContent ( Json::encode ( array (
+								'type' => 'addProp',
 								'success' => true
-						) );
-						return $result;
+						) ) );
 					}
 				}
 			}
@@ -190,14 +174,14 @@ class PropEmpLiqController extends AbstractActionController {
 				if ($propiedadEmpresaLiquidacion) {
 					$statusRemove = $this->getEntityManager ()->remove ( $propiedadEmpresaLiquidacion );
 					$statusFlush = $this->getEntityManager ()->flush ();
-					$result = new JsonModel ( array (
-							'type' => 'del',						
-							// 'statusRemove' => $statusRemove,
-							// 'statusFlush' => $statusFlush,
-							'success' => true 
-					) );
-					return $result;
+					
+					return $this->response->setContent ( Json::encode ( array (
+							'type' => 'delProp',
+							'success' => true
+					) ) );
 				}
+			}else {
+				return $this->redirect ()->toUrl ( $this->getRequest ()->getBaseUrl () );
 			}
 		} else {
 			return $this->redirect ()->toUrl ( $this->getRequest ()->getBaseUrl () );
@@ -219,11 +203,10 @@ class PropEmpLiqController extends AbstractActionController {
 						$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacionValores );
 						$statusFlush = $this->getEntityManager ()->flush ();
 						
-						$result = new JsonModel ( array (
+						return $this->response->setContent ( Json::encode ( array (
 								'type' => 'addVal',
 								'success' => true
-						) );
-						return $result;
+						) ) );
 					} else{
 							if(isset($data['id'])){
 							//Edit
@@ -234,19 +217,17 @@ class PropEmpLiqController extends AbstractActionController {
 								$statusPersist = $this->getEntityManager ()->persist ( $propiedadEmpresaLiquidacionValores );
 								$statusFlush = $this->getEntityManager ()->flush ();
 							
-								$result = new JsonModel ( array (
+								return $this->response->setContent ( Json::encode ( array (
 										'type' => 'editVal',
 										'success' => true
-								) );
-								return $result;
+								) ) );
 							}
 						}
 					}
 				}
 			}
 		} else {
-			echo "Error";
-			//return $this->redirect ()->toUrl ( $this->getRequest ()->getBaseUrl () );
+			return $this->redirect ()->toUrl ( $this->getRequest ()->getBaseUrl () );
 		}
 	}
 	public function deleteGridItemValAction() {
@@ -259,13 +240,11 @@ class PropEmpLiqController extends AbstractActionController {
 				if ($propiedadEmpresaLiquidacionValores) {
 					$statusRemove = $this->getEntityManager ()->remove ( $propiedadEmpresaLiquidacionValores );
 					$statusFlush = $this->getEntityManager ()->flush ();
-					$result = new JsonModel ( array (
+					
+					return $this->response->setContent ( Json::encode ( array (
 							'type' => 'delVal',
-							// 'statusRemove' => $statusRemove,
-							// 'statusFlush' => $statusFlush,
 							'success' => true
-					) );
-					return $result;
+					) ) );
 				}
 			}
 		} else {

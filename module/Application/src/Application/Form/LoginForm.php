@@ -22,7 +22,7 @@ class LoginForm extends Form {
 				'name' => 'usuario',
 				'attributes' => array (
 						'type' => 'text',
-						'class' => 'input form-control',
+						'class' => 'input-lg form-control',
 						'required' => 'required' 
 				) 
 		) );
@@ -31,7 +31,7 @@ class LoginForm extends Form {
 				'name' => 'clave',
 				'attributes' => array (
 						'type' => 'password',
-						'class' => 'input form-control',
+						'class' => 'input-lg form-control',
 						'required' => 'required' 
 				) 
 		) );
