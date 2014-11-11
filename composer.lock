@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "b23911b5694776b19f154260f557700a",
+    "hash": "e67360e9fdf446278bd98adc823836f5",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -637,16 +637,16 @@
         },
         {
             "name": "doctrine/orm",
-            "version": "v2.4.2",
+            "version": "v2.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/doctrine2.git",
-                "reference": "0363a5548d9263f979f9ca149decb9cfc66419ab"
+                "reference": "bebacf79d8d4dae9168f0f9bc6811e6c2cb6a4d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/0363a5548d9263f979f9ca149decb9cfc66419ab",
-                "reference": "0363a5548d9263f979f9ca149decb9cfc66419ab",
+                "url": "https://api.github.com/repos/doctrine/doctrine2/zipball/bebacf79d8d4dae9168f0f9bc6811e6c2cb6a4d9",
+                "reference": "bebacf79d8d4dae9168f0f9bc6811e6c2cb6a4d9",
                 "shasum": ""
             },
             "require": {
@@ -684,23 +684,20 @@
             ],
             "authors": [
                 {
-                    "name": "Jonathan Wage",
-                    "email": "jonwage@gmail.com",
-                    "homepage": "http://www.jwage.com/",
-                    "role": "Creator"
-                },
-                {
-                    "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com",
-                    "homepage": "http://www.instaclick.com"
-                },
-                {
                     "name": "Roman Borschel",
                     "email": "roman@code-factory.org"
                 },
                 {
                     "name": "Benjamin Eberlei",
                     "email": "kontakt@beberlei.de"
+                },
+                {
+                    "name": "Guilherme Blanco",
+                    "email": "guilhermeblanco@gmail.com"
+                },
+                {
+                    "name": "Jonathan Wage",
+                    "email": "jonwage@gmail.com"
                 }
             ],
             "description": "Object-Relational-Mapper for PHP",
@@ -709,87 +706,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2014-02-08 16:35:09"
-        },
-        {
-            "name": "gedmo/doctrine-extensions",
-            "version": "v2.3.9",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Atlantic18/DoctrineExtensions.git",
-                "reference": "35adcaae1a3f50d0d5b73aa50ed8fd28ee35ce54"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/35adcaae1a3f50d0d5b73aa50ed8fd28ee35ce54",
-                "reference": "35adcaae1a3f50d0d5b73aa50ed8fd28ee35ce54",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/common": ">=2.2,<2.5-dev",
-                "php": ">=5.3.2"
-            },
-            "require-dev": {
-                "doctrine/common": ">=2.4.0-RC3",
-                "doctrine/dbal": ">=2.4.0-RC1",
-                "doctrine/mongodb": ">=1.0.3",
-                "doctrine/mongodb-odm": ">=1.0.0-BETA9",
-                "doctrine/orm": ">=2.4.0-RC1",
-                "symfony/yaml": "2.3.1"
-            },
-            "suggest": {
-                "doctrine/dbal": ">=2.3.2",
-                "doctrine/mongodb": ">=1.0.1",
-                "doctrine/mongodb-odm": ">=1.0.0-BETA7",
-                "doctrine/orm": ">=2.3.2"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.3.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "Gedmo\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "David Buchmann",
-                    "email": "david@liip.ch"
-                },
-                {
-                    "name": "Gediminas Morkevicius",
-                    "email": "gediminas.morkevicius@gmail.com"
-                },
-                {
-                    "name": "Gustavo Falco",
-                    "email": "comfortablynumb84@gmail.com"
-                }
-            ],
-            "description": "Doctrine2 behavioral extensions",
-            "homepage": "http://gediminasm.org/",
-            "keywords": [
-                "Blameable",
-                "behaviors",
-                "doctrine2",
-                "extensions",
-                "gedmo",
-                "loggable",
-                "nestedset",
-                "sluggable",
-                "sortable",
-                "timestampable",
-                "translatable",
-                "tree",
-                "uploadable"
-            ],
-            "time": "2014-01-12 16:34:06"
+            "time": "2014-10-06 13:22:50"
         },
         {
             "name": "symfony/console",
@@ -847,38 +764,39 @@
             "time": "2014-10-05 13:57:04"
         },
         {
-            "name": "synergy/common",
+            "name": "zendframework/zend-developer-tools",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/odiaseo/synergy-common.git",
-                "reference": "d0953f379b441aa80652402602a0a5e6aeb06267"
+                "url": "https://github.com/zendframework/ZendDeveloperTools.git",
+                "reference": "5e38d0889a34bfbfccef2acb93ca9f4df40dfe31"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/odiaseo/synergy-common/zipball/d0953f379b441aa80652402602a0a5e6aeb06267",
-                "reference": "d0953f379b441aa80652402602a0a5e6aeb06267",
+                "url": "https://api.github.com/repos/zendframework/ZendDeveloperTools/zipball/5e38d0889a34bfbfccef2acb93ca9f4df40dfe31",
+                "reference": "5e38d0889a34bfbfccef2acb93ca9f4df40dfe31",
                 "shasum": ""
             },
             "require": {
-                "doctrine/doctrine-module": ">=0.7",
-                "doctrine/doctrine-orm-module": ">=0.5",
-                "gedmo/doctrine-extensions": ">=v2.2.0",
                 "php": ">=5.3.3",
-                "zendframework/zendframework": ">=2.0"
+                "zendframework/zend-debug": "2.*",
+                "zendframework/zend-eventmanager": "2.*",
+                "zendframework/zend-mvc": "2.*",
+                "zendframework/zend-servicemanager": "2.*",
+                "zendframework/zend-stdlib": "2.*",
+                "zendframework/zend-version": "2.*"
             },
             "suggest": {
-                "ewgo/solarium-module": "For solr search aware models",
-                "monolog/monolog": "For enhanced logging features"
+                "bjyoungblood/bjy-profiler": "Version: dev-master, allows the usage of the (Zend) Db collector.",
+                "ocramius/ocra-service-manager": "OcraServiceManager can help you track dependencies within your application."
             },
-            "type": "library",
+            "type": "zf-module",
             "autoload": {
                 "psr-0": {
-                    "SynergyCommon": "lib/",
-                    "SynergyCommonTest": "tests/"
+                    "ZendDeveloperTools": "src/"
                 },
                 "classmap": [
-                    "./tests/Module.php"
+                    "./Module.php"
                 ]
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -887,139 +805,24 @@
             ],
             "authors": [
                 {
-                    "name": "Pele Odiase",
-                    "email": "peleodiase@yahoo.co.uk"
-                }
-            ],
-            "description": "Library Abstract and concrete classes common to Synergy Modules",
-            "homepage": "http://developer.peleodiase.com/synergy-data-grid",
-            "keywords": [
-                "abstract classes",
-                "synergy library"
-            ],
-            "time": "2014-10-25 11:03:49"
-        },
-        {
-            "name": "synergy/synergydatagrid",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/odiaseo/zf2-datagrid.git",
-                "reference": "bd51fcdc07fabe8e06a4714f26d1f6147339f562"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/odiaseo/zf2-datagrid/zipball/bd51fcdc07fabe8e06a4714f26d1f6147339f562",
-                "reference": "bd51fcdc07fabe8e06a4714f26d1f6147339f562",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/doctrine-module": ">=0.7",
-                "doctrine/doctrine-orm-module": ">=0.5",
-                "doctrine/orm": "=v2.4.2",
-                "php": ">=5.3.3",
-                "synergy/common": "dev-master",
-                "zendframework/zendframework": ">=2.0"
-            },
-            "suggest": {
-                "gedmo/doctrine-extensions": ">=v2.2.0",
-                "monolog/monolog": "For enhanced logging features"
-            },
-            "type": "synergy-module",
-            "autoload": {
-                "psr-0": {
-                    "SynergyDataGrid": "src/",
-                    "SynergyDataGridTest": "tests/module"
+                    "name": "Evan Coury",
+                    "email": "me@evancoury.com",
+                    "homepage": "http://blog.evan.pro/"
                 },
-                "classmap": [
-                    "./Module.php",
-                    "tests/module/Module.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
                 {
-                    "name": "Pele Odiase",
-                    "email": "peleodiase@yahoo.co.uk"
+                    "name": "Eric Boh",
+                    "email": "cossish@gmail.com"
                 }
             ],
-            "description": "Module to display data in grid using the jqGrid javascript plugin",
-            "homepage": "http://developer.peleodiase.com/synergy-data-grid",
+            "description": "Module for developer and debug tools for working with the ZF2 MVC layer.",
+            "homepage": "https://github.com/zendframework/ZendDeveloperTools",
             "keywords": [
-                "data grid",
-                "jqgrid",
+                "debug",
+                "developer",
                 "module",
                 "zf2"
             ],
-            "time": "2014-10-26 18:48:28"
-        },
-        {
-            "name": "thadafinser/zfc-datagrid",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ThaDafinser/ZfcDatagrid.git",
-                "reference": "f7ca778fbf1ee27b7e6d98983107a693e6ebd93f"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ThaDafinser/ZfcDatagrid/zipball/f7ca778fbf1ee27b7e6d98983107a693e6ebd93f",
-                "reference": "f7ca778fbf1ee27b7e6d98983107a693e6ebd93f",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.23",
-                "zendframework/zend-cache": "~2.2",
-                "zendframework/zend-http": "~2.2",
-                "zendframework/zend-modulemanager": "~2.2",
-                "zendframework/zend-mvc": "~2.2",
-                "zendframework/zend-paginator": "~2.2",
-                "zendframework/zend-session": "~2.2",
-                "zendframework/zend-view": "~2.2"
-            },
-            "require-dev": {
-                "doctrine/doctrine-orm-module": ">=0.8",
-                "fabpot/php-cs-fixer": "*@dev",
-                "phpunit/phpunit": "~3.7",
-                "satooshi/php-coveralls": "dev-master",
-                "zendframework/zendframework": "~2.2"
-            },
-            "suggest": {
-                "codeplex/phpexcel": "~1.7",
-                "doctrine/doctrine-orm-module": ">=0.8",
-                "ext-intl": "*",
-                "tecnick.com/tcpdf": "~6.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "ZfcDatagrid\\": "src/",
-                    "ZfcDatagridTest\\": "tests/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "WTFPL"
-            ],
-            "authors": [
-                {
-                    "name": "Martin Keckeis",
-                    "email": "martin.keckeis1@gmail.com"
-                }
-            ],
-            "description": "Zend Framework 2 Module that provides a datagrid for different datasources and output formats",
-            "keywords": [
-                "Zend Framework",
-                "ZfcDatagrid",
-                "datagrid",
-                "datatable",
-                "module",
-                "zf2"
-            ],
-            "time": "2014-10-27 20:24:52"
+            "time": "2014-10-23 18:27:03"
         },
         {
             "name": "zendframework/zendframework",
@@ -1189,9 +992,7 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "thadafinser/zfc-datagrid": 20,
-        "synergy/synergydatagrid": 20,
-        "synergy/common": 20
+        "zendframework/zend-developer-tools": 20
     },
     "prefer-stable": false,
     "platform": {

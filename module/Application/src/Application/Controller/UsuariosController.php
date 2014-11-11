@@ -5,7 +5,7 @@ namespace Application\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
-//Componentes de validación
+//Componentes de validaciï¿½n
 use Zend\Validator;
 use Zend\I18n\Validator as I18nValidator;
 
@@ -13,10 +13,10 @@ use Zend\I18n\Validator as I18nValidator;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\Sql\Sql;
 
-//Componente para cifrar contraseñas
+//Componente para cifrar contraseï¿½as
 use Zend\Crypt\Password\Bcrypt;
 
-//Componentes de autenticación
+//Componentes de autenticaciï¿½n
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Storage\Session as SessionStorage;
@@ -46,7 +46,7 @@ class UsuariosController extends AbstractActionController
 		$auth = $this->auth;
 		$identi = $auth->getStorage()->read();
 		if($identi!=false && $identi!=null){
-			return $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/usuarios/main');
+			return $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/usuarios/index');
 		}
 
 		$this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
@@ -93,7 +93,7 @@ class UsuariosController extends AbstractActionController
 						$result = $empresa->getEmpresaById($result[0]["empresa_id"]);
 						$session->empresaCorriente = $result['nombre'];
 						$auth->getStorage()->write($session);
-						return $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/usuarios/main');
+						return $this->redirect()->toUrl($this->getRequest()->getBaseUrl().'/usuarios/index');
 						
 						}elseif (count($result) > 1)
 							{
@@ -112,7 +112,7 @@ class UsuariosController extends AbstractActionController
 		);
 	}
 
-	public function mainAction()
+	public function indexAction()
 	{
 		if($this->request->getPost("submit")){
 			$empresa_seleccionada = $this->request->getPost();
