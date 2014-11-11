@@ -1,0 +1,22 @@
+<hr>
+	<h1 class="page-header"><?php echo $this->titulo?></h1>
+<hr/>
+
+<?php
+if($this->identity()){
+	$iden = $this->identity();
+// 		if(!is_string($this->datos) || !is_string($this->empresa))
+// 		{
+// 		//echo "Bienvenido usuario ".$this->datos->usuario."<br/>";
+// 		echo "Estas identificado con la empresa id ".$this->empresa;
+// 		}
+	?>
+	<br></br>
+	<p>
+	    <a class="btn btn-lg btn-primary" href="<?=$this->basePath("usuarios/cerrar")?>">Cerrar sesion</a>
+	</p>  
+<?php 
+}else{
+	echo "No está identificado.";
+}
+?>
