@@ -25,9 +25,24 @@ class MenuController extends AbstractActionController {
     }
 
     public function indexAction() {
-         return new ViewModel(array(
-             'menu' => $this->getEntityManager()->getRepository('Application\Entity\N7Menu')->findAll()
-         ));
+        $menu = $this->getEntityManager()->getRepository('Application\Entity\N7MenuGeneral');
+        return new ViewModel(array(
+            'menu' => $this->generateTreeMenu($menu)
+        ));
+    }
+
+    public function generateTreeMenu($datas, $parent = 0) {
+        $tree = '<ul>';
+        foreach ($datas as $key => $row) {
+            if ($row->getIdPadre() == $parent) {
+                $tree .= '<li><a href = "' . $row->getUrl() . '">';
+                $tree .= $row->getDescripcion() . '</a>';
+                $tree .= $this->generateTreeMenu($datas, $row->getId());
+                $tree .= '</li>';
+            }
+        }
+        $tree .= '</ul>';
+        return $tree;
     }
 
 }

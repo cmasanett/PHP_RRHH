@@ -1,13 +1,2 @@
 <?php
- $title = 'Menu';
- $this->headTitle($title);
- ?>
-
- <hr><h1 class="page-header"><?php echo $this->escapeHtml($title);?></h1>
-
- <?php 
-foreach($menu as $key=>$row)
-    {
-        echo $row->getDescripcion();
-        echo '<br />';
-    }
+echo $menu;

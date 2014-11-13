@@ -65,15 +65,15 @@ return array(
                     )
                 )
             ),
-            'propempliq' => array(
+            'datosemp' => array(
                 'type' => 'Segment',
                 'options' => array(
-                    'route' => '/propempliq[/[:action][/:id]]',
+                    'route' => '/datosemp[/[:action][/:id]]',
                     'constraints' => array(
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
                     ),
                     'defaults' => array(
-                        'controller' => 'Application\Controller\PropEmpLiq',
+                        'controller' => 'Application\Controller\DatosEmp',
                         'action' => 'index'
                     )
                 )
@@ -115,7 +115,7 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Application\Controller\Usuarios' => 'Application\Controller\UsuariosController',
-            'Application\Controller\PropEmpLiq' => 'Application\Controller\PropEmpLiqController',
+            'Application\Controller\DatosEmp' => 'Application\Controller\DatosEmpController',
             'Application\Controller\Menu' => 'Application\Controller\MenuController'
         )
     ),

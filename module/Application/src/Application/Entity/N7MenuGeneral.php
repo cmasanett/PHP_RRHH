@@ -5,12 +5,12 @@ namespace Application\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * N7Menu
+ * N7MenuGeneral
  *
- * @ORM\Table(name="n7_menu")
+ * @ORM\Table(name="n7_menu_general")
  * @ORM\Entity
  */
-class N7Menu
+class N7MenuGeneral
 {
     /**
      * @var integer
@@ -49,8 +49,7 @@ class N7Menu
      */
     private $url;
 
-
-
+    
     /**
      * Get id
      *
@@ -65,7 +64,7 @@ class N7Menu
      * Set descripcion
      *
      * @param string $descripcion
-     * @return N7Menu
+     * @return N7MenuGeneral
      */
     public function setDescripcion($descripcion)
     {
@@ -88,7 +87,7 @@ class N7Menu
      * Set idPadre
      *
      * @param integer $idPadre
-     * @return N7Menu
+     * @return N7MenuGeneral
      */
     public function setIdPadre($idPadre)
     {
@@ -111,7 +110,7 @@ class N7Menu
      * Set nivel
      *
      * @param integer $nivel
-     * @return N7Menu
+     * @return N7MenuGeneral
      */
     public function setNivel($nivel)
     {
@@ -134,7 +133,7 @@ class N7Menu
      * Set url
      *
      * @param string $url
-     * @return N7Menu
+     * @return N7MenuGeneral
      */
     public function setUrl($url)
     {
