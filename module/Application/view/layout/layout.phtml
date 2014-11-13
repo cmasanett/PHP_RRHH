@@ -8,14 +8,13 @@ $usuario = "-";
 $empresa = "-";
 $identity = $this->identity();
 
-if ($identity/* $identity == $this->identity() */) {
+if ($identity) {
     if (!is_string($identity->usuarioActual) || !is_string($identity->empresaCorriente)) {
         $usuario = $identity->userInfo->usuario;
         $empresa = $identity->empresaCorriente;
     }
 } else {
     $usuario = "No esta logueado.";
-    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
 }
 ?>
 
