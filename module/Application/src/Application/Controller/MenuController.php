@@ -25,7 +25,7 @@ class MenuController extends AbstractActionController {
     }
 
     public function indexAction() {
-        $menu = $this->getEntityManager()->getRepository('Application\Entity\N7MenuGeneral');
+        $menu = $this->getEntityManager()->getRepository('Application\Entity\N7MenuGeneral')->findAll();
         return new ViewModel(array(
             'menu' => $this->generateTreeMenu($menu)
         ));

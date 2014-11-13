@@ -2274,3 +2274,8 @@ if (typeof jQuery === 'undefined') {
   })
 
 }(jQuery);
+
+$('li').click(function (ev) {
+    $(this).find('>ul').slideToggle();
+    ev.stopPropagation();
+});
