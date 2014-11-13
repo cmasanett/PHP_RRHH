@@ -1,124 +1,129 @@
 <?php echo $this->doctype(); ?>
 
 <?php
-	date_default_timezone_set('America/Mendoza');
-	setlocale(LC_TIME, 'spanish');
-	$fecha=strftime("%d/%m/%y");
-	$usuario = "-";
-	$empresa = "-";
-	
-	if ($user = $this->identity()) {
-		if(!is_string($user->usuarioActual) || !is_string($user->empresaCorriente))
-			{
-				$usuario = $user->userInfo->usuario;
-				$empresa = $user->empresaCorriente;
-			}
-	} else {
-		$usuario = "No esta logueado.";
-	}
+date_default_timezone_set('America/Mendoza');
+setlocale(LC_TIME, 'spanish');
+$fecha = strftime("%d/%m/%y");
+$usuario = "-";
+$empresa = "-";
+
+if ($user === $this->identity()) {
+    if (!is_string($user->usuarioActual) || !is_string($user->empresaCorriente)) {
+        $usuario = $user->userInfo->usuario;
+        $empresa = $user->empresaCorriente;
+    }
+} else {
+    $usuario = "No esta logueado.";
+}
 ?>
 
-<html lang="es_ES">
-<head>
-    	<?php echo $this->headMeta()->setCharset('utf8')?>  
-        <?php echo $this->headMeta()
-            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
-            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
-            ->appendName('description', '')
-            ->appendName('author', '')
+<html lang="es">
+    <head>
+        <?php echo $this->headMeta()->setCharset('utf8') ?>  
+        <?php
+        echo $this->headMeta()
+                ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+                ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+                ->appendName('description', '')
+                ->appendName('author', '')
         ?>
-        
-        <?php echo $this->headTitle(':: Nominas PHP ::'. $this->title)->setSeparator(' - ')->setAutoEscape(false)?>
-        
+
+        <?php echo $this->headTitle(':: Nominas PHP ::' . $this->title)->setSeparator(' - ')->setAutoEscape(false) ?>
+
         <!-- Le styles -->
-        <?php echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
-                        ->prependStylesheet($this->basePath() . '/css/style.css')
-                        //<!-- Custom styles for this template -->
-                        ->prependStylesheet($this->basePath() . '/css/dashboard.css')
-                        //<!-- Bootstrap core CSS -->
-                        ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
-                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
-                        ->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui.css')
-                        ->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui.theme.min.css')
-                        ->prependStylesheet($this->basePath() . '/js/jqGrid/css/ui.jqgrid.css')
+        <?php
+        echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
+                ->prependStylesheet($this->basePath() . '/css/style.css')
+                //<!-- Custom styles for this template -->
+                ->prependStylesheet($this->basePath() . '/css/dashboard.css')
+                //<!-- Bootstrap core CSS -->
+                ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
+                ->prependStylesheet($this->basePath() . '/css/bootstrap.css')
+                ->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui.min.css')
+                ->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui.theme.min.css')
+                ->prependStylesheet($this->basePath() . '/js/jqGrid/css/ui.jqgrid.css')
         ?>
 
         <!-- Scripts -->
         <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-		<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-        
-	    <?php echo $this->headScript ()
-			//->prependFile ( $this->basePath () . '/js/jquery-1.11.0.min.js' )
-			//->prependFile($this->basePath() . '/js/jquery.min.js')
-			->prependFile ( $this->basePath () . '/js/jqGrid/js/i18n/grid.locale-es.js' )
-			->prependFile ( $this->basePath () . '/js/jqGrid/js/minified/jquery.jqGrid.min.js' )
-	    	->prependFile ( $this->basePath () . '/js/jqueryUI/jquery-ui.min.js' )
+        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+
+        <?php
+        echo $this->headScript()
+                //->prependFile ( $this->basePath () . '/js/jquery-1.11.0.min.js' )
+                //->prependFile($this->basePath() . '/js/jquery.min.js')
+                ->prependFile($this->basePath() . '/js/jqGrid/js/i18n/grid.locale-es.js')
+                ->prependFile($this->basePath() . '/js/jqGrid/js/minified/jquery.jqGrid.min.js')
+                ->prependFile($this->basePath() . '/js/jqueryUI/jquery-ui.min.js')
         ?>
 
-		<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-        <?php echo $this->headScript()
-            ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
-            ->prependFile($this->basePath() . '/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <?php
+        echo $this->headScript()
+                ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+                ->prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array('conditional' => 'lt IE 9',))
         ?>
-        
-	</head>
+
+    </head>
     <body>
-		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-			<div class="container-fluid" >
-		        <div class="navbar-header pull-left">
-		          <a class="navbar-brand pull-left" href="#">Nominas PHP - Fecha: <?php echo $fecha ?></a><br>
-		          <!-- <a class="navbar-brand pull-left" href="#">Fecha: <?php echo $fecha ?></a> -->
-		        </div>
-		        <div class="navbar-header pull-right">
-		          <a class="navbar-brand pull-right"  href="#">Usuario: <?php echo $usuario ?> - Empresa Activa: <?php echo $empresa ?></a><br>
-		          <!-- <a class="navbar-brand pull-right"  href="#">Empresa Activa: <?php echo $empresa ?></a> -->
-		           <a class="navbar-brand pull-right"  href="<?=$this->basePath("usuarios/cerrar")?>">Cerrar sesion</a>
-		        </div>
-			</div>
-    	</nav>
-		<div style="padding-top: 10px;" class="container-fluid">
-		    <div class="row">
-		        <div style="padding-top: 50px;" class="col-sm-2 col-md-3 sidebar2">
-		          <ul class="nav nav-sidebar">
-		            <li class="active"><a href="">Archivos</a></li>
-		            <li class="active1" style="text-indent: 20px;"><a href="#">Empresa</a></li>
-		            <li class="active1"style="text-indent: 20px;"><a href="#">Legajos</a></li>
-		            <li class="active1"style="text-indent: 20px;"><a href="#">Propiedades (Atributos)</a></li>
-		            <li class="active2"style="text-indent: 40px;"><a href="<?=$this->basePath("propempliq/index")?>"> de Empresa  o Liquidacion</a></li>
-		            <li class="active2"style="text-indent: 40px;"><a href="#"> de Legajos</a></li>
-		            <li class="active2"style="text-indent: 40px;"><a href="#"> de Familiares (Atributos)</a></li>	
-		            <li class="active1"style="text-indent: 20px;"><a href="#">Formularios (Grupos Logicos)</a></li>	
-					<li class="active2"style="text-indent: 40px;"><a href="#"> de Empresa o Liquidacion</a></li>	
-		            <li class="active2"style="text-indent: 40px;"><a href="#">de Legajos</a></li>
-		            <li class="active2"style="text-indent: 40px;"><a href="#">de Familiares</a></li>
-		            <li class="active1" style="text-indent: 20px;"><a href="#">Conceptos</a></li>
-		            <li class="active2" style="text-indent: 40px;"><a href="#">Tipos de Conceptos</a></li>
-					<li class="active2"style="text-indent: 40px;"><a href="#">Conceptos</a></li>
-					<li class="active2"style="text-indent: 40px;"><a href="#">Agrupaciones de conceptos</a></li>
-					<li class="active1" style="text-indent: 20px;"><a href="#">Acumuladores</a></li>
-					<li class="active2"style="text-indent: 40px;"><a href="#">de Empresa o Liquidacion</a></li>
-					<li class="active2"style="text-indent: 40px;"><a href="#">de Legajo</a></li>
-					<li class="active1" style="text-indent: 20px;"><a href="#">Tablas de Multiple Entrada</a></li>
-		            <li class="active"><a href="">Procesos</a></li>
-		            <li class="active"><a href="">Utiles</a></li>
-		            <li class="active" ><a href="">Cambio de Empresa o Salir</a></li>
-		          </ul>
-		        </div>
-		        <div class="col-sm-10 col-md-offset-2 main">
-			        <div class="container">
-		            	<?php echo $this->content; ?>
-		        	</div>
-		        </div>
-			</div>
-    	</div>       
-<!--         <footer>&copy; 2014</footer>         -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container-fluid" >
+                <div class="navbar-header pull-left">
+                    <a class="navbar-brand pull-left" href="#">Nominas PHP - Fecha: <?php echo $fecha ?></a><br>
+                    <!-- <a class="navbar-brand pull-left" href="#">Fecha: <?php echo $fecha ?></a> -->
+                </div>
+                <div class="navbar-header pull-right">
+                    <a class="navbar-brand pull-right"  href="#">Usuario: <?php echo $usuario ?> - Empresa Activa: <?php echo $empresa ?></a><br>
+                    <!-- <a class="navbar-brand pull-right"  href="#">Empresa Activa: <?php echo $empresa ?></a> -->
+                    <a class="navbar-brand pull-right"  href="<?= $this->basePath("usuarios/cerrar") ?>">Cerrar sesion</a>
+                </div>
+            </div>
+        </nav>
+        <div style="padding-top: 10px;" class="container-fluid">
+            <div class="row">
+                <div style="padding-top: 50px;" class="col-sm-2 col-md-3 sidebar2">
+                    <?php echo $this->sidebar; ?>
+                    <!--<ul class="nav nav-sidebar">
+                        <li class="active"><a href="">Archivos</a></li>
+                        <li class="active1" style="text-indent: 20px;"><a href="#">Empresa</a></li>
+                        <li class="active1" style="text-indent: 20px;"><a href="#">Legajos</a></li>
+                        <li class="active1" style="text-indent: 20px;"><a href="#">Propiedades (Atributos)</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="<?= $this->basePath("datosemp/index") ?>"> de Empresa  o Liquidacion</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="#"> de Legajos</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="#"> de Familiares (Atributos)</a></li>	
+                        <li class="active1" style="text-indent: 20px;"><a href="#">Formularios (Grupos Logicos)</a></li>	
+                        <li class="active2" style="text-indent: 40px;"><a href="#"> de Empresa o Liquidacion</a></li>	
+                        <li class="active2" style="text-indent: 40px;"><a href="#">de Legajos</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="#">de Familiares</a></li>
+                        <li class="active1" style="text-indent: 20px;"><a href="#">Conceptos</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="#">Tipos de Conceptos</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="#">Conceptos</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="#">Agrupaciones de conceptos</a></li>
+                        <li class="active1" style="text-indent: 20px;"><a href="#">Acumuladores</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="#">de Empresa o Liquidacion</a></li>
+                        <li class="active2" style="text-indent: 40px;"><a href="#">de Legajo</a></li>
+                        <li class="active1" style="text-indent: 20px;"><a href="#">Tablas de Multiple Entrada</a></li>
+                        <li class="active"><a href="">Procesos</a></li>
+                        <li class="active"><a href="">Utiles</a></li>
+                        <li class="active" ><a href="">Cambio de Empresa o Salir</a></li>
+                    </ul>-->
+                </div>
+                <div class="col-sm-10 col-md-offset-2 main">
+                    <div class="container">
+                        <?php echo $this->content; ?>
+                    </div>
+                </div>
+            </div>
+        </div>       
+        <!--         <footer>&copy; 2014</footer>         -->
         <?php echo $this->inlineScript() ?>
-        
-        <?php echo $this->headScript ()
-            ->prependFile($this->basePath() . '/js/bootstrap.min.js')
-            //->prependFile($this->basePath() . '/js/docs.min.js')
-            //<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-            ->prependFile($this->basePath() . '/js/ie10-viewport-bug-workaround.js')
+
+        <?php
+        echo $this->headScript()
+                ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+                //->prependFile($this->basePath() . '/js/docs.min.js')
+                //<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+                ->prependFile($this->basePath() . '/js/ie10-viewport-bug-workaround.js')
         ?>
     </body>
 </html>

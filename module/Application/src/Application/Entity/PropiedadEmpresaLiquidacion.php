@@ -196,4 +196,27 @@ class PropiedadEmpresaLiquidacion implements InputFilterAwareInterface {
 		
 		return $this->inputFilter;
 	}
+
+    /**
+     * Set tipo_de_campo
+     *
+     * @param string $tipoDeCampo
+     * @return PropiedadEmpresaLiquidacion
+     */
+    public function setTipoDeCampo($tipoDeCampo)
+    {
+        $this->tipo_de_campo = $tipoDeCampo;
+
+        return $this;
+    }
+
+    /**
+     * Get tipo_de_campo
+     *
+     * @return string 
+     */
+    public function getTipoDeCampo()
+    {
+        return $this->tipo_de_campo;
+    }
 }
