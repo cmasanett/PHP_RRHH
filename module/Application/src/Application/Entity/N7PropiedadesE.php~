@@ -1,0 +1,39 @@
+<?php
+
+namespace Application\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * N7PropiedadesE
+ *
+ * @ORM\Table(name="n7_propiedades_e", indexes={@ORM\Index(name="Index_2", columns={"descripcion"})})
+ * @ORM\Entity
+ */
+class N7PropiedadesE
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="descripcion", type="string", length=80, nullable=false)
+     */
+    private $descripcion;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="tipo_de_campo", type="string", length=1, nullable=false)
+     */
+    private $tipoDeCampo;
+
+
+}
