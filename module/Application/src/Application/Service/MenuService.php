@@ -28,10 +28,6 @@ class MenuService {
         $this->repository = $entityManager->getRepository('Application\Entity\N7MenuGeneral');
     }
 
-    /* public function setRepository(Repository $repository) {
-      $repositoryLoad = $repository;
-      } */
-
     public function load() {
         $menu = $this->repository->findAll();
         return $this->generateTreeMenu($menu);
@@ -55,7 +51,7 @@ class MenuService {
                     $tree .= '<li><a href = "' . $urlTemp . '">';
                     $tree .= $row->getDescripcion() . '</a>';
                 } else {
-                    $tree .= '<li>'.$row->getDescripcion();
+                    $tree .= '<li>' . $row->getDescripcion();
                 }
                 $tree .= $this->generateTreeMenu($datas, $row->getId());
                 $tree .= '</li>';

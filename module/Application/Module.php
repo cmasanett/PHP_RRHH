@@ -44,17 +44,14 @@ class Module {
                 'menuService' => function ($sl) {
                     $entityManager = $sl->get('doctrine.entitymanager.orm_default');
                     $vhManager = $sl->get('ViewHelperManager');
-                    $plugin  = $vhManager->get('basePath');
+                    $plugin = $vhManager->get('basePath');
                     $myService = new Service\MenuService();
                     $myService->setEntityManager($entityManager);
-                    $myService->setViewHelperManager($vhManager);
+                    //$myService->setViewHelperManager($vhManager);
                     $myService->setPlugin($plugin);
-                    //or you can set repository
-                    //$repository = $entityManager->getRepository('Application\Entity\N7MenuGeneral');
-                    //$myService->setRepository($repository);
                     return $myService;
                 },
-                ]
+            ]
         ];
     }
 
