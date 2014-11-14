@@ -6,11 +6,12 @@ setlocale(LC_TIME, 'spanish');
 $fecha = strftime("%d/%m/%y");
 $usuario = "-";
 $empresa = "-";
+$identity = $this->identity();
 
-if ($user === $this->identity()) {
-    if (!is_string($user->usuarioActual) || !is_string($user->empresaCorriente)) {
-        $usuario = $user->userInfo->usuario;
-        $empresa = $user->empresaCorriente;
+if ($identity) {
+    if (!is_string($identity->usuarioActual) || !is_string($identity->empresaCorriente)) {
+        $usuario = $identity->userInfo->usuario;
+        $empresa = $identity->empresaCorriente;
     }
 } else {
     $usuario = "No esta logueado.";
@@ -30,7 +31,7 @@ if ($user === $this->identity()) {
 
         <?php echo $this->headTitle(':: Nominas PHP ::' . $this->title)->setSeparator(' - ')->setAutoEscape(false) ?>
 
-        <!-- Le styles -->
+        <!-- Styles -->
         <?php
         echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
                 ->prependStylesheet($this->basePath() . '/css/style.css')
@@ -82,31 +83,7 @@ if ($user === $this->identity()) {
         <div style="padding-top: 10px;" class="container-fluid">
             <div class="row">
                 <div style="padding-top: 50px;" class="col-sm-2 col-md-3 sidebar2">
-                    <?php echo $this->sidebar; ?>
-                    <!--<ul class="nav nav-sidebar">
-                        <li class="active"><a href="">Archivos</a></li>
-                        <li class="active1" style="text-indent: 20px;"><a href="#">Empresa</a></li>
-                        <li class="active1" style="text-indent: 20px;"><a href="#">Legajos</a></li>
-                        <li class="active1" style="text-indent: 20px;"><a href="#">Propiedades (Atributos)</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="<?= $this->basePath("datosemp/index") ?>"> de Empresa  o Liquidacion</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="#"> de Legajos</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="#"> de Familiares (Atributos)</a></li>	
-                        <li class="active1" style="text-indent: 20px;"><a href="#">Formularios (Grupos Logicos)</a></li>	
-                        <li class="active2" style="text-indent: 40px;"><a href="#"> de Empresa o Liquidacion</a></li>	
-                        <li class="active2" style="text-indent: 40px;"><a href="#">de Legajos</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="#">de Familiares</a></li>
-                        <li class="active1" style="text-indent: 20px;"><a href="#">Conceptos</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="#">Tipos de Conceptos</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="#">Conceptos</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="#">Agrupaciones de conceptos</a></li>
-                        <li class="active1" style="text-indent: 20px;"><a href="#">Acumuladores</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="#">de Empresa o Liquidacion</a></li>
-                        <li class="active2" style="text-indent: 40px;"><a href="#">de Legajo</a></li>
-                        <li class="active1" style="text-indent: 20px;"><a href="#">Tablas de Multiple Entrada</a></li>
-                        <li class="active"><a href="">Procesos</a></li>
-                        <li class="active"><a href="">Utiles</a></li>
-                        <li class="active" ><a href="">Cambio de Empresa o Salir</a></li>
-                    </ul>-->
+                    <?php echo $this->menuWidget(); ?>
                 </div>
                 <div class="col-sm-10 col-md-offset-2 main">
                     <div class="container">
@@ -120,7 +97,7 @@ if ($user === $this->identity()) {
 
         <?php
         echo $this->headScript()
-                ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+                ->prependFile($this->basePath() . '/js/bootstrap.js')
                 //->prependFile($this->basePath() . '/js/docs.min.js')
                 //<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
                 ->prependFile($this->basePath() . '/js/ie10-viewport-bug-workaround.js')

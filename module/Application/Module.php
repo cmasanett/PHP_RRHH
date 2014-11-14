@@ -1,13 +1,5 @@
 <?php
 
-/**
- * Zend Framework (http://framework.zend.com/)
- *
- * @link      http://github.com/zendframework/ZendSkeletonApplication for the canonical source repository
- * @copyright Copyright (c) 2005-2014 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   http://framework.zend.com/license/new-bsd New BSD License
- */
-
 namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
@@ -33,6 +25,34 @@ class Module {
                 ),
             ),
         );
+    }
+
+    public function getViewHelperConfig() {
+        return array(
+            'factories' => array(
+                'menuWidget' => function ($serviceManager) {
+                    // Get the Menu Service
+                    $menuService = $serviceManager->getServiceLocator()->get('MenuService');
+                    return new \Application\View\Helper\MenuWidget($menuService);
+                }
+            )
+        );
+    }
+
+    public function getServiceConfig() {
+        return ['factories' => ['menuService' => 'Application\Service\MenuService',
+                'menuService' => function ($sl) {
+                    $entityManager = $sl->get('doctrine.entitymanager.orm_default');
+                    $vhManager = $sl->get('ViewHelperManager');
+                    $plugin = $vhManager->get('basePath');
+                    $myService = new Service\MenuService();
+                    $myService->setEntityManager($entityManager);
+                    //$myService->setViewHelperManager($vhManager);
+                    $myService->setPlugin($plugin);
+                    return $myService;
+                },
+            ]
+        ];
     }
 
 }

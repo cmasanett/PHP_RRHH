@@ -74,23 +74,17 @@ body {
   padding-right: 20px;
   padding-left: 20px;
 }
-.nav-sidebar > .active > a,
-.nav-sidebar > .active > a:hover,
-.nav-sidebar > .active > a:focus {
+.active {
   color: #fff;
   background-color: #428bca;
 }
 
-.nav-sidebar > .active1 > a,
-.nav-sidebar > .active1 > a:hover,
-.nav-sidebar > .active1 > a:focus {
+.active1{
   color: #fff;
   background-color: #787878;
 }
 
-.nav-sidebar > .active2 > a,
-.nav-sidebar > .active2 > a:hover,
-.nav-sidebar > .active2 > a:focus {
+.active2 {
   color: #fff;
   background-color: #888888;
 }
@@ -137,4 +131,8 @@ body {
   position: relative;
   display: block;
   padding: 1px 15px;
+}
+
+ul li:hover>ul{
+   display:block;       
 }
