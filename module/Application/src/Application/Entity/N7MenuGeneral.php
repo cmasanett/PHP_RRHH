@@ -49,7 +49,8 @@ class N7MenuGeneral
      */
     private $url;
 
-    
+
+
     /**
      * Get id
      *

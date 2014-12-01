@@ -13,12 +13,15 @@ use Zend\I18n\Validator as I18nValidator;
 // Adaptador de la db
 use Zend\Db\Adapter\Adapter;
 // Incluir entidades
-use Application\Entity\PropiedadEmpresaLiquidacion;
-use Application\Entity\PropiedadEmpresaLiquidacionValores;
+//use Application\Entity\PropiedadEmpresaLiquidacion;
+//use Application\Entity\PropiedadEmpresaLiquidacionValores;
+use Application\Entity\N7PropiedadesE;
+use Application\Entity\N7ValoresPosiblesEmpresas;
+
 // Doctrine ORM
 use Doctrine\ORM\EntityManager;
 
-class DatosEmpController extends AbstractActionController {
+class DatosEmpresasController extends AbstractActionController {
 
     public function __construct() {
         
@@ -54,7 +57,7 @@ class DatosEmpController extends AbstractActionController {
         if ($searchOn == 'true') {
         }*/
 
-        $data = $this->getEntityManager()->getRepository('Application\Entity\PropiedadEmpresaLiquidacion')->findAll();
+        $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findAll();
 
         $count = count($data);
 
@@ -73,7 +76,7 @@ class DatosEmpController extends AbstractActionController {
         }
         
         //$row = $this->getEntityManager()->getRepository('Application\Entity\PropiedadEmpresaLiquidacion')->findBy(array(), array($sidx => $sord));
-        $row = $this->getEntityManager()->getRepository('Application\Entity\PropiedadEmpresaLiquidacion')->findBy(array(), array($sidx => $sord), $limit, $start);
+        $row = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array(), array($sidx => $sord), $limit, $start);
 
         $response ['page'] = $page;
         $response ['total'] = $total_pages;
@@ -81,11 +84,11 @@ class DatosEmpController extends AbstractActionController {
         $i = 0;
 
         foreach ($row as $r) {
-            $response ['rows'] [$i] ['id'] = $r->id; // id
+            $response ['rows'] [$i] ['id'] = $r->getId(); // id
             $response ['rows'] [$i] ['cell'] = array(
-                $r->id,
-                $r->descripcion,
-                $r->tipo_de_campo
+                $r->getId(),
+                $r->getDescripcion(),
+                $r->getTipoDeCampo()
             );
             $i ++;
         }
@@ -98,12 +101,12 @@ class DatosEmpController extends AbstractActionController {
 
         $id = $this->params()->fromRoute("id", null);
 
-        $sidx = $request->getPost('sidx', 'propiedad_id');
+        $sidx = $request->getPost('sidx', 'propiedad');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
         $limit = $request->getPost('rows', 10);
 
-        $data = $this->getEntityManager()->getRepository('Application\Entity\PropiedadEmpresaLiquidacionValores')->findBy(array('propiedad_id' => $id));
+        $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesEmpresas')->findBy(array('propiedad' => $id));
         $count = count($data);
 
         if ($count > 0) {
@@ -120,7 +123,7 @@ class DatosEmpController extends AbstractActionController {
             $start = 0;
         }
 
-        $row = $this->getEntityManager()->getRepository('Application\Entity\PropiedadEmpresaLiquidacionValores')->findBy(['propiedad_id' => $id], array($sidx => $sord), $limit, $start);
+        $row = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesEmpresas')->findBy(['propiedad' => $id], array($sidx => $sord), $limit, $start);
 
         $response ['page'] = $page;
         $response ['total'] = $total_pages;
@@ -128,12 +131,12 @@ class DatosEmpController extends AbstractActionController {
         $i = 0;
 
         foreach ($row as $r) {
-            $response ['rows'] [$i] ['id'] = $r->id; // id
+            $response ['rows'] [$i] ['id'] = $r->getId(); // id
             $response ['rows'] [$i] ['cell'] = array(
-                $r->id,
-                $r->propiedad_id,
-                $r->valor_posible,
-                $r->significado
+                $r->getId(),
+                $r->getPropiedad()->getId(),
+                $r->getValorPosible(),
+                $r->getSignificado()
             );
             $i ++;
         }
@@ -149,13 +152,13 @@ class DatosEmpController extends AbstractActionController {
                 if ($data) {
                     if (isset($data['id'])) {
                         //Edit
-                        $propiedadEmpresaLiquidacion = new PropiedadEmpresaLiquidacion ();
-                        $propiedadEmpresaLiquidacion = $this->getEntityManager()->find('Application\Entity\PropiedadEmpresaLiquidacion', $data['id']);
-                        if ($propiedadEmpresaLiquidacion) {
-                            $propiedadEmpresaLiquidacion->setDescripcion($data['descripcion']);
-                            $propiedadEmpresaLiquidacion->setTipo($data['tipo_de_campo']);
-                            $statusPersist = $this->getEntityManager()->persist($propiedadEmpresaLiquidacion);
-                            $statusFlush = $this->getEntityManager()->flush();
+                        $n7PropiedadesE = new N7PropiedadesE ();
+                        $n7PropiedadesE = $this->getEntityManager()->find('Application\Entity\N7PropiedadesE', $data['id']);
+                        if ($n7PropiedadesE) {
+                            $n7PropiedadesE->setDescripcion($data['descripcion']);
+                            $n7PropiedadesE->setTipoDeCampo($data['tipo_de_campo']);
+                            $this->getEntityManager()->persist($n7PropiedadesE);
+                            $this->getEntityManager()->flush();
 
                             return $this->response->setContent(Json::encode(array(
                                                 'type' => 'editProp',
@@ -164,12 +167,12 @@ class DatosEmpController extends AbstractActionController {
                         }
                     } else {
                         //Add
-                        $propiedadEmpresaLiquidacion = new PropiedadEmpresaLiquidacion ();
+                        $n7PropiedadesE = new N7PropiedadesE ();
                         //$propiedadEmpresaLiquidacion->exchangeArray ( $request->getPost () );
-                        $propiedadEmpresaLiquidacion->setDescripcion($data['descripcion']);
-                        $propiedadEmpresaLiquidacion->setTipo($data['tipo_de_campo']);
-                        $statusPersist = $this->getEntityManager()->persist($propiedadEmpresaLiquidacion);
-                        $statusFlush = $this->getEntityManager()->flush();
+                        $n7PropiedadesE->setDescripcion($data['descripcion']);
+                        $n7PropiedadesE->setTipoDeCampo($data['tipo_de_campo']);
+                        $this->getEntityManager()->persist($n7PropiedadesE);
+                        $this->getEntityManager()->flush();
 
                         return $this->response->setContent(Json::encode(array(
                                             'type' => 'addProp',
@@ -188,11 +191,11 @@ class DatosEmpController extends AbstractActionController {
             $request = $this->getRequest();
             if ($request->isPost()) {
                 $id = (int) $request->getPost('id');
-                $propiedadEmpresaLiquidacion = new PropiedadEmpresaLiquidacion ();
-                $propiedadEmpresaLiquidacion = $this->getEntityManager()->find('Application\Entity\PropiedadEmpresaLiquidacion', $id);
-                if ($propiedadEmpresaLiquidacion) {
-                    $statusRemove = $this->getEntityManager()->remove($propiedadEmpresaLiquidacion);
-                    $statusFlush = $this->getEntityManager()->flush();
+                $n7PropiedadesE = new N7PropiedadesE ();
+                $n7PropiedadesE = $this->getEntityManager()->find('Application\Entity\N7PropiedadesE', $id);
+                if ($n7PropiedadesE) {
+                    $this->getEntityManager()->remove($n7PropiedadesE);
+                    $this->getEntityManager()->flush();
 
                     return $this->response->setContent(Json::encode(array(
                                         'type' => 'delProp',
@@ -211,17 +214,20 @@ class DatosEmpController extends AbstractActionController {
         if ($this->request->isXmlHttpRequest()) {
             $request = $this->getRequest();
             if ($request->isPost()) {
-                $data = $request->getPost('data');
-                $data = Json::decode($data, true);
+                $data = Json::decode($request->getPost('data'), true);
                 if ($data) {
-                    if (isset($data['propiedad_id'])) {
+                    if (isset($data['propiedad'])) {
                         //Add
-                        $propiedadEmpresaLiquidacionValores = new PropiedadEmpresaLiquidacionValores ();
-                        $propiedadEmpresaLiquidacionValores->setPropiedadId($data['propiedad_id']);
-                        $propiedadEmpresaLiquidacionValores->setValorPosible($data['valor_posible']);
-                        $propiedadEmpresaLiquidacionValores->setSignificado($data['significado']);
-                        $statusPersist = $this->getEntityManager()->persist($propiedadEmpresaLiquidacionValores);
-                        $statusFlush = $this->getEntityManager()->flush();
+                        $n7PropiedadesE = new N7PropiedadesE ();
+                        $n7PropiedadesE = $this->getEntityManager()->find('Application\Entity\N7PropiedadesE', $data['propiedad']);
+                        if ($n7PropiedadesE) {
+                            $n7ValoresPosiblesEmpresas = new N7ValoresPosiblesEmpresas ();
+                            $n7ValoresPosiblesEmpresas->setPropiedad($n7PropiedadesE);
+                            $n7ValoresPosiblesEmpresas->setValorPosible($data['valor_posible']);
+                            $n7ValoresPosiblesEmpresas->setSignificado($data['significado']);
+                            $this->getEntityManager()->persist($n7ValoresPosiblesEmpresas);
+                            $this->getEntityManager()->flush();
+                        }
 
                         return $this->response->setContent(Json::encode(array(
                                             'type' => 'addVal',
@@ -230,12 +236,12 @@ class DatosEmpController extends AbstractActionController {
                     } else {
                         if (isset($data['id'])) {
                             //Edit
-                            $propiedadEmpresaLiquidacionValores = $this->getEntityManager()->find('Application\Entity\PropiedadEmpresaLiquidacionValores', $data['id']);
-                            if ($propiedadEmpresaLiquidacionValores) {
-                                $propiedadEmpresaLiquidacionValores->setValorPosible($data['valor_posible']);
-                                $propiedadEmpresaLiquidacionValores->setSignificado($data['significado']);
-                                $statusPersist = $this->getEntityManager()->persist($propiedadEmpresaLiquidacionValores);
-                                $statusFlush = $this->getEntityManager()->flush();
+                            $n7ValoresPosiblesEmpresas = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesEmpresas', $data['id']);
+                            if ($n7ValoresPosiblesEmpresas) {
+                                $n7ValoresPosiblesEmpresas->setValorPosible($data['valor_posible']);
+                                $n7ValoresPosiblesEmpresas->setSignificado($data['significado']);
+                                $this->getEntityManager()->persist($n7ValoresPosiblesEmpresas);
+                                $this->getEntityManager()->flush();
 
                                 return $this->response->setContent(Json::encode(array(
                                                     'type' => 'editVal',
@@ -256,11 +262,11 @@ class DatosEmpController extends AbstractActionController {
             $request = $this->getRequest();
             if ($request->isPost()) {
                 $id = (int) $request->getPost('id');
-                $propiedadEmpresaLiquidacionValores = new PropiedadEmpresaLiquidacionValores ();
-                $propiedadEmpresaLiquidacionValores = $this->getEntityManager()->find('Application\Entity\PropiedadEmpresaLiquidacionValores', $id);
-                if ($propiedadEmpresaLiquidacionValores) {
-                    $statusRemove = $this->getEntityManager()->remove($propiedadEmpresaLiquidacionValores);
-                    $statusFlush = $this->getEntityManager()->flush();
+                $n7ValoresPosiblesEmpresas = new N7ValoresPosiblesEmpresas ();
+                $n7ValoresPosiblesEmpresas = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesEmpresas', $id);
+                if ($n7ValoresPosiblesEmpresas) {
+                    $this->getEntityManager()->remove($n7ValoresPosiblesEmpresas);
+                    $this->getEntityManager()->flush();
 
                     return $this->response->setContent(Json::encode(array(
                                         'type' => 'delVal',
