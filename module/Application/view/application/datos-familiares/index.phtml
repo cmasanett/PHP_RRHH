@@ -1,0 +1,734 @@
+<?php
+$title = 'Definicion de datos de Empresa';
+?>
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>	
+<?php
+$flash = $this->flashMessenger();
+$flash->setMessageOpenFormat('<div%s>
+							     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							         &times;
+							     </button>
+							     <ul><li>')
+        ->setMessageSeparatorString('</li><li>')
+        ->setMessageCloseString('</li></ul></div>');
+
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
+
+<div class="alert alert-warning" id="myAlert" style="display:none">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong><span class="dataAlert"></span></strong>
+</div>
+
+<br>
+<div class="content">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class=" btn-group">
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddDatosEmp">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelDatosEmp">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditDatosEmp">Modificacion</button>
+            </div>
+            <br>
+            <div id="jqGridDatosEmp" style="padding-top:10px;">
+                <table id="gridDatosEmp"></table>
+                <div id="pagerDatosEmp"></div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class=" btn-group">
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddDatosEmpVal">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelDatosEmpVal">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditDatosEmpVal">Modificacion</button>
+            </div>
+            <br>
+            <div id="jqGridDatosEmpVal" style="padding-top:10px;">
+                <table id="gridDatosEmpVal"></table>
+                <div id="pagerDatosEmpVal"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#gridDatosEmp").jqGrid({
+            width: 100,
+            height: 230,
+            autowidth: true,
+            rownumbers: true,
+            rownumWidth: 20,
+            url: "<?php echo $this->url('datosemp', array('action' => 'loadDataGrid')); ?>",
+            datatype: 'json',
+            mtype: 'POST',
+            colNames: ["Id", "Propiedad", "Tipo"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'descripcion', index: 'descripcion',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                    //editable: true,
+                    //editrules: {required: true},
+                    //editoptions: {size: 30}
+                },
+                {name: 'tipo_de_campo', index: 'tipo_de_campo',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
+                    //editable: true,
+                    //edittype: 'select',
+                    //editoptions: {value: "Todos;N:N;C:C;F:F"}
+                }
+            ],
+            pager: "#pagerDatosEmp",
+            //rowNum: 10,
+            //rowList: [10, 20, 30],
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: false,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('datosemp', array('action' => 'editGridItem')); ?>",
+            caption: "Datos de Empresa",
+            onSelectRow: function (id) {
+                loadGridDatosEmpVal(id);
+            }
+        });
+        $("#gridDatosEmp").navGrid("#pagerDatosEmp",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridDatosEmp").navButtonAdd("#pagerDatosEmp", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridDatosEmp")[0].clearToolbar();
+                gridReload('gridDatosEmp');
+            }
+        });
+        $('#gridDatosEmp').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        
+        $("#gridDatosEmpVal").jqGrid({
+            width: 450,
+            height: 230,
+            autowidth: false,
+            rownumbers: true,
+            rownumWidth: 20, 
+            url: "<?php echo $this->url('datosemp', array('action' => 'loadDataGridVal')); ?>",
+            datatype: "json",
+            mtype: 'POST',
+            colNames: ["Id", "PropiedadId", "Valor", "Significado"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'propiedad_id', index: 'propiedad_id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'valor_posible', index: 'valor_posible',
+                    width: 15,
+                    align: "center",
+                    sortable: false,
+                    editable: true,
+                    editrules: {required: true},
+                    editoptions: {size: 30}
+                },
+                {name: 'significado', index: 'significado',
+                    width: 15,
+                    align: "center",
+                    sortable: false,
+                    editable: true,
+                    editrules: {required: true},
+                    editoptions: {size: 30}
+                }
+            ],
+            pager: "#pagerDatosEmpVal",
+            //rowNum: 10,
+            //rowList: [10, 20, 30],
+            sortname: "propiedad_id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: true,
+            pgbuttons: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('datosemp', array('action' => 'editGridItemVal')); ?>",
+            caption: "Valores Posibles"
+        });
+        $("#gridDatosEmpVal").navGrid("#pagerDatosEmpVal",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridDatosEmpVal").navButtonAdd("#pagerDatosEmpVal", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridDatosEmpVal")[0].clearToolbar();
+                //loadGridDatosEmpVal(rowid);
+            }
+        });
+        $('#gridDatosEmpVal').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        //Buttons
+        $("#btnAddDatosEmp").click(function () {
+            openDiagDatosEmp("form-add-DatosEmp", "add", "", "");
+        });
+        $("#btnDelDatosEmp").click(function () {
+            var rowid = jQuery("#gridDatosEmp").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                var ids = $("#gridDatosEmpVal").jqGrid('getDataIDs');
+                ids = ids.toString();
+                ids = ids.split(",");
+                var e = 0;
+                for (var i = 0; i < ids.length; i++) {
+                    var data = $("#gridDatosEmpVal").jqGrid('getRowData', ids[i]);
+                    if (data['propiedad_id'] == rowid) {
+                        e++;
+                    }
+                }
+
+                if (e == 0) {
+                    $.ajax({
+                        url: "<?php echo $this->url('datosemp', array('action' => 'deleteGridItem')); ?>",
+                        global: false,
+                        type: "POST",
+                        data: "id=" + rowid,
+                        dataType: "json",
+                        async: false,
+                        success: function (msg) {
+                            gridReload('gridDatosEmp');
+                            gridReload('gridDatosEmpVal');
+                        }
+                    });
+                } else {
+                    msgAlert("myAlert", "dataAlert", "No se puede eliminar la propiedad porque tiene valores asociados.");
+                }
+            }
+            else {
+                msgAlert("myAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnEditDatosEmp").click(function () {
+            var rowid = jQuery("#gridDatosEmp").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosEmp("form-edit-DatosEmp", "edit", "gridDatosEmp", rowid);
+            }
+            else {
+                msgAlert("myAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnAddDatosEmpVal").click(function () {
+            var rowid = jQuery("#gridDatosEmp").jqGrid('getGridParam', 'selrow');
+            var rowidVal = jQuery("#gridDatosEmpVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosEmpVal("form-add-DatosEmpVal", "add", "gridDatosEmpVal", rowidVal);
+            }
+            else {
+                msgAlert("myAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnDelDatosEmpVal").click(function () {
+            var rowid = jQuery("#gridDatosEmpVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                $.ajax({
+                    url: "<?php echo $this->url('datosemp', array('action' => 'deleteGridItemVal')); ?>",
+                    global: false,
+                    type: "POST",
+                    data: "id=" + rowid,
+                    dataType: "json",
+                    async: false,
+                    success: function () {
+                        gridReload('gridDatosEmpVal');
+                    }
+                });
+            }
+            else {
+                msgAlert("myAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnEditDatosEmpVal").click(function () {
+            var rowid = jQuery("#gridDatosEmpVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosEmpVal("form-edit-DatosEmpVal", "edit", "gridDatosEmpVal", rowid);
+            }
+            else {
+                msgAlert("myAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+
+        //Dialog addDatosEmp
+        $("#form-add-DatosEmp").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            fluid: true, //new option
+            buttons: {
+                'Aceptar': function () {
+                    var descripcion = $("#descripcion-add-DatosEmp").val();
+                    var tipo = $("#tipo-add-DatosEmp").val();
+
+                    if (descripcion != '') {
+                        var ids = $("#gridDatosEmp").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosEmp").jqGrid('getRowData', ids[i]);
+                            if (data['descripcion'] == descripcion) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0) {
+                            var mydata = {
+                                "descripcion": descripcion,
+                                "tipo_de_campo": tipo
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datosemp', array('action' => 'editGridItem')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(mydata),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    gridReload('gridDatosEmp');
+                                    $("#form-add-DatosEmp").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("myAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                'Cancelar': function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog editDatosEmp
+        $("#form-edit-DatosEmp").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            fluid: true, //new option
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosEmp").jqGrid('getGridParam', 'selrow');
+                    if (rowid != null) {
+                        var ids = $("#gridDatosEmp").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosEmp").jqGrid('getRowData', ids[i]);
+                            if (data['descripcion'] == $("#descripcion-edit-DatosEmp").val() && data['id'] != rowid) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0)
+                        {
+                            var mydata = {
+                                "id": rowid,
+                                "descripcion": $("#descripcion-edit-DatosEmp").val(),
+                                "tipo_de_campo": $("#tipo-edit-DatosEmp").val(),
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datosemp', array('action' => 'editGridItem')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(mydata),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    gridReload('gridDatosEmp');
+                                    $("#form-edit-DatosEmp").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("myAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                'Cancelar': function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog addDatosEmpVal
+        $("#form-add-DatosEmpVal").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            fluid: true, //new option
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosEmp").jqGrid('getGridParam', 'selrow');
+                    var ids = $("#gridDatosEmpVal").jqGrid('getDataIDs');
+                    ids = ids.toString();
+                    ids = ids.split(",");
+                    var e = 0;
+                    for (var i = 0; i < ids.length; i++) {
+                        var data = $("#gridDatosEmpVal").jqGrid('getRowData', ids[i]);
+                        if (data['propiedad_id'] == rowid && data['valor_posible'] == $("#valor-posible-add-DatosEmpVal").val()) {
+                            e++;
+                        }
+                    }
+
+                    if (e == 0)
+                    {
+                        var mydata = {
+                            "propiedad_id": rowid,
+                            "valor_posible": $("#valor-posible-add-DatosEmpVal").val(),
+                            "significado": $("#significado-add-DatosEmpVal").val()
+                        };
+                        $.ajax({
+                            url: "<?php echo $this->url('datosemp', array('action' => 'editGridItemVal')); ?>",
+                            global: false,
+                            type: "POST",
+                            data: "data=" + JSON.stringify(mydata),
+                            dataType: "json",
+                            async: false,
+                            success: function () {
+                                loadGridDatosEmpVal(rowid);
+                                $("#form-add-DatosEmpVal").dialog('close');
+                            }
+                        });
+                    } else {
+                        $(this).dialog('close');
+                        msgAlert("myAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog editDatosEmpVal
+        $("#form-edit-DatosEmpVal").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            fluid: true, //new option
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosEmpVal").jqGrid('getGridParam', 'selrow');
+                    if (rowid != null) {
+                        var ids = $("#gridDatosEmpVal").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosEmpVal").jqGrid('getRowData', ids[i]);
+                            if (data['valor_posible'] == $("#valor-posible-edit-DatosEmpVal").val() && data['id'] != rowid) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0)
+                        {
+                            var mydata = {
+                                "id": rowid,
+                                "valor_posible": $("#valor-posible-edit-DatosEmpVal").val(),
+                                "significado": $("#significado-edit-DatosEmpVal").val(),
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datosemp', array('action' => 'editGridItemVal')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(mydata),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    loadGridDatosEmpVal(dataGrid.propiedad_id);
+                                    $("#form-edit-DatosEmpVal").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("myAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        
+        /*$('input').bind('keypress', function (event) {
+         var regex = new RegExp("^[a-zA-Z0-9_ \,._-]+$");
+         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+         if (!regex.test(key)) {
+         event.preventDefault();
+         return false;
+         }
+         });*/
+
+        $('#myAlert').on('closed.bs.alert', function () {
+            $('.dataAlert').html("");
+        });
+    });
+
+    //jqGrid responsive
+    jQuery(window).bind('resize', function () {
+        //$(".ui-dialog-content").dialog("option", "position", ['center', 'center']);
+        // Get width of parent container
+        var width1 = jQuery("#jqGridDatosEmp").attr('clientWidth');
+        var width2 = jQuery("#jqGridDatosEmpVal").attr('clientWidth');
+        if (width == null || width < 1) {
+            // For IE, revert to offsetWidth if necessary
+            width = jQuery("#jqGridDatosEmp").attr('offsetWidth');
+        }
+        width = width - 2; // Fudge factor to prevent horizontal scrollbars
+        if (width > 0 &&
+                // Only resize if new width exceeds a minimal threshold
+                // Fixes IE issue with in-place resizing when mousing-over frame bars
+                Math.abs(width - jQuery("#gridDatosEmp").width()) > 5)
+        {
+            jQuery("#gridDatosEmp").setGridWidth(width);
+            //jQuery("#gridDatosEmpVal").setGridWidth(width);
+        }
+    }).trigger('resize');
+
+    // run function on all dialog opens
+    $(document).on("dialogopen", ".ui-dialog", function (event, ui) {
+        fluidDialog();
+    });
+
+    // remove window resize namespace
+    $(document).on("dialogclose", ".ui-dialog", function (event, ui) {
+        $(window).off("resize.responsive");
+    });
+
+    function fluidDialog() {
+        var $visible = $(".ui-dialog:visible");
+        // each open dialog
+        $visible.each(function () {
+            var $this = $(this);
+            var dialog = $this.find(".ui-dialog-content").data("dialog");
+            // if fluid option == true
+            if (dialog.options.maxWidth && dialog.options.width) {
+                // fix maxWidth bug
+                $this.css("max-width", dialog.options.maxWidth);
+                //reposition dialog
+                dialog.option("position", dialog.options.position);
+            }
+
+            if (dialog.options.fluid) {
+                // namespace window resize
+                $(window).on("resize.responsive", function () {
+                    var wWidth = $(window).width();
+                    // check window width against dialog width
+                    if (wWidth < dialog.options.maxWidth + 50) {
+                        // keep dialog from filling entire screen
+                        $this.css("width", "90%");
+                    }
+                    //reposition dialog
+                    dialog.option("position", dialog.options.position);
+                });
+            }
+
+        });
+    }
+
+    function gridReload(gridName) {
+        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
+    }
+
+    function loadGridDatosEmpVal(id) {
+        if (id != null) {
+            var sUrl = "<?php echo $this->url('datosemp', array('action' => 'loadDataGridVal')); ?>" + "/" + id;
+            $("#gridDatosEmpVal").setGridParam({datatype:'json',url: sUrl}).trigger('reloadGrid');
+        }
+        else {
+            msgAlert("myAlert", "dataAlert", "Por favor seleccione una fila.");
+        }
+    }
+
+    function openDiagDatosEmp(diagName, op, grid, id) {
+        clearDataDatosEmp();
+        if (op == "edit") {
+            rowdata = jQuery("#" + grid).getRowData(id);
+            $('#descripcion-edit-DatosEmp').val(rowdata['descripcion']);
+            $('#tipo-edit-DatosEmp').val(rowdata['tipo_de_campo']);
+            $('#' + diagName).dialog('open');
+        } else {
+            $('#' + diagName).dialog('open');
+            $('#tipo-add-DatosEmp option:contains("C")').prop('selected', true);
+        }
+    }
+
+    function openDiagDatosEmpVal(diagName, op, grid, id) {
+        clearDataDatosEmpVal();
+        if (op == "edit") {
+            rowdata = jQuery("#" + grid).getRowData(id);
+            $('#valor-posible-edit-DatosEmpVal').val(rowdata['valor_posible']);
+            $('#significado-edit-DatosEmpVal').val(rowdata['significado']);
+            $('#' + diagName).dialog('open');
+        } else {
+            $('#' + diagName).dialog('open');
+        }
+    }
+
+    function clearDataDatosEmp() {
+        $('#descripcion-add-DatosEmp').val("");
+        $('#descripcion-edit-DatosEmp').val("");
+    }
+
+    function clearDataDatosEmpVal() {
+        $('#valor-posible-add-DatosEmpVal').val("");
+        $('#significado-add-DatosEmpVal').val("");
+        $('#valor-posible-edit-DatosEmpVal').val("");
+        $('#significado-edit-DatosEmpVal').val("");
+    }
+
+    function msgAlert(diagName, selectorName, msg) {
+        $('#' + diagName).show();
+        $('.' + selectorName).html(msg);
+        setTimeout(function () {
+            $('#' + diagName).hide();
+            $('.' + selectorName).html("");
+        }, 3000);
+    }
+
+</script>
+
+<!-- Dialogo form-add-DatosEmp -->
+<div id="form-add-DatosEmp"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-DatosEmp" role="form">
+        <div class="form-group">
+            <label for="input-descripcion-add-DatosEmp" class="col-sm-4 control-label">Nombre de campo:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="descripcion-add-DatosEmp" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-tipo-add-DatosEmp" class="col-sm-4 control-label">Tipo:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="tipo-add-DatosEmp">
+                    <option value="C">Caracter</option>
+                    <option value="N">Numero</option>
+                    <option value="F">Fecha</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-edit-DatosEmp -->
+<div id="form-edit-DatosEmp"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-DatosEmp" role="form">
+        <div class="form-group">
+            <label for="input-descripcion-edit-DatosEmp" class="col-sm-4 control-label">Nombre de campo:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="descripcion-edit-DatosEmp" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-tipo-edit-DatosEmp" class="col-sm-4 control-label">Tipo:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="tipo-edit-DatosEmp">
+                    <option value="C">Caracter</option>
+                    <option value="N">Numero</option>
+                    <option value="F">Fecha</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-add-DatosEmpVal -->
+<div id="form-add-DatosEmpVal"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-DatosEmpVal" role="form">
+        <div class="form-group">
+            <label for="input-valor-posible-add-DatosEmpVal" class="col-sm-4 control-label">Valor:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="valor-posible-add-DatosEmpVal" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-significado-add-DatosEmpVal" class="col-sm-4 control-label">Significado:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="significado-add-DatosEmpVal" placeholder="">
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-add-DatosEmpVal -->
+<div id="form-edit-DatosEmpVal"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-DatosEmpVal" role="form">
+        <div class="form-group">
+            <label for="input-valor-posible-edit-DatosEmpVal" class="col-sm-4 control-label">Valor:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="valor-posible-edit-DatosEmpVal" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-significado-edit-DatosEmpVal" class="col-sm-4 control-label">Significado:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="significado-edit-DatosEmpVal" placeholder="">
+            </div>
+        </div>
+    </form>
+</div>		
