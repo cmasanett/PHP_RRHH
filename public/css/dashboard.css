@@ -179,3 +179,7 @@ li a{
 li a:hover {
     text-decoration: none;
 }
+
+ul li:hover>ul{
+   display:block;       
+}

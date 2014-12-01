@@ -39,6 +39,15 @@ CREATE TABLE IF NOT EXISTS `empresas` (
   `nombre` char(120) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=4 ;
 
+--
+-- Truncar tablas antes de insertar `empresas`
+--
+
+TRUNCATE TABLE `empresas`;
+--
+-- Volcado de datos para la tabla `empresas`
+--
+
 INSERT INTO `empresas` (`id`, `codigo`, `nombre`) VALUES
 (1, 'A001', 'Empresa 1'),
 (2, 'A002', 'Empresa 2'),
@@ -58,6 +67,15 @@ CREATE TABLE IF NOT EXISTS `empresa_usuario` (
   `usuario_id` int(11) DEFAULT NULL,
   `empresa_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=4 ;
+
+--
+-- Truncar tablas antes de insertar `empresa_usuario`
+--
+
+TRUNCATE TABLE `empresa_usuario`;
+--
+-- Volcado de datos para la tabla `empresa_usuario`
+--
 
 INSERT INTO `empresa_usuario` (`id`, `usuario_id`, `empresa_id`) VALUES
 (1, 1, 1),
@@ -80,6 +98,15 @@ CREATE TABLE IF NOT EXISTS `n7_menu_general` (
   `nivel` int(11) unsigned NOT NULL,
   `url` varchar(255) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=22 ;
+
+--
+-- Truncar tablas antes de insertar `n7_menu_general`
+--
+
+TRUNCATE TABLE `n7_menu_general`;
+--
+-- Volcado de datos para la tabla `n7_menu_general`
+--
 
 INSERT INTO `n7_menu_general` (`id`, `descripcion`, `id_padre`, `nivel`, `url`) VALUES
 (1, 'Entidades', 0, 0, ''),
@@ -119,13 +146,32 @@ CREATE TABLE IF NOT EXISTS `n7_propiedades_e` (
   `tipo_de_campo` char(1) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=173 ;
 
+--
+-- Truncar tablas antes de insertar `n7_propiedades_e`
+--
+
+TRUNCATE TABLE `n7_propiedades_e`;
+--
+-- Volcado de datos para la tabla `n7_propiedades_e`
+--
+
 INSERT INTO `n7_propiedades_e` (`id`, `descripcion`, `tipo_de_campo`) VALUES
-(157, 'prueba 0', 'N'),
-(158, 'prueba 1', 'F'),
-(159, 'prueba 2', 'F'),
-(160, 'prueba 3', 'C'),
-(161, 'prueba 4', 'C'),
-(162, 'prueba 5', 'N');
+(157, 'prueba 1', 'N'),
+(158, '1', 'F'),
+(159, '2', 'F'),
+(160, '3', 'C'),
+(161, '4', 'C'),
+(162, '5', 'C'),
+(163, '6', 'C'),
+(164, '7', 'C'),
+(165, '8', 'C'),
+(166, '9', 'C'),
+(167, '10', 'N'),
+(168, '12', 'N'),
+(169, '123', 'N'),
+(170, 'desa', 'N'),
+(171, 'liqu', 'C'),
+(172, 'algo', 'F');
 
 -- --------------------------------------------------------
 
@@ -143,11 +189,26 @@ CREATE TABLE IF NOT EXISTS `n7_valores_posibles_empresas` (
   `significado` varchar(120) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=13 ;
 
+--
+-- Truncar tablas antes de insertar `n7_valores_posibles_empresas`
+--
+
+TRUNCATE TABLE `n7_valores_posibles_empresas`;
+--
+-- Volcado de datos para la tabla `n7_valores_posibles_empresas`
+--
+
 INSERT INTO `n7_valores_posibles_empresas` (`id`, `propiedad_id`, `valor_posible`, `significado`) VALUES
 (1, 157, '1', '1'),
 (2, 157, '2', '1'),
 (3, 157, '3', '1'),
-(4, 157, '4', '1');
+(4, 157, '4', '1'),
+(5, 157, '5', '1'),
+(6, 157, '6', '1'),
+(7, 157, '7', '2'),
+(9, 157, '23', '23'),
+(11, 157, '123', '123'),
+(12, 157, 'test', 'ok');
 
 -- --------------------------------------------------------
 
@@ -163,6 +224,15 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `usuario` char(20) COLLATE utf8_spanish_ci NOT NULL,
   `clave` char(32) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=3 ;
+
+--
+-- Truncar tablas antes de insertar `usuarios`
+--
+
+TRUNCATE TABLE `usuarios`;
+--
+-- Volcado de datos para la tabla `usuarios`
+--
 
 INSERT INTO `usuarios` (`id`, `usuario`, `clave`) VALUES
 (1, 'test', 'e10adc3949ba59abbe56e057f20f883e'),

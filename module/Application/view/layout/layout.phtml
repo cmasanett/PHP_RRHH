@@ -15,6 +15,7 @@ if ($identity) {
     }
 } else {
     $usuario = "No esta logueado.";
+    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
 }
 ?>
 

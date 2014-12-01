@@ -1,0 +1,674 @@
+<?php
+$title = 'Definicion de datos de Legajo';
+?>
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>	
+<?php
+$flash = $this->flashMessenger();
+$flash->setMessageOpenFormat('<div%s>
+							     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							         &times;
+							     </button>
+							     <ul><li>')
+        ->setMessageSeparatorString('</li><li>')
+        ->setMessageCloseString('</li></ul></div>');
+
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
+
+<div class="alert alert-warning" id="diagAlert" style="display:none">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong><span class="dataAlert"></span></strong>
+</div>
+
+<br>
+<div class="content">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class=" btn-group">
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddDatosLegajos">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelDatosLegajos">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditDatosLegajos">Modificacion</button>
+            </div>
+            <br>
+            <div id="jqGridDatosLegajos" style="padding-top:10px;">
+                <table id="gridDatosLegajos"></table>
+                <div id="pagerDatosLegajos"></div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class=" btn-group">
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddDatosLegajosVal">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelDatosLegajosVal">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditDatosLegajosVal">Modificacion</button>
+            </div>
+            <br>
+            <div id="jqGridDatosLegajosVal" style="padding-top:10px;">
+                <table id="gridDatosLegajosVal"></table>
+                <div id="pagerDatosLegajosVal"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#gridDatosLegajos").jqGrid({
+            width: 100,
+            height: 230,
+            autowidth: true,
+            rownumbers: true,
+            rownumWidth: 20,
+            url: "<?php echo $this->url('datoslegajos', array('action' => 'loadDataGrid')); ?>",
+            datatype: 'json',
+            mtype: 'POST',
+            colNames: ["Id", "Propiedad", "Tipo"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'descripcion', index: 'descripcion',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                    //editable: true,
+                    //editrules: {required: true},
+                    //editoptions: {size: 30}
+                },
+                {name: 'tipo_de_campo', index: 'tipo_de_campo',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
+                    //editable: true,
+                    //edittype: 'select',
+                    //editoptions: {value: "Todos;N:N;C:C;F:F"}
+                }
+            ],
+            pager: "#pagerDatosLegajos",
+            //rowNum: 10,
+            //rowList: [10, 20, 30],
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: false,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItem')); ?>",
+            caption: "Datos de Legajos",
+            onSelectRow: function (id) {
+                loadGridDatosLegajosVal(id);
+            }
+        });
+        $("#gridDatosLegajos").navGrid("#pagerDatosLegajos",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridDatosLegajos").navButtonAdd("#pagerDatosLegajos", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridDatosLegajos")[0].clearToolbar();
+                gridReload('gridDatosLegajos');
+            }
+        });
+        $('#gridDatosLegajos').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        $("#gridDatosLegajosVal").jqGrid({
+            width: 450,
+            height: 230,
+            autowidth: false,
+            rownumbers: true,
+            rownumWidth: 20,
+            url: "<?php echo $this->url('datoslegajos', array('action' => 'loadDataGridVal')); ?>",
+            datatype: "json",
+            mtype: 'POST',
+            colNames: ["Id", "PropiedadId", "Valor", "Significado"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'propiedad', index: 'propiedad',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'valor_posible', index: 'valor_posible',
+                    width: 15,
+                    align: "center",
+                    sortable: false,
+                    editable: true,
+                    editrules: {required: true},
+                    editoptions: {size: 30}
+                },
+                {name: 'significado', index: 'significado',
+                    width: 15,
+                    align: "center",
+                    sortable: false,
+                    editable: true,
+                    editrules: {required: true},
+                    editoptions: {size: 30}
+                }
+            ],
+            pager: "#pagerDatosLegajosVal",
+            //rowNum: 10,
+            //rowList: [10, 20, 30],
+            sortname: "propiedad",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: true,
+            pgbuttons: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItemVal')); ?>",
+            caption: "Valores Posibles"
+        });
+        $("#gridDatosLegajosVal").navGrid("#pagerDatosLegajosVal",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridDatosLegajosVal").navButtonAdd("#pagerDatosLegajosVal", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridDatosLegajosVal")[0].clearToolbar();
+                //loadGridDatosLegajosVal(rowid);
+            }
+        });
+        $('#gridDatosLegajosVal').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        //Buttons
+        $("#btnAddDatosLegajos").click(function () {
+            openDiagDatosLegajos("form-add-DatosLegajos", "add", "", "");
+        });
+        $("#btnDelDatosLegajos").click(function () {
+            var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
+                ids = ids.toString();
+                ids = ids.split(",");
+                var e = 0;
+                for (var i = 0; i < ids.length; i++) {
+                    var data = $("#gridDatosLegajosVal").jqGrid('getRowData', ids[i]);
+                    if (data['propiedad'] == rowid) {
+                        e++;
+                    }
+                }
+
+                if (e == 0) {
+                    $.ajax({
+                        url: "<?php echo $this->url('datoslegajos', array('action' => 'deleteGridItem')); ?>",
+                        global: false,
+                        type: "POST",
+                        data: "id=" + rowid,
+                        dataType: "json",
+                        async: false,
+                        success: function (msg) {
+                            gridReload('gridDatosLegajos');
+                            gridReload('gridDatosLegajosVal');
+                        }
+                    });
+                } else {
+                    msgAlert("diagAlert", "dataAlert", "No se puede eliminar la propiedad porque tiene valores asociados.");
+                }
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnEditDatosLegajos").click(function () {
+            var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosLegajos("form-edit-DatosLegajos", "edit", "gridDatosLegajos", rowid);
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnAddDatosLegajosVal").click(function () {
+            var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
+            var rowidVal = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosLegajosVal("form-add-DatosLegajosVal", "add", "gridDatosLegajosVal", rowidVal);
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnDelDatosLegajosVal").click(function () {
+            var rowid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                $.ajax({
+                    url: "<?php echo $this->url('datoslegajos', array('action' => 'deleteGridItemVal')); ?>",
+                    global: false,
+                    type: "POST",
+                    data: "id=" + rowid,
+                    dataType: "json",
+                    async: false,
+                    success: function () {
+                        gridReload('gridDatosLegajosVal');
+                    }
+                });
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnEditDatosLegajosVal").click(function () {
+            var rowid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosLegajosVal("form-edit-DatosLegajosVal", "edit", "gridDatosLegajosVal", rowid);
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+
+        //Dialog addDatosLegajos
+        $("#form-add-DatosLegajos").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    var descripcion = $("#descripcion-add-DatosLegajos").val();
+                    var tipo = $("#tipo-add-DatosLegajos").val();
+
+                    if (descripcion != '') {
+                        var ids = $("#gridDatosLegajos").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosLegajos").jqGrid('getRowData', ids[i]);
+                            if (data['descripcion'] == descripcion) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0) {
+                            var data = {
+                                "descripcion": descripcion,
+                                "tipo_de_campo": tipo
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItem')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(data),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    gridReload('gridDatosLegajos');
+                                    $("#form-add-DatosLegajos").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                'Cancelar': function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog editDatosLegajos
+        $("#form-edit-DatosLegajos").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
+                    if (rowid != null) {
+                        var ids = $("#gridDatosLegajos").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosLegajos").jqGrid('getRowData', ids[i]);
+                            if (data['descripcion'] == $("#descripcion-edit-DatosLegajos").val() && data['id'] != rowid) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0)
+                        {
+                            var data = {
+                                "id": rowid,
+                                "descripcion": $("#descripcion-edit-DatosLegajos").val(),
+                                "tipo_de_campo": $("#tipo-edit-DatosLegajos").val()
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItem')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(data),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    gridReload('gridDatosLegajos');
+                                    $("#form-edit-DatosLegajos").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                'Cancelar': function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog addDatosLegajosVal
+        $("#form-add-DatosLegajosVal").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
+                    var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
+                    ids = ids.toString();
+                    ids = ids.split(",");
+                    var e = 0;
+                    for (var i = 0; i < ids.length; i++) {
+                        var data = $("#gridDatosLegajosVal").jqGrid('getRowData', ids[i]);
+                        if (data['propiedad'] == rowid && data['valor_posible'] == $("#valor-posible-add-DatosLegajosVal").val()) {
+                            e++;
+                        }
+                    }
+
+                    if (e == 0)
+                    {
+                        var data = {
+                            "propiedad": rowid,
+                            "valor_posible": $("#valor-posible-add-DatosLegajosVal").val(),
+                            "significado": $("#significado-add-DatosLegajosVal").val()
+                        };
+                        $.ajax({
+                            url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItemVal')); ?>",
+                            global: false,
+                            type: "POST",
+                            data: "data=" + JSON.stringify(data),
+                            dataType: "json",
+                            async: false,
+                            success: function () {
+                                loadGridDatosLegajosVal(rowid);
+                                $("#form-add-DatosLegajosVal").dialog('close');
+                            }
+                        });
+                    } else {
+                        $(this).dialog('close');
+                        msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog editDatosLegajosVal
+        $("#form-edit-DatosLegajosVal").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
+                    if (rowid != null) {
+                        var dataGrid = $("#gridDatosLegajosVal").jqGrid('getRowData', rowid);
+                        var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosLegajosVal").jqGrid('getRowData', ids[i]);
+                            if (data['valor_posible'] == $("#valor-posible-edit-DatosLegajosVal").val() && data['id'] != rowid) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0)
+                        {
+                            var data = {
+                                "id": rowid,
+                                "valor_posible": $("#valor-posible-edit-DatosLegajosVal").val(),
+                                "significado": $("#significado-edit-DatosLegajosVal").val()
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItemVal')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(data),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    loadGridDatosLegajosVal(dataGrid.propiedad);
+                                    $("#form-edit-DatosLegajosVal").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+
+        /*$('input').bind('keypress', function (event) {
+         var regex = new RegExp("^[a-zA-Z0-9_ \,._-]+$");
+         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+         if (!regex.test(key)) {
+         event.preventDefault();
+         return false;
+         }
+         });*/
+
+        $('#diagAlert').on('closed.bs.alert', function () {
+            $('.dataAlert').html("");
+        });
+    });
+
+    // remove window resize namespace
+    $(document).on("dialogclose", ".ui-dialog", function (event, ui) {
+        $(window).off("resize.responsive");
+    });
+
+    function gridReload(gridName) {
+        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
+    }
+
+    function loadGridDatosLegajosVal(id) {
+        if (id != null) {
+            var sUrl = "<?php echo $this->url('datoslegajos', array('action' => 'loadDataGridVal')); ?>" + "/" + id;
+            $("#gridDatosLegajosVal").setGridParam({datatype: 'json', url: sUrl}).trigger('reloadGrid');
+        }
+        else {
+            msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+        }
+    }
+
+    function openDiagDatosLegajos(diagName, op, grid, id) {
+        clearDataDatosLegajos();
+        if (op == "edit") {
+            rowdata = jQuery("#" + grid).getRowData(id);
+            $('#descripcion-edit-DatosLegajos').val(rowdata['descripcion']);
+            $('#tipo-edit-DatosLegajos').val(rowdata['tipo_de_campo']);
+            $('#' + diagName).dialog('open');
+        } else {
+            $('#' + diagName).dialog('open');
+            $('#tipo-add-DatosLegajos option:contains("C")').prop('selected', true);
+        }
+    }
+
+    function openDiagDatosLegajosVal(diagName, op, grid, id) {
+        clearDataDatosLegajosVal();
+        if (op == "edit") {
+            rowdata = jQuery("#" + grid).getRowData(id);
+            $('#valor-posible-edit-DatosLegajosVal').val(rowdata['valor_posible']);
+            $('#significado-edit-DatosLegajosVal').val(rowdata['significado']);
+            $('#' + diagName).dialog('open');
+        } else {
+            $('#' + diagName).dialog('open');
+        }
+    }
+
+    function clearDataDatosLegajos() {
+        $('#descripcion-add-DatosLegajos').val("");
+        $('#descripcion-edit-DatosLegajos').val("");
+    }
+
+    function clearDataDatosLegajosVal() {
+        $('#valor-posible-add-DatosLegajosVal').val("");
+        $('#significado-add-DatosLegajosVal').val("");
+        $('#valor-posible-edit-DatosLegajosVal').val("");
+        $('#significado-edit-DatosLegajosVal').val("");
+    }
+
+    function msgAlert(diagName, selectorName, msg) {
+        $('#' + diagName).show();
+        $('.' + selectorName).html(msg);
+        setTimeout(function () {
+            $('#' + diagName).hide();
+            $('.' + selectorName).html("");
+        }, 3000);
+    }
+
+</script>
+
+<!-- Dialogo form-add-DatosLegajos -->
+<div id="form-add-DatosLegajos"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-DatosLegajos" role="form">
+        <div class="form-group">
+            <label for="input-descripcion-add-DatosLegajos" class="col-sm-4 control-label">Nombre de campo:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="descripcion-add-DatosLegajos" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-tipo-add-DatosLegajos" class="col-sm-4 control-label">Tipo:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="tipo-add-DatosLegajos">
+                    <option value="C">Caracter</option>
+                    <option value="N">Numero</option>
+                    <option value="F">Fecha</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-edit-DatosLegajos -->
+<div id="form-edit-DatosLegajos"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-DatosLegajos" role="form">
+        <div class="form-group">
+            <label for="input-descripcion-edit-DatosLegajos" class="col-sm-4 control-label">Nombre de campo:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="descripcion-edit-DatosLegajos" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-tipo-edit-DatosLegajos" class="col-sm-4 control-label">Tipo:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="tipo-edit-DatosLegajos">
+                    <option value="C">Caracter</option>
+                    <option value="N">Numero</option>
+                    <option value="F">Fecha</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-add-DatosLegajosVal -->
+<div id="form-add-DatosLegajosVal"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-DatosLegajosVal" role="form">
+        <div class="form-group">
+            <label for="input-valor-posible-add-DatosLegajosVal" class="col-sm-4 control-label">Valor:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="valor-posible-add-DatosLegajosVal" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-significado-add-DatosLegajosVal" class="col-sm-4 control-label">Significado:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="significado-add-DatosLegajosVal" placeholder="">
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-add-DatosLegajosVal -->
+<div id="form-edit-DatosLegajosVal"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-DatosLegajosVal" role="form">
+        <div class="form-group">
+            <label for="input-valor-posible-edit-DatosLegajosVal" class="col-sm-4 control-label">Valor:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="valor-posible-edit-DatosLegajosVal" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-significado-edit-DatosLegajosVal" class="col-sm-4 control-label">Significado:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="significado-edit-DatosLegajosVal" placeholder="">
+            </div>
+        </div>
+    </form>
+</div>		
