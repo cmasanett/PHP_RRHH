@@ -45,11 +45,29 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                     ]
                 ]
             ],
-            'datosemp' => ['type' => 'Segment',
-                'options' => ['route' => '/datosemp[/[:action][/:id]]',
+            'datosempresas' => ['type' => 'Segment',
+                'options' => ['route' => '/datosempresas[/[:action][/:id]]',
                     'constraints' => ['action' => '[a-zA-Z][a-zA-Z0-9_-]*'
                     ],
-                    'defaults' => ['controller' => 'Application\Controller\DatosEmp',
+                    'defaults' => ['controller' => 'Application\Controller\DatosEmpresas',
+                        'action' => 'index'
+                    ]
+                ]
+            ],
+            'datoslegajos' => ['type' => 'Segment',
+                'options' => ['route' => '/datoslegajos[/[:action][/:id]]',
+                    'constraints' => ['action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ],
+                    'defaults' => ['controller' => 'Application\Controller\DatosLegajos',
+                        'action' => 'index'
+                    ]
+                ]
+            ],
+            'datosfamiliares' => ['type' => 'Segment',
+                'options' => ['route' => '/datosfamiliares[/[:action][/:id]]',
+                    'constraints' => ['action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ],
+                    'defaults' => ['controller' => 'Application\Controller\DatosFamiliares',
                         'action' => 'index'
                     ]
                 ]
@@ -71,7 +89,9 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
         ]
     ],
     'controllers' => ['invokables' => ['Application\Controller\Usuarios' => 'Application\Controller\UsuariosController',
-            'Application\Controller\DatosEmp' => 'Application\Controller\DatosEmpController'
+            'Application\Controller\DatosEmpresas' => 'Application\Controller\DatosEmpresasController',
+            'Application\Controller\DatosLegajos' => 'Application\Controller\DatosLegajosController',
+            'Application\Controller\DatosFamiliares' => 'Application\Controller\DatosFamiliaresController'
         ]
     ],
     'view_manager' => ['display_not_found_reason' => true,

@@ -48,7 +48,7 @@ TRUNCATE TABLE `empresas`;
 -- Volcado de datos para la tabla `empresas`
 --
 
-INSERT DELAYED IGNORE INTO `empresas` (`id`, `codigo`, `nombre`) VALUES
+INSERT INTO `empresas` (`id`, `codigo`, `nombre`) VALUES
 (1, 'A001', 'Empresa 1'),
 (2, 'A002', 'Empresa 2'),
 (3, 'A003', 'Empresa 3');
@@ -77,7 +77,7 @@ TRUNCATE TABLE `empresa_usuario`;
 -- Volcado de datos para la tabla `empresa_usuario`
 --
 
-INSERT DELAYED IGNORE INTO `empresa_usuario` (`id`, `usuario_id`, `empresa_id`) VALUES
+INSERT INTO `empresa_usuario` (`id`, `usuario_id`, `empresa_id`) VALUES
 (1, 1, 1),
 (2, 2, 1),
 (3, 2, 2);
@@ -108,7 +108,7 @@ TRUNCATE TABLE `n7_menu_general`;
 -- Volcado de datos para la tabla `n7_menu_general`
 --
 
-INSERT DELAYED IGNORE INTO `n7_menu_general` (`id`, `descripcion`, `id_padre`, `nivel`, `url`) VALUES
+INSERT INTO `n7_menu_general` (`id`, `descripcion`, `id_padre`, `nivel`, `url`) VALUES
 (1, 'Entidades', 0, 0, ''),
 (2, 'empresas', 1, 1, ''),
 (3, 'legajo', 1, 1, ''),
@@ -155,7 +155,7 @@ TRUNCATE TABLE `n7_propiedades_e`;
 -- Volcado de datos para la tabla `n7_propiedades_e`
 --
 
-INSERT DELAYED IGNORE INTO `n7_propiedades_e` (`id`, `descripcion`, `tipo_de_campo`) VALUES
+INSERT INTO `n7_propiedades_e` (`id`, `descripcion`, `tipo_de_campo`) VALUES
 (157, 'prueba 1', 'N'),
 (158, '1', 'F'),
 (159, '2', 'F'),
@@ -198,7 +198,7 @@ TRUNCATE TABLE `n7_valores_posibles_empresas`;
 -- Volcado de datos para la tabla `n7_valores_posibles_empresas`
 --
 
-INSERT DELAYED IGNORE INTO `n7_valores_posibles_empresas` (`id`, `propiedad_id`, `valor_posible`, `significado`) VALUES
+INSERT INTO `n7_valores_posibles_empresas` (`id`, `propiedad_id`, `valor_posible`, `significado`) VALUES
 (1, 157, '1', '1'),
 (2, 157, '2', '1'),
 (3, 157, '3', '1'),
@@ -234,9 +234,9 @@ TRUNCATE TABLE `usuarios`;
 -- Volcado de datos para la tabla `usuarios`
 --
 
-INSERT DELAYED IGNORE INTO `usuarios` (`id`, `usuario`, `clave`) VALUES
-(1, 'cele', 'e10adc3949ba59abbe56e057f20f883e'),
-(2, 'test', 'e10adc3949ba59abbe56e057f20f883e');
+INSERT INTO `usuarios` (`id`, `usuario`, `clave`) VALUES
+(1, 'test', 'e10adc3949ba59abbe56e057f20f883e'),
+(2, 'test2', 'e10adc3949ba59abbe56e057f20f883e');
 
 --
 -- Índices para tablas volcadas

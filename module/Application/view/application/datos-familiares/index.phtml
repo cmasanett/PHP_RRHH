@@ -1,0 +1,674 @@
+<?php
+$title = 'Definicion de datos de Familiares';
+?>
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>	
+<?php
+$flash = $this->flashMessenger();
+$flash->setMessageOpenFormat('<div%s>
+							     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+							         &times;
+							     </button>
+							     <ul><li>')
+        ->setMessageSeparatorString('</li><li>')
+        ->setMessageCloseString('</li></ul></div>');
+
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+?>
+
+<div class="alert alert-warning" id="diagAlert" style="display:none">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong><span class="dataAlert"></span></strong>
+</div>
+
+<br>
+<div class="content">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class=" btn-group">
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddDatosFamiliares">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelDatosFamiliares">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditDatosFamiliares">Modificacion</button>
+            </div>
+            <br>
+            <div id="jqGridDatosFamiliares" style="padding-top:10px;">
+                <table id="gridDatosFamiliares"></table>
+                <div id="pagerDatosFamiliares"></div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class=" btn-group">
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddDatosFamiliaresVal">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelDatosFamiliaresVal">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditDatosFamiliaresVal">Modificacion</button>
+            </div>
+            <br>
+            <div id="jqGridDatosFamiliaresVal" style="padding-top:10px;">
+                <table id="gridDatosFamiliaresVal"></table>
+                <div id="pagerDatosFamiliaresVal"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#gridDatosFamiliares").jqGrid({
+            width: 100,
+            height: 230,
+            autowidth: true,
+            rownumbers: true,
+            rownumWidth: 20,
+            url: "<?php echo $this->url('datosfamiliares', array('action' => 'loadDataGrid')); ?>",
+            datatype: 'json',
+            mtype: 'POST',
+            colNames: ["Id", "Propiedad", "Tipo"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'descripcion', index: 'descripcion',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                    //editable: true,
+                    //editrules: {required: true},
+                    //editoptions: {size: 30}
+                },
+                {name: 'tipo_de_campo', index: 'tipo_de_campo',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
+                    //editable: true,
+                    //edittype: 'select',
+                    //editoptions: {value: "Todos;N:N;C:C;F:F"}
+                }
+            ],
+            pager: "#pagerDatosFamiliares",
+            //rowNum: 10,
+            //rowList: [10, 20, 30],
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: false,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItem')); ?>",
+            caption: "Datos de Familiares",
+            onSelectRow: function (id) {
+                loadGridDatosFamiliaresVal(id);
+            }
+        });
+        $("#gridDatosFamiliares").navGrid("#pagerDatosFamiliares",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridDatosFamiliares").navButtonAdd("#pagerDatosFamiliares", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridDatosFamiliares")[0].clearToolbar();
+                gridReload('gridDatosFamiliares');
+            }
+        });
+        $('#gridDatosFamiliares').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        
+        $("#gridDatosFamiliaresVal").jqGrid({
+            width: 450,
+            height: 230,
+            autowidth: false,
+            rownumbers: true,
+            rownumWidth: 20, 
+            url: "<?php echo $this->url('datosfamiliares', array('action' => 'loadDataGridVal')); ?>",
+            datatype: "json",
+            mtype: 'POST',
+            colNames: ["Id", "PropiedadId", "Valor", "Significado"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'propiedad', index: 'propiedad',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'valor_posible', index: 'valor_posible',
+                    width: 15,
+                    align: "center",
+                    sortable: false,
+                    editable: true,
+                    editrules: {required: true},
+                    editoptions: {size: 30}
+                },
+                {name: 'significado', index: 'significado',
+                    width: 15,
+                    align: "center",
+                    sortable: false,
+                    editable: true,
+                    editrules: {required: true},
+                    editoptions: {size: 30}
+                }
+            ],
+            pager: "#pagerDatosFamiliaresVal",
+            //rowNum: 10,
+            //rowList: [10, 20, 30],
+            sortname: "propiedad",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: true,
+            pgbuttons: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItemVal')); ?>",
+            caption: "Valores Posibles"
+        });
+        $("#gridDatosFamiliaresVal").navGrid("#pagerDatosFamiliaresVal",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridDatosFamiliaresVal").navButtonAdd("#pagerDatosFamiliaresVal", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridDatosFamiliaresVal")[0].clearToolbar();
+                //loadGridDatosFamiliaresVal(rowid);
+            }
+        });
+        $('#gridDatosFamiliaresVal').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        //Buttons
+        $("#btnAddDatosFamiliares").click(function () {
+            openDiagDatosFamiliares("form-add-DatosFamiliares", "add", "", "");
+        });
+        $("#btnDelDatosFamiliares").click(function () {
+            var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                var ids = $("#gridDatosFamiliaresVal").jqGrid('getDataIDs');
+                ids = ids.toString();
+                ids = ids.split(",");
+                var e = 0;
+                for (var i = 0; i < ids.length; i++) {
+                    var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
+                    if (data['propiedad'] == rowid) {
+                        e++;
+                    }
+                }
+
+                if (e == 0) {
+                    $.ajax({
+                        url: "<?php echo $this->url('datosfamiliares', array('action' => 'deleteGridItem')); ?>",
+                        global: false,
+                        type: "POST",
+                        data: "id=" + rowid,
+                        dataType: "json",
+                        async: false,
+                        success: function (msg) {
+                            gridReload('gridDatosFamiliares');
+                            gridReload('gridDatosFamiliaresVal');
+                        }
+                    });
+                } else {
+                    msgAlert("diagAlert", "dataAlert", "No se puede eliminar la propiedad porque tiene valores asociados.");
+                }
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnEditDatosFamiliares").click(function () {
+            var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosFamiliares("form-edit-DatosFamiliares", "edit", "gridDatosFamiliares", rowid);
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnAddDatosFamiliaresVal").click(function () {
+            var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
+            var rowidVal = jQuery("#gridDatosFamiliaresVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosFamiliaresVal("form-add-DatosFamiliaresVal", "add", "gridDatosFamiliaresVal", rowidVal);
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnDelDatosFamiliaresVal").click(function () {
+            var rowid = jQuery("#gridDatosFamiliaresVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                $.ajax({
+                    url: "<?php echo $this->url('datosfamiliares', array('action' => 'deleteGridItemVal')); ?>",
+                    global: false,
+                    type: "POST",
+                    data: "id=" + rowid,
+                    dataType: "json",
+                    async: false,
+                    success: function () {
+                        gridReload('gridDatosFamiliaresVal');
+                    }
+                });
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnEditDatosFamiliaresVal").click(function () {
+            var rowid = jQuery("#gridDatosFamiliaresVal").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagDatosFamiliaresVal("form-edit-DatosFamiliaresVal", "edit", "gridDatosFamiliaresVal", rowid);
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+
+        //Dialog addDatosFamiliares
+        $("#form-add-DatosFamiliares").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    var descripcion = $("#descripcion-add-DatosFamiliares").val();
+                    var tipo = $("#tipo-add-DatosFamiliares").val();
+
+                    if (descripcion != '') {
+                        var ids = $("#gridDatosFamiliares").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosFamiliares").jqGrid('getRowData', ids[i]);
+                            if (data['descripcion'] == descripcion) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0) {
+                            var data = {
+                                "descripcion": descripcion,
+                                "tipo_de_campo": tipo
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItem')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(data),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    gridReload('gridDatosFamiliares');
+                                    $("#form-add-DatosFamiliares").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                'Cancelar': function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog editDatosFamiliares
+        $("#form-edit-DatosFamiliares").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
+                    if (rowid != null) {
+                        var ids = $("#gridDatosFamiliares").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosFamiliares").jqGrid('getRowData', ids[i]);
+                            if (data['descripcion'] == $("#descripcion-edit-DatosFamiliares").val() && data['id'] != rowid) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0)
+                        {
+                            var data = {
+                                "id": rowid,
+                                "descripcion": $("#descripcion-edit-DatosFamiliares").val(),
+                                "tipo_de_campo": $("#tipo-edit-DatosFamiliares").val()
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItem')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(data),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    gridReload('gridDatosFamiliares');
+                                    $("#form-edit-DatosFamiliares").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                'Cancelar': function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog addDatosFamiliaresVal
+        $("#form-add-DatosFamiliaresVal").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
+                    var ids = $("#gridDatosFamiliaresVal").jqGrid('getDataIDs');
+                    ids = ids.toString();
+                    ids = ids.split(",");
+                    var e = 0;
+                    for (var i = 0; i < ids.length; i++) {
+                        var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
+                        if (data['propiedad'] == rowid && data['valor_posible'] == $("#valor-posible-add-DatosFamiliaresVal").val()) {
+                            e++;
+                        }
+                    }
+
+                    if (e == 0)
+                    {
+                        var data = {
+                            "propiedad": rowid,
+                            "valor_posible": $("#valor-posible-add-DatosFamiliaresVal").val(),
+                            "significado": $("#significado-add-DatosFamiliaresVal").val()
+                        };
+                        $.ajax({
+                            url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItemVal')); ?>",
+                            global: false,
+                            type: "POST",
+                            data: "data=" + JSON.stringify(data),
+                            dataType: "json",
+                            async: false,
+                            success: function () {
+                                loadGridDatosFamiliaresVal(rowid);
+                                $("#form-add-DatosFamiliaresVal").dialog('close');
+                            }
+                        });
+                    } else {
+                        $(this).dialog('close');
+                        msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog editDatosFamiliaresVal
+        $("#form-edit-DatosFamiliaresVal").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridDatosFamiliaresVal").jqGrid('getGridParam', 'selrow');
+                    if (rowid != null) {
+                        var dataGrid = $("#gridDatosFamiliaresVal").jqGrid('getRowData', rowid);
+                        var ids = $("#gridDatosFamiliaresVal").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
+                            if (data['valor_posible'] == $("#valor-posible-edit-DatosFamiliaresVal").val() && data['id'] != rowid) {
+                                e++;
+                            }
+                        }
+
+                        if (e == 0)
+                        {
+                            var data = {
+                                "id": rowid,
+                                "valor_posible": $("#valor-posible-edit-DatosFamiliaresVal").val(),
+                                "significado": $("#significado-edit-DatosFamiliaresVal").val()
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItemVal')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(data),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    loadGridDatosFamiliaresVal(dataGrid.propiedad);
+                                    $("#form-edit-DatosFamiliaresVal").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                Cancel: function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        
+        /*$('input').bind('keypress', function (event) {
+         var regex = new RegExp("^[a-zA-Z0-9_ \,._-]+$");
+         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+         if (!regex.test(key)) {
+         event.preventDefault();
+         return false;
+         }
+         });*/
+
+        $('#diagAlert').on('closed.bs.alert', function () {
+            $('.dataAlert').html("");
+        });
+    });
+
+    // remove window resize namespace
+    $(document).on("dialogclose", ".ui-dialog", function (event, ui) {
+        $(window).off("resize.responsive");
+    });
+
+    function gridReload(gridName) {
+        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
+    }
+
+    function loadGridDatosFamiliaresVal(id) {
+        if (id != null) {
+            var sUrl = "<?php echo $this->url('datosfamiliares', array('action' => 'loadDataGridVal')); ?>" + "/" + id;
+            $("#gridDatosFamiliaresVal").setGridParam({datatype:'json',url: sUrl}).trigger('reloadGrid');
+        }
+        else {
+            msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+        }
+    }
+
+    function openDiagDatosFamiliares(diagName, op, grid, id) {
+        clearDataDatosFamiliares();
+        if (op == "edit") {
+            rowdata = jQuery("#" + grid).getRowData(id);
+            $('#descripcion-edit-DatosFamiliares').val(rowdata['descripcion']);
+            $('#tipo-edit-DatosFamiliares').val(rowdata['tipo_de_campo']);
+            $('#' + diagName).dialog('open');
+        } else {
+            $('#' + diagName).dialog('open');
+            $('#tipo-add-DatosFamiliares option:contains("C")').prop('selected', true);
+        }
+    }
+
+    function openDiagDatosFamiliaresVal(diagName, op, grid, id) {
+        clearDataDatosFamiliaresVal();
+        if (op == "edit") {
+            rowdata = jQuery("#" + grid).getRowData(id);
+            $('#valor-posible-edit-DatosFamiliaresVal').val(rowdata['valor_posible']);
+            $('#significado-edit-DatosFamiliaresVal').val(rowdata['significado']);
+            $('#' + diagName).dialog('open');
+        } else {
+            $('#' + diagName).dialog('open');
+        }
+    }
+
+    function clearDataDatosFamiliares() {
+        $('#descripcion-add-DatosFamiliares').val("");
+        $('#descripcion-edit-DatosFamiliares').val("");
+    }
+
+    function clearDataDatosFamiliaresVal() {
+        $('#valor-posible-add-DatosFamiliaresVal').val("");
+        $('#significado-add-DatosFamiliaresVal').val("");
+        $('#valor-posible-edit-DatosFamiliaresVal').val("");
+        $('#significado-edit-DatosFamiliaresVal').val("");
+    }
+
+    function msgAlert(diagName, selectorName, msg) {
+        $('#' + diagName).show();
+        $('.' + selectorName).html(msg);
+        setTimeout(function () {
+            $('#' + diagName).hide();
+            $('.' + selectorName).html("");
+        }, 3000);
+    }
+
+</script>
+
+<!-- Dialogo form-add-DatosFamiliares -->
+<div id="form-add-DatosFamiliares"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-DatosFamiliares" role="form">
+        <div class="form-group">
+            <label for="input-descripcion-add-DatosFamiliares" class="col-sm-4 control-label">Nombre de campo:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="descripcion-add-DatosFamiliares" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-tipo-add-DatosFamiliares" class="col-sm-4 control-label">Tipo:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="tipo-add-DatosFamiliares">
+                    <option value="C">Caracter</option>
+                    <option value="N">Numero</option>
+                    <option value="F">Fecha</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-edit-DatosFamiliares -->
+<div id="form-edit-DatosFamiliares"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-DatosFamiliares" role="form">
+        <div class="form-group">
+            <label for="input-descripcion-edit-DatosFamiliares" class="col-sm-4 control-label">Nombre de campo:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="descripcion-edit-DatosFamiliares" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-tipo-edit-DatosFamiliares" class="col-sm-4 control-label">Tipo:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="tipo-edit-DatosFamiliares">
+                    <option value="C">Caracter</option>
+                    <option value="N">Numero</option>
+                    <option value="F">Fecha</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-add-DatosFamiliaresVal -->
+<div id="form-add-DatosFamiliaresVal"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-DatosFamiliaresVal" role="form">
+        <div class="form-group">
+            <label for="input-valor-posible-add-DatosFamiliaresVal" class="col-sm-4 control-label">Valor:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="valor-posible-add-DatosFamiliaresVal" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-significado-add-DatosFamiliaresVal" class="col-sm-4 control-label">Significado:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="significado-add-DatosFamiliaresVal" placeholder="">
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-add-DatosFamiliaresVal -->
+<div id="form-edit-DatosFamiliaresVal"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-DatosFamiliaresVal" role="form">
+        <div class="form-group">
+            <label for="input-valor-posible-edit-DatosFamiliaresVal" class="col-sm-4 control-label">Valor:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="valor-posible-edit-DatosFamiliaresVal" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-significado-edit-DatosFamiliaresVal" class="col-sm-4 control-label">Significado:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="significado-edit-DatosFamiliaresVal" placeholder="">
+            </div>
+        </div>
+    </form>
+</div>		
