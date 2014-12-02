@@ -2279,8 +2279,3 @@ $('li').click(function (ev) {
     $(this).find('>ul').slideToggle();
     ev.stopPropagation();
 });
-
-$('li').hover(function (ev) {
-    $(this).find('>ul').slideToggle();
-    ev.stopPropagation();
-});
