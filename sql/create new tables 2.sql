@@ -6,8 +6,6 @@ CREATE TABLE `n7_propiedades_l` (
   KEY `Index_2` (`descripcion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
-TRUNCATE TABLE `n7_propiedades_l`;
-
 CREATE TABLE `n7_valores_posibles_legajos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `propiedad_id` int(11) unsigned NOT NULL,
@@ -30,8 +28,6 @@ CREATE TABLE `n7_propiedades_f` (
   PRIMARY KEY (`id`),
   KEY `Index_2` (`descripcion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
-TRUNCATE TABLE `n7_propiedades_f`;
 
 CREATE TABLE `n7_valores_posibles_familiares` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
