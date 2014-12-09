@@ -1,24 +1,24 @@
 <?php
 $title = 'Definicion de datos de Empresa';
 ?>
-<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>	
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>
 <?php
 $flash = $this->flashMessenger();
 $flash->setMessageOpenFormat('<div%s>
-							     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-							         &times;
-							     </button>
-							     <ul><li>')
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            &times;
+            </button>
+        <ul><li>')
         ->setMessageSeparatorString('</li><li>')
         ->setMessageCloseString('</li></ul></div>');
 
-echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger'));
-echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info'));
-echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
-echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger', 'flashAlert'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info', 'flashAlert'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning', 'flashAlert'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
 ?>
 
-<div class="alert alert-warning" id="diagAlert" style="display:none">
+<div class="alert alert-warning" id="diagAlert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <strong><span class="dataAlert"></span></strong>
 </div>
@@ -127,13 +127,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             }
         });
         $('#gridDatosEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
-        
+
         $("#gridDatosEmpresaVal").jqGrid({
             width: 450,
             height: 230,
             autowidth: false,
             rownumbers: true,
-            rownumWidth: 20, 
+            rownumWidth: 20,
             url: "<?php echo $this->url('datosempresas', array('action' => 'loadDataGridVal')); ?>",
             datatype: "json",
             mtype: 'POST',
@@ -289,7 +289,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
             height: 'auto',
             maxWidth: 600,
             //fluid: true, //new option
@@ -306,7 +306,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosEmpresa").jqGrid('getRowData', ids[i]);
-                            if (data['descripcion'] == descripcion) {
+                            if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
                                 e++;
                             }
                         }
@@ -348,7 +348,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
             height: 'auto',
             maxWidth: 600,
             //fluid: true, //new option
@@ -362,7 +362,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         var e = 0;
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosEmpresa").jqGrid('getRowData', ids[i]);
-                            if (data['descripcion'] == $("#descripcion-edit-DatosEmpresa").val() && data['id'] != rowid) {
+                            if (data['descripcion'].toLowerCase() == $("#descripcion-edit-DatosEmpresa").val().toLowerCase() && data['id'] != rowid) {
                                 e++;
                             }
                         }
@@ -406,7 +406,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
             height: 'auto',
             maxWidth: 600,
             //fluid: true, //new option
@@ -419,7 +419,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     var e = 0;
                     for (var i = 0; i < ids.length; i++) {
                         var data = $("#gridDatosEmpresaVal").jqGrid('getRowData', ids[i]);
-                        if (data['propiedad'] == rowid && data['valor_posible'] == $("#valor-posible-add-DatosEmpresaVal").val()) {
+                        if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valor-posible-add-DatosEmpresaVal").val().toLowerCase()) {
                             e++;
                         }
                     }
@@ -462,7 +462,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
             height: 'auto',
             maxWidth: 600,
             //fluid: true, //new option
@@ -477,7 +477,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         var e = 0;
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosEmpresaVal").jqGrid('getRowData', ids[i]);
-                            if (data['valor_posible'] == $("#valor-posible-edit-DatosEmpresaVal").val() && data['id'] != rowid) {
+                            if (data['valor_posible'].toLowerCase() == $("#valor-posible-edit-DatosEmpresaVal").val().toLowerCase() && data['id'] != rowid) {
                                 e++;
                             }
                         }
@@ -515,7 +515,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 //nada por ahora
             }
         });
-        
+
         /*$('input').bind('keypress', function (event) {
          var regex = new RegExp("^[a-zA-Z0-9_ \,._-]+$");
          var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
@@ -551,9 +551,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     }).trigger('resize');
 
     /*// run function on all dialog opens
-    $(document).on("dialogopen", ".ui-dialog", function (event, ui) {
-        fluidDialog();
-    });*/
+     $(document).on("dialogopen", ".ui-dialog", function (event, ui) {
+     fluidDialog();
+     });*/
 
     // remove window resize namespace
     $(document).on("dialogclose", ".ui-dialog", function (event, ui) {
@@ -561,35 +561,35 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     });
 
     /*function fluidDialog() {
-        var $visible = $(".ui-dialog:visible");
-        // each open dialog
-        $visible.each(function () {
-            var $this = $(this);
-            var dialog = $this.find(".ui-dialog-content").data("dialog");
-            // if fluid option == true
-            if (dialog.options.maxWidth && dialog.options.width) {
-                // fix maxWidth bug
-                $this.css("max-width", dialog.options.maxWidth);
-                //reposition dialog
-                dialog.option("position", dialog.options.position);
-            }
+     var $visible = $(".ui-dialog:visible");
+     // each open dialog
+     $visible.each(function () {
+     var $this = $(this);
+     var dialog = $this.find(".ui-dialog-content").data("dialog");
+     // if fluid option == true
+     if (dialog.options.maxWidth && dialog.options.width) {
+     // fix maxWidth bug
+     $this.css("max-width", dialog.options.maxWidth);
+     //reposition dialog
+     dialog.option("position", dialog.options.position);
+     }
 
-            if (dialog.options.fluid) {
-                // namespace window resize
-                $(window).on("resize.responsive", function () {
-                    var wWidth = $(window).width();
-                    // check window width against dialog width
-                    if (wWidth < dialog.options.maxWidth + 50) {
-                        // keep dialog from filling entire screen
-                        $this.css("width", "90%");
-                    }
-                    //reposition dialog
-                    dialog.option("position", dialog.options.position);
-                });
-            }
+     if (dialog.options.fluid) {
+     // namespace window resize
+     $(window).on("resize.responsive", function () {
+     var wWidth = $(window).width();
+     // check window width against dialog width
+     if (wWidth < dialog.options.maxWidth + 50) {
+     // keep dialog from filling entire screen
+     $this.css("width", "90%");
+     }
+     //reposition dialog
+     dialog.option("position", dialog.options.position);
+     });
+     }
 
-        });
-    }*/
+     });
+     }*/
 
     function gridReload(gridName) {
         $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
@@ -598,7 +598,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     function loadGridDatosEmpresaVal(id) {
         if (id != null) {
             var sUrl = "<?php echo $this->url('datosempresas', array('action' => 'loadDataGridVal')); ?>" + "/" + id;
-            $("#gridDatosEmpresaVal").setGridParam({datatype:'json',url: sUrl}).trigger('reloadGrid');
+            $("#gridDatosEmpresaVal").setGridParam({datatype: 'json', url: sUrl}).trigger('reloadGrid');
         }
         else {
             msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
@@ -646,7 +646,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $('#' + diagName).show();
         $('.' + selectorName).html(msg);
         setTimeout(function () {
-            $('#' + diagName).hide();
+            $('#' + diagName).hide("drop", {direction: "up"}, "slow");
             $('.' + selectorName).html("");
         }, 3000);
     }
@@ -731,4 +731,4 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
-</div>		
+</div>

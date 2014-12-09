@@ -1,24 +1,24 @@
 <?php
 $title = 'Definicion de datos de Legajo';
 ?>
-<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>	
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>
 <?php
 $flash = $this->flashMessenger();
 $flash->setMessageOpenFormat('<div%s>
-							     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-							         &times;
-							     </button>
-							     <ul><li>')
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            &times;
+            </button>
+        <ul><li>')
         ->setMessageSeparatorString('</li><li>')
         ->setMessageCloseString('</li></ul></div>');
 
-echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger'));
-echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info'));
-echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
-echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger', 'flashAlert'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info', 'flashAlert'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning', 'flashAlert'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
 ?>
 
-<div class="alert alert-warning" id="diagAlert" style="display:none">
+<div class="alert alert-warning" id="diagAlert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <strong><span class="dataAlert"></span></strong>
 </div>
@@ -305,7 +305,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosLegajos").jqGrid('getRowData', ids[i]);
-                            if (data['descripcion'] == descripcion) {
+                            if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
                                 e++;
                             }
                         }
@@ -360,7 +360,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         var e = 0;
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosLegajos").jqGrid('getRowData', ids[i]);
-                            if (data['descripcion'] == $("#descripcion-edit-DatosLegajos").val() && data['id'] != rowid) {
+                            if (data['descripcion'].toLowerCase() == $("#descripcion-edit-DatosLegajos").val().toLowerCase() && data['id'] != rowid) {
                                 e++;
                             }
                         }
@@ -416,7 +416,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     var e = 0;
                     for (var i = 0; i < ids.length; i++) {
                         var data = $("#gridDatosLegajosVal").jqGrid('getRowData', ids[i]);
-                        if (data['propiedad'] == rowid && data['valor_posible'] == $("#valor-posible-add-DatosLegajosVal").val()) {
+                        if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valor-posible-add-DatosLegajosVal").val().toLowerCase()) {
                             e++;
                         }
                     }
@@ -473,7 +473,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         var e = 0;
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosLegajosVal").jqGrid('getRowData', ids[i]);
-                            if (data['valor_posible'] == $("#valor-posible-edit-DatosLegajosVal").val() && data['id'] != rowid) {
+                            if (data['valor_posible'].toLowerCase() == $("#valor-posible-edit-DatosLegajosVal").val().toLowerCase() && data['id'] != rowid) {
                                 e++;
                             }
                         }
@@ -586,7 +586,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $('#' + diagName).show();
         $('.' + selectorName).html(msg);
         setTimeout(function () {
-            $('#' + diagName).hide();
+            $('#' + diagName).hide("drop", {direction: "up"}, "slow");
             $('.' + selectorName).html("");
         }, 3000);
     }
@@ -671,4 +671,4 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
-</div>		
+</div>

@@ -1,24 +1,24 @@
 <?php
 $title = 'Definicion de datos de Familiares';
 ?>
-<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>	
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>
 <?php
 $flash = $this->flashMessenger();
 $flash->setMessageOpenFormat('<div%s>
-							     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
-							         &times;
-							     </button>
-							     <ul><li>')
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            &times;
+            </button>
+        <ul><li>')
         ->setMessageSeparatorString('</li><li>')
         ->setMessageCloseString('</li></ul></div>');
 
-echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger'));
-echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info'));
-echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
-echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger', 'flashAlert'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info', 'flashAlert'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning', 'flashAlert'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
 ?>
 
-<div class="alert alert-warning" id="diagAlert" style="display:none">
+<div class="alert alert-warning" id="diagAlert">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <strong><span class="dataAlert"></span></strong>
 </div>
@@ -127,13 +127,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             }
         });
         $('#gridDatosFamiliares').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
-        
+
         $("#gridDatosFamiliaresVal").jqGrid({
             width: 450,
             height: 230,
             autowidth: false,
             rownumbers: true,
-            rownumWidth: 20, 
+            rownumWidth: 20,
             url: "<?php echo $this->url('datosfamiliares', array('action' => 'loadDataGridVal')); ?>",
             datatype: "json",
             mtype: 'POST',
@@ -289,7 +289,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
             height: 'auto',
             maxWidth: 600,
             buttons: {
@@ -305,7 +305,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosFamiliares").jqGrid('getRowData', ids[i]);
-                            if (data['descripcion'] == descripcion) {
+                            if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
                                 e++;
                             }
                         }
@@ -347,7 +347,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
             height: 'auto',
             maxWidth: 600,
             buttons: {
@@ -360,7 +360,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         var e = 0;
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosFamiliares").jqGrid('getRowData', ids[i]);
-                            if (data['descripcion'] == $("#descripcion-edit-DatosFamiliares").val() && data['id'] != rowid) {
+                            if (data['descripcion'].toLowerCase() == $("#descripcion-edit-DatosFamiliares").val().toLowerCase() && data['id'] != rowid) {
                                 e++;
                             }
                         }
@@ -404,7 +404,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
             height: 'auto',
             maxWidth: 600,
             buttons: {
@@ -416,7 +416,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     var e = 0;
                     for (var i = 0; i < ids.length; i++) {
                         var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
-                        if (data['propiedad'] == rowid && data['valor_posible'] == $("#valor-posible-add-DatosFamiliaresVal").val()) {
+                        if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valor-posible-add-DatosFamiliaresVal").val().toLowerCase()) {
                             e++;
                         }
                     }
@@ -459,7 +459,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto',// overcomes width:'auto' and maxWidth bug
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
             height: 'auto',
             maxWidth: 600,
             buttons: {
@@ -473,7 +473,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         var e = 0;
                         for (var i = 0; i < ids.length; i++) {
                             var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
-                            if (data['valor_posible'] == $("#valor-posible-edit-DatosFamiliaresVal").val() && data['id'] != rowid) {
+                            if (data['valor_posible'].toLowerCase() == $("#valor-posible-edit-DatosFamiliaresVal").val().toLowerCase() && data['id'] != rowid) {
                                 e++;
                             }
                         }
@@ -511,7 +511,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 //nada por ahora
             }
         });
-        
+
         /*$('input').bind('keypress', function (event) {
          var regex = new RegExp("^[a-zA-Z0-9_ \,._-]+$");
          var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
@@ -538,7 +538,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     function loadGridDatosFamiliaresVal(id) {
         if (id != null) {
             var sUrl = "<?php echo $this->url('datosfamiliares', array('action' => 'loadDataGridVal')); ?>" + "/" + id;
-            $("#gridDatosFamiliaresVal").setGridParam({datatype:'json',url: sUrl}).trigger('reloadGrid');
+            $("#gridDatosFamiliaresVal").setGridParam({datatype: 'json', url: sUrl}).trigger('reloadGrid');
         }
         else {
             msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
@@ -586,7 +586,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $('#' + diagName).show();
         $('.' + selectorName).html(msg);
         setTimeout(function () {
-            $('#' + diagName).hide();
+            $('#' + diagName).hide("drop", {direction: "up"}, "slow");
             $('.' + selectorName).html("");
         }, 3000);
     }
@@ -671,4 +671,4 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
-</div>		
+</div>

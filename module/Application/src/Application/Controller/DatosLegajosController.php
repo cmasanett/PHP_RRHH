@@ -37,42 +37,46 @@ class DatosLegajosController extends AbstractActionController {
         $page = $request->getPost('page', 1);
         $limit = $request->getPost('rows', 10);
 
-        $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesL')->findAll();
+        try {
+            $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesL')->findAll();
 
-        $count = count($data);
+            $count = count($data);
 
-        if ($count > 0) {
-            $total_pages = ceil($count / $limit);
-        } else {
-            $total_pages = 0;
+            if ($count > 0) {
+                $total_pages = ceil($count / $limit);
+            } else {
+                $total_pages = 0;
+            }
+            if ($page > $total_pages) {
+                $page = $total_pages;
+            }
+
+            $start = $limit * $page - $limit;
+            if ($start < 0) {
+                $start = 0;
+            }
+
+            $row = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesL')->findBy(array(), array($sidx => $sord), $limit, $start);
+
+            $response ['page'] = $page;
+            $response ['total'] = $total_pages;
+            $response ['records'] = $count;
+            $i = 0;
+
+            foreach ($row as $r) {
+                $response ['rows'] [$i] ['id'] = $r->getId(); // id
+                $response ['rows'] [$i] ['cell'] = array(
+                    $r->getId(),
+                    $r->getDescripcion(),
+                    $r->getTipoDeCampo()
+                );
+                $i ++;
+            }
+
+            return $this->response->setContent(Json::encode($response));
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage($ex->getMessage());
         }
-        if ($page > $total_pages) {
-            $page = $total_pages;
-        }
-
-        $start = $limit * $page - $limit;
-        if ($start < 0) {
-            $start = 0;
-        }
-        
-        $row = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesL')->findBy(array(), array($sidx => $sord), $limit, $start);
-
-        $response ['page'] = $page;
-        $response ['total'] = $total_pages;
-        $response ['records'] = $count;
-        $i = 0;
-
-        foreach ($row as $r) {
-            $response ['rows'] [$i] ['id'] = $r->getId(); // id
-            $response ['rows'] [$i] ['cell'] = array(
-                $r->getId(),
-                $r->getDescripcion(),
-                $r->getTipoDeCampo()
-            );
-            $i ++;
-        }
-
-        return $this->response->setContent(Json::encode($response));
     }
 
     public function loadDataGridValAction() {
@@ -85,174 +89,194 @@ class DatosLegajosController extends AbstractActionController {
         $page = $request->getPost('page', 1);
         $limit = $request->getPost('rows', 10);
 
-        $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(array('propiedad' => $id));
-        $count = count($data);
+        try{
+            $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(array('propiedad' => $id));
+            $count = count($data);
 
-        if ($count > 0) {
-            $total_pages = ceil($count / $limit);
-        } else {
-            $total_pages = 0;
+            if ($count > 0) {
+                $total_pages = ceil($count / $limit);
+            } else {
+                $total_pages = 0;
+            }
+            if ($page > $total_pages) {
+                $page = $total_pages;
+            }
+
+            $start = $limit * $page - $limit;
+            if ($start < 0) {
+                $start = 0;
+            }
+
+            $row = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(['propiedad' => $id], array($sidx => $sord), $limit, $start);
+
+            $response ['page'] = $page;
+            $response ['total'] = $total_pages;
+            $response ['records'] = $count;
+            $i = 0;
+
+            foreach ($row as $r) {
+                $response ['rows'] [$i] ['id'] = $r->getId(); // id
+                $response ['rows'] [$i] ['cell'] = array(
+                    $r->getId(),
+                    $r->getPropiedad()->getId(),
+                    $r->getValorPosible(),
+                    $r->getSignificado()
+                );
+                $i ++;
+            }
+
+            return $this->response->setContent(Json::encode($response));
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage($ex->getMessage());
         }
-        if ($page > $total_pages) {
-            $page = $total_pages;
-        }
-
-        $start = $limit * $page - $limit;
-        if ($start < 0) {
-            $start = 0;
-        }
-
-        $row = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(['propiedad' => $id], array($sidx => $sord), $limit, $start);
-
-        $response ['page'] = $page;
-        $response ['total'] = $total_pages;
-        $response ['records'] = $count;
-        $i = 0;
-
-        foreach ($row as $r) {
-            $response ['rows'] [$i] ['id'] = $r->getId(); // id
-            $response ['rows'] [$i] ['cell'] = array(
-                $r->getId(),
-                $r->getPropiedad()->getId(),
-                $r->getValorPosible(),
-                $r->getSignificado()
-            );
-            $i ++;
-        }
-
-        return $this->response->setContent(Json::encode($response));
     }
 
     public function editGridItemAction() {
-        if ($this->request->isXmlHttpRequest()) {
-            $request = $this->getRequest();
-            if ($request->isPost()) {
-                $data = Json::decode($request->getPost('data'), true);
-                if ($data) {
-                    if (isset($data['id'])) {
-                        //Edit
-                        $n7PropiedadesL = new N7PropiedadesL();
-                        $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $data['id']);
-                        if ($n7PropiedadesL) {
+        try{
+            if ($this->request->isXmlHttpRequest()) {
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $data = Json::decode($request->getPost('data'), true);
+                    if ($data) {
+                        if (isset($data['id'])) {
+                            //Edit
+                            $n7PropiedadesL = new N7PropiedadesL();
+                            $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $data['id']);
+                            if ($n7PropiedadesL) {
+                                $n7PropiedadesL->setDescripcion($data['descripcion']);
+                                $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
+                                $statusPersist = $this->getEntityManager()->persist($n7PropiedadesL);
+                                $statusFlush = $this->getEntityManager()->flush();
+
+                                return $this->response->setContent(Json::encode(array(
+                                                    'type' => 'editProp',
+                                                    'success' => true
+                                )));
+                            }
+                        } else {
+                            //Add
+                            $n7PropiedadesL = new N7PropiedadesL ();
                             $n7PropiedadesL->setDescripcion($data['descripcion']);
                             $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
                             $statusPersist = $this->getEntityManager()->persist($n7PropiedadesL);
                             $statusFlush = $this->getEntityManager()->flush();
 
                             return $this->response->setContent(Json::encode(array(
-                                                'type' => 'editProp',
+                                                'type' => 'addProp',
                                                 'success' => true
                             )));
                         }
-                    } else {
-                        //Add
-                        $n7PropiedadesL = new N7PropiedadesL ();
-                        $n7PropiedadesL->setDescripcion($data['descripcion']);
-                        $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
-                        $statusPersist = $this->getEntityManager()->persist($n7PropiedadesL);
-                        $statusFlush = $this->getEntityManager()->flush();
-
-                        return $this->response->setContent(Json::encode(array(
-                                            'type' => 'addProp',
-                                            'success' => true
-                        )));
                     }
-                }
-            }
-        } else {
-            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
-        }
-    }
-
-    public function deleteGridItemAction() {
-        if ($this->request->isXmlHttpRequest()) {
-            $request = $this->getRequest();
-            if ($request->isPost()) {
-                $id = (int) $request->getPost('id');
-                $n7PropiedadesL = new N7PropiedadesL ();
-                $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $id);
-                if ($n7PropiedadesL) {
-                    $statusRemove = $this->getEntityManager()->remove($n7PropiedadesL);
-                    $statusFlush = $this->getEntityManager()->flush();
-
-                    return $this->response->setContent(Json::encode(array(
-                                        'type' => 'delProp',
-                                        'success' => true
-                    )));
                 }
             } else {
                 return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
             }
-        } else {
-            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage($ex->getMessage());
+        }
+    }
+
+    public function deleteGridItemAction() {
+        try{
+            if ($this->request->isXmlHttpRequest()) {
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $id = (int) $request->getPost('id');
+                    $n7PropiedadesL = new N7PropiedadesL ();
+                    $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $id);
+                    if ($n7PropiedadesL) {
+                        $statusRemove = $this->getEntityManager()->remove($n7PropiedadesL);
+                        $statusFlush = $this->getEntityManager()->flush();
+
+                        return $this->response->setContent(Json::encode(array(
+                                            'type' => 'delProp',
+                                            'success' => true
+                        )));
+                    }
+                } else {
+                    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
+                }
+            } else {
+                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
+            }
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage($ex->getMessage());
         }
     }
 
     public function editGridItemValAction() {
-        if ($this->request->isXmlHttpRequest()) {
-            $request = $this->getRequest();
-            if ($request->isPost()) {
-                $data = Json::decode($request->getPost('data'), true);
-                if ($data) {
-                    if (isset($data['propiedad'])) {
-                        //Add
-                        $n7PropiedadesL = new N7PropiedadesL ();
-                        $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $data['propiedad']);
-                        if ($n7PropiedadesL) {
-                            $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
-                            $n7ValoresPosiblesLegajos->setPropiedad($n7PropiedadesL);
-                            $n7ValoresPosiblesLegajos->setValorPosible($data['valor_posible']);
-                            $n7ValoresPosiblesLegajos->setSignificado($data['significado']);
-                            $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);
-                            $this->getEntityManager()->flush();
-                        }
-                        return $this->response->setContent(Json::encode(array(
-                                            'type' => 'addVal',
-                                            'success' => true
-                        )));
-                    } else {
-                        if (isset($data['id'])) {
-                            //Edit
-                            $n7ValoresPosiblesLegajos = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesLegajos', $data['id']);
-                            if ($n7ValoresPosiblesLegajos) {
+        try{
+            if ($this->request->isXmlHttpRequest()) {
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $data = Json::decode($request->getPost('data'), true);
+                    if ($data) {
+                        if (isset($data['propiedad'])) {
+                            //Add
+                            $n7PropiedadesL = new N7PropiedadesL ();
+                            $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $data['propiedad']);
+                            if ($n7PropiedadesL) {
+                                $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
+                                $n7ValoresPosiblesLegajos->setPropiedad($n7PropiedadesL);
                                 $n7ValoresPosiblesLegajos->setValorPosible($data['valor_posible']);
                                 $n7ValoresPosiblesLegajos->setSignificado($data['significado']);
                                 $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);
                                 $this->getEntityManager()->flush();
+                            }
+                            return $this->response->setContent(Json::encode(array(
+                                                'type' => 'addVal',
+                                                'success' => true
+                            )));
+                        } else {
+                            if (isset($data['id'])) {
+                                //Edit
+                                $n7ValoresPosiblesLegajos = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesLegajos', $data['id']);
+                                if ($n7ValoresPosiblesLegajos) {
+                                    $n7ValoresPosiblesLegajos->setValorPosible($data['valor_posible']);
+                                    $n7ValoresPosiblesLegajos->setSignificado($data['significado']);
+                                    $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);
+                                    $this->getEntityManager()->flush();
 
-                                return $this->response->setContent(Json::encode(array(
-                                                    'type' => 'editVal',
-                                                    'success' => true
-                                )));
+                                    return $this->response->setContent(Json::encode(array(
+                                                        'type' => 'editVal',
+                                                        'success' => true
+                                    )));
+                                }
                             }
                         }
                     }
                 }
+            } else {
+                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
             }
-        } else {
-            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage($ex->getMessage());
         }
     }
 
     public function deleteGridItemValAction() {
-        if ($this->request->isXmlHttpRequest()) {
-            $request = $this->getRequest();
-            if ($request->isPost()) {
-                $id = (int) $request->getPost('id');
-                $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
-                $n7ValoresPosiblesLegajos = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesLegajos', $id);
-                if ($n7ValoresPosiblesLegajos) {
-                    $this->getEntityManager()->remove($n7ValoresPosiblesLegajos);
-                    $this->getEntityManager()->flush();
+        try{
+            if ($this->request->isXmlHttpRequest()) {
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $id = (int) $request->getPost('id');
+                    $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
+                    $n7ValoresPosiblesLegajos = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesLegajos', $id);
+                    if ($n7ValoresPosiblesLegajos) {
+                        $this->getEntityManager()->remove($n7ValoresPosiblesLegajos);
+                        $this->getEntityManager()->flush();
 
-                    return $this->response->setContent(Json::encode(array(
-                                        'type' => 'delVal',
-                                        'success' => true
-                    )));
+                        return $this->response->setContent(Json::encode(array(
+                                            'type' => 'delVal',
+                                            'success' => true
+                        )));
+                    }
                 }
+            } else {
+                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
             }
-        } else {
-            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage($ex->getMessage());
         }
     }
 
