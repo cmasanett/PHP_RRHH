@@ -207,10 +207,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 ids = ids.toString();
                 ids = ids.split(",");
                 var e = 0;
-                for (var i = 0; i < ids.length; i++) {
-                    var data = $("#gridDatosEmpresaVal").jqGrid('getRowData', ids[i]);
-                    if (data['propiedad'] == rowid) {
-                        e++;
+                
+                if( ids != ""){
+                    for (var i = 0; i < ids.length; i++) {
+                        var data = $("#gridDatosEmpresaVal").jqGrid('getRowData', ids[i]);
+                        if (data['propiedad'] == rowid) {
+                            e++;
+                        }
                     }
                 }
 
@@ -304,10 +307,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         ids = ids.split(",");
                         var e = 0;
 
-                        for (var i = 0; i < ids.length; i++) {
-                            var data = $("#gridDatosEmpresa").jqGrid('getRowData', ids[i]);
-                            if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
-                                e++;
+                        if( ids != ""){
+                            for (var i = 0; i < ids.length; i++) {
+                                var data = $("#gridDatosEmpresa").jqGrid('getRowData', ids[i]);
+                                if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
+                                    e++;
+                                }
                             }
                         }
 
@@ -360,10 +365,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         ids = ids.toString();
                         ids = ids.split(",");
                         var e = 0;
-                        for (var i = 0; i < ids.length; i++) {
-                            var data = $("#gridDatosEmpresa").jqGrid('getRowData', ids[i]);
-                            if (data['descripcion'].toLowerCase() == $("#descripcion-edit-DatosEmpresa").val().toLowerCase() && data['id'] != rowid) {
-                                e++;
+                        
+                        if( ids != ""){
+                            for (var i = 0; i < ids.length; i++) {
+                                var data = $("#gridDatosEmpresa").jqGrid('getRowData', ids[i]);
+                                if (data['descripcion'].toLowerCase() == $("#descripcion-edit-DatosEmpresa").val().toLowerCase() && data['id'] != rowid) {
+                                    e++;
+                                }
                             }
                         }
 
@@ -417,10 +425,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     ids = ids.toString();
                     ids = ids.split(",");
                     var e = 0;
-                    for (var i = 0; i < ids.length; i++) {
-                        var data = $("#gridDatosEmpresaVal").jqGrid('getRowData', ids[i]);
-                        if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valor-posible-add-DatosEmpresaVal").val().toLowerCase()) {
-                            e++;
+                    
+                    if( ids != ""){
+                        for (var i = 0; i < ids.length; i++) {
+                            var data = $("#gridDatosEmpresaVal").jqGrid('getRowData', ids[i]);
+                            if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valor-posible-add-DatosEmpresaVal").val().toLowerCase()) {
+                                e++;
+                            }
                         }
                     }
 
@@ -475,10 +486,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         ids = ids.toString();
                         ids = ids.split(",");
                         var e = 0;
-                        for (var i = 0; i < ids.length; i++) {
-                            var data = $("#gridDatosEmpresaVal").jqGrid('getRowData', ids[i]);
-                            if (data['valor_posible'].toLowerCase() == $("#valor-posible-edit-DatosEmpresaVal").val().toLowerCase() && data['id'] != rowid) {
-                                e++;
+                        
+                        if( ids != ""){
+                            for (var i = 0; i < ids.length; i++) {
+                                var data = $("#gridDatosEmpresaVal").jqGrid('getRowData', ids[i]);
+                                if (data['valor_posible'].toLowerCase() == $("#valor-posible-edit-DatosEmpresaVal").val().toLowerCase() && data['id'] != rowid) {
+                                    e++;
+                                }
                             }
                         }
 
