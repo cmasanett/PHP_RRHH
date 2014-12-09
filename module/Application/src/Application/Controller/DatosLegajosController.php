@@ -200,7 +200,7 @@ class DatosLegajosController extends AbstractActionController {
                         $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $data['propiedad']);
                         if ($n7PropiedadesL) {
                             $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
-                            $n7ValoresPosiblesLegajos->setPropiedad($data['propiedad']);
+                            $n7ValoresPosiblesLegajos->setPropiedad($n7PropiedadesL);
                             $n7ValoresPosiblesLegajos->setValorPosible($data['valor_posible']);
                             $n7ValoresPosiblesLegajos->setSignificado($data['significado']);
                             $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);

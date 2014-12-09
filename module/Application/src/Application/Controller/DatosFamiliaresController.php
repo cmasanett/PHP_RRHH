@@ -200,7 +200,7 @@ class DatosFamiliaresController extends AbstractActionController {
                         $n7PropiedadesF = $this->getEntityManager()->find('Application\Entity\N7PropiedadesF', $data['propiedad']);
                         if ($n7PropiedadesF) {
                             $n7ValoresPosiblesFamiliares = new N7ValoresPosiblesFamiliares ();
-                            $n7ValoresPosiblesFamiliares->setPropiedad($data['propiedad']);
+                            $n7ValoresPosiblesFamiliares->setPropiedad($n7PropiedadesF);
                             $n7ValoresPosiblesFamiliares->setValorPosible($data['valor_posible']);
                             $n7ValoresPosiblesFamiliares->setSignificado($data['significado']);
                             $this->getEntityManager()->persist($n7ValoresPosiblesFamiliares);

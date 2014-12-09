@@ -4,22 +4,13 @@ namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-use Zend\View\Model\JsonModel;
-use Zend\Http\Request;
 use Zend\Json\Json;
-// Componentes de validaci�n
-use Zend\Validator;
-use Zend\I18n\Validator as I18nValidator;
-// Adaptador de la db
-use Zend\Db\Adapter\Adapter;
+
 // Incluir entidades
 //use Application\Entity\PropiedadEmpresaLiquidacion;
 //use Application\Entity\PropiedadEmpresaLiquidacionValores;
 use Application\Entity\N7PropiedadesE;
 use Application\Entity\N7ValoresPosiblesEmpresas;
-
-// Doctrine ORM
-use Doctrine\ORM\EntityManager;
 
 class DatosEmpresasController extends AbstractActionController {
 
