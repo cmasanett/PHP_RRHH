@@ -27,7 +27,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 <div class="content">
     <div class="row">
         <div class="col-xs-6">
-            <div class=" btn-group">
+            <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-lg" id="btnAddVistasEmpresa">Alta</button>
                 <button type="button" class="btn btn-primary btn-lg" id="btnDelVistasEmpresa">Baja</button>
                 <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasEmpresa">Modificacion</button>
@@ -43,13 +43,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
 <script type="text/javascript">
     $(document).ready(function () {
+        //Grids
         $("#gridVistasEmpresa").jqGrid({
             width: 100,
             height: 230,
             autowidth: true,
             rownumbers: true,
             rownumWidth: 20,
-            url: "<?php echo $this->url('vistasempresas', array('action' => 'loadDataGrid')); ?>",
+            url: "<?php echo $this->url('vistasempresas', array('action' => 'loadViewGrid')); ?>",
             datatype: 'json',
             mtype: 'POST',
             colNames: ["Id", "Vista", "Extranet"],
@@ -66,9 +67,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     search: true,
                     stype: 'text',
                     searchoptions: {clearSearch: true}
-                    //editable: true,
-                    //editrules: {required: true},
-                    //editoptions: {size: 30}
                 },
                 {name: 'extranet_permitido', index: 'extranet_permitido',
                     width: 10,
@@ -76,15 +74,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     sortable: true,
                     search: true,
                     stype: 'select',
-                    searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
-                    //editable: true,
-                    //edittype: 'select',
-                    //editoptions: {value: "Todos;N:N;C:C;F:F"}
+                    searchoptions: {value: ":;S:Si;N:No"}
                 }
             ],
             pager: "#pagerVistasEmpresa",
-            //rowNum: 10,
-            //rowList: [10, 20, 30],
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
@@ -115,6 +108,145 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             }
         });
         $('#gridVistasEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        $("#gridPropiedadesEmpresa").jqGrid({
+            width: 500,
+            height: 150,
+            autowidth: false,
+            rownumbers: true,
+            rownumWidth: 20,
+            url: "<?php echo $this->url('vistasempresas', array('action' => 'loadPropGrid')); ?>",
+            datatype: 'json',
+            mtype: 'POST',
+            colNames: ["Id", "Propiedad", "Tipo"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'descripcion', index: 'descripcion',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                },
+                {name: 'tipo_de_campo', index: 'tipo_de_campo',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;S:Si;N:No"}
+                }
+            ],
+            pager: "#pagerPropiedadesEmpresa",
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: false,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            caption: "Lista de datos posibles",
+            onSelectRow: function (id) {
+                //loadGridVistasEmpresaVal(id);
+            }
+        });
+        $("#gridPropiedadesEmpresa").navGrid("#pagerPropiedadesEmpresa",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridPropiedadesEmpresa").navButtonAdd("#pagerPropiedadesEmpresa", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridPropiedadesEmpresa")[0].clearToolbar();
+                gridReload('gridPropiedadesEmpresa');
+            }
+        });
+        $('#gridPropiedadesEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        $("#gridDatosVistasEmpresa").jqGrid({
+            width: 400,
+            height: 150,
+            autowidth: false,
+            rownumbers: true,
+            rownumWidth: 20,
+            url: "<?php echo $this->url('vistasempresas', array('action' => 'loadDataGrid')); ?>",
+            datatype: 'json',
+            mtype: 'POST',
+            colNames: ["Id", "PropiedadId", "FormularioId", "Orden", "Modificable"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'propiedadId', index: 'propiedadId',
+                    width: 10,
+                    align: "center",
+                    hidden: false
+                },
+                {name: 'formularioId', index: 'formularioId',
+                    width: 10,
+                    align: "center",
+                    hidden: false
+                },
+                {name: 'orden', index: 'orden',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                },
+                {name: 'solo_lectura', index: 'solo_lectura',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;S:Si;N:No"}
+                }
+            ],
+            pager: "#pagerDatosVistasEmpresa",
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: false,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('vistasempresas', array('action' => 'editGridItem')); ?>",
+            caption: "Datos en las vistas",
+            onSelectRow: function (id) {
+                //loadGridVistasEmpresaVal(id);
+            }
+        });
+        $("#gridDatosVistasEmpresa").navGrid("#pagerDatosVistasEmpresa",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridDatosVistasEmpresa").navButtonAdd("#pagerDatosVistasEmpresa", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridDatosVistasEmpresa")[0].clearToolbar();
+                gridReload('gridDatosVistasEmpresa');
+            }
+        });
+        $('#gridDatosVistasEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
 
         //Buttons
         $("#btnAddVistasEmpresa").click(function () {
@@ -172,11 +304,15 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $("#form-add-VistasEmpresa").dialog({
             autoOpen: false,
             resizable: true,
+            draggable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto', // overcomes width:'auto' and maxWidth bug
-            height: 'auto',
-            maxWidth: 600,
+            width: 'auto' , //1000, 'auto' 
+            height: 'auto', //500, 'auto'
+            //zIndex: 500,
+            //stack: false,
+            maxWidth: 1200,
+            //position: ['center',50] , //{ my: "center", at: "center", of: window }
             //fluid: true, //new option
             buttons: {
                 'Aceptar': function () {
@@ -235,7 +371,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             resizable: true,
             closeOnEscape: true,
             modal: true,
-            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            width: 'auto',
             height: 'auto',
             maxWidth: 600,
             //fluid: true, //new option
@@ -325,46 +461,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         }
     }).trigger('resize');
 
-    /*// run function on all dialog opens
-     $(document).on("dialogopen", ".ui-dialog", function (event, ui) {
-     fluidDialog();
-     });*/
-
     // remove window resize namespace
     $(document).on("dialogclose", ".ui-dialog", function (event, ui) {
         $(window).off("resize.responsive");
     });
-
-    /*function fluidDialog() {
-     var $visible = $(".ui-dialog:visible");
-     // each open dialog
-     $visible.each(function () {
-     var $this = $(this);
-     var dialog = $this.find(".ui-dialog-content").data("dialog");
-     // if fluid option == true
-     if (dialog.options.maxWidth && dialog.options.width) {
-     // fix maxWidth bug
-     $this.css("max-width", dialog.options.maxWidth);
-     //reposition dialog
-     dialog.option("position", dialog.options.position);
-     }
-
-     if (dialog.options.fluid) {
-     // namespace window resize
-     $(window).on("resize.responsive", function () {
-     var wWidth = $(window).width();
-     // check window width against dialog width
-     if (wWidth < dialog.options.maxWidth + 50) {
-     // keep dialog from filling entire screen
-     $this.css("width", "90%");
-     }
-     //reposition dialog
-     dialog.option("position", dialog.options.position);
-     });
-     }
-
-     });
-     }*/
 
     function gridReload(gridName) {
         $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
@@ -379,6 +479,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             $('#' + diagName).dialog('open');
         } else {
             $('#' + diagName).dialog('open');
+            $('#' + diagName).dialog('moveToTop');
             $('#extranet-add-VistasEmpresa option:contains("C")').prop('selected', true);
         }
     }
@@ -400,25 +501,50 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 </script>
 
 <!-- Dialogo form-add-VistasEmpresa -->
-<div id="form-add-VistasEmpresa"  title="Agregar registro">
+<div id="form-add-VistasEmpresa" class="container-fluid" title="Agregar registro" >
     <form class="form-horizontal" id="valid-form-add-VistasEmpresa" role="form">
-        <div class="form-group">
-            <label for="input-descripcion-add-VistasEmpresa" class="col-sm-4 control-label">Vista:</label>
-            <div class="col-sm-8">
-                <input type="text" class="form-control" id="descripcion-add-VistasEmpresa" placeholder="">
+        <div class="row">
+            <div class="form-group col-xs-2 col-md-4">
+                <label for="input-descripcion-add-VistasEmpresa" class="col-sm-4 control-label">Vista:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="descripcion-add-VistasEmpresa" placeholder="">
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label for="input-extranet-add-VistasEmpresa" class="col-sm-4 control-label">Extranet:</label>
-            <div class="col-sm-8">
-                <select class="form-control" id="extranet-add-VistasEmpresa">
-                    <option value="C">Caracter</option>
-                    <option value="N">Numero</option>
-                    <option value="F">Fecha</option>
-                </select>
+        <div class="row">
+            <div class="form-group col-xs-2 col-md-4">
+                <label for="input-extranet-add-VistasEmpresa" class="col-sm-4 control-label">Extranet:</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="extranet-add-VistasEmpresa">
+                        <option value="S">Si</option>
+                        <option value="N">No</option>
+                    </select>
+                </div>
             </div>
         </div>
     </form>
+    <div class="row">
+        <div class="col-xs-6 col-sm-6">
+            <div id="jqGridPropiedadesEmpresa" style="padding-top:10px;">
+                <table id="gridPropiedadesEmpresa"></table>
+                <div id="pagerPropiedadesEmpresa"></div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-1">
+             <div class="btn-group-vertical" style="padding-top:70px;">
+                <button type="button" class="btn btn-info btn-xs" id="btnAddAll">=>></button>
+                <button type="button" class="btn btn-info btn-xs" id="btnAddSingle">></button>
+                <button type="button" class="btn btn-info btn-xs" id="btnDelSingle"><</button>
+                <button type="button" class="btn btn-info btn-xs" id="btnDelAll"><<=</button>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-5">
+            <div id="jqGridDatosVistasEmpresa" style="padding-top:10px;">
+                <table id="gridDatosVistasEmpresa"></table>
+                <div id="pagerDatosVistasEmpresa"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Dialogo form-edit-VistasEmpresa -->
@@ -434,11 +560,24 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             <label for="input-extranet-edit-VistasEmpresa" class="col-sm-4 control-label">Extranet:</label>
             <div class="col-sm-8">
                 <select class="form-control" id="extranet-edit-VistasEmpresa">
-                    <option value="C">Caracter</option>
-                    <option value="N">Numero</option>
-                    <option value="F">Fecha</option>
+                    <option value="S">Si</option>
+                    <option value="N">No</option>
                 </select>
             </div>
         </div>
     </form>
+    <div class="row">
+        <div class="col-xs-6">
+            <div id="jqGridPropiedadesEmpresa" style="padding-top:10px;">
+                <table id="gridPropiedadesEmpresa"></table>
+                <div id="pagerPropiedadesEmpresa"></div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div id="jqGridDatosVistasEmpresa" style="padding-top:10px;">
+                <table id="gridDatosVistasEmpresa"></table>
+                <div id="pagerDatosVistasEmpresa"></div>
+            </div>
+        </div>
+    </div>
 </div>
