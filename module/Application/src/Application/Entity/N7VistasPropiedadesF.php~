@@ -1,0 +1,53 @@
+<?php
+
+namespace Application\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * N7VistasPropiedadesF
+ *
+ * @ORM\Table(name="n7_vistas_propiedades_f", indexes={@ORM\Index(name="Index_2", columns={"propiedad_id"}), @ORM\Index(name="Index_3", columns={"formulario_id"})})
+ * @ORM\Entity
+ */
+class N7VistasPropiedadesF
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="propiedad_id", type="integer", nullable=false)
+     */
+    private $propiedadId;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="formulario_id", type="integer", nullable=false)
+     */
+    private $formularioId;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="orden", type="smallint", nullable=false)
+     */
+    private $orden;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="solo_lectura", type="string", length=1, nullable=false)
+     */
+    private $soloLectura;
+
+
+}

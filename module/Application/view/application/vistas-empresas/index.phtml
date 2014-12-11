@@ -1,0 +1,444 @@
+<?php
+$title = 'Vistas de datos de Empresas';
+?>
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>
+<?php
+$flash = $this->flashMessenger();
+$flash->setMessageOpenFormat('<div%s>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            &times;
+            </button>
+        <ul><li>')
+        ->setMessageSeparatorString('</li><li>')
+        ->setMessageCloseString('</li></ul></div>');
+
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger', 'flashAlert'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info', 'flashAlert'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning', 'flashAlert'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
+?>
+
+<div class="alert alert-warning" id="diagAlert">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong><span class="dataAlert"></span></strong>
+</div>
+
+<br>
+<div class="content">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class=" btn-group">
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddVistasEmpresa">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelVistasEmpresa">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasEmpresa">Modificacion</button>
+            </div>
+            <br>
+            <div id="jqGridVistasEmpresa" style="padding-top:10px;">
+                <table id="gridVistasEmpresa"></table>
+                <div id="pagerVistasEmpresa"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#gridVistasEmpresa").jqGrid({
+            width: 100,
+            height: 230,
+            autowidth: true,
+            rownumbers: true,
+            rownumWidth: 20,
+            url: "<?php echo $this->url('vistasempresas', array('action' => 'loadDataGrid')); ?>",
+            datatype: 'json',
+            mtype: 'POST',
+            colNames: ["Id", "Vista", "Extranet"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    hidden: true
+                },
+                {name: 'descripcion', index: 'descripcion',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                    //editable: true,
+                    //editrules: {required: true},
+                    //editoptions: {size: 30}
+                },
+                {name: 'extranet_permitido', index: 'extranet_permitido',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
+                    //editable: true,
+                    //edittype: 'select',
+                    //editoptions: {value: "Todos;N:N;C:C;F:F"}
+                }
+            ],
+            pager: "#pagerVistasEmpresa",
+            //rowNum: 10,
+            //rowList: [10, 20, 30],
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            autoencode: true,
+            forceFit: false,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('vistasempresas', array('action' => 'editGridItem')); ?>",
+            caption: "Vistas de Empresa",
+            onSelectRow: function (id) {
+                //loadGridVistasEmpresaVal(id);
+            }
+        });
+        $("#gridVistasEmpresa").navGrid("#pagerVistasEmpresa",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridVistasEmpresa").navButtonAdd("#pagerVistasEmpresa", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridVistasEmpresa")[0].clearToolbar();
+                gridReload('gridVistasEmpresa');
+            }
+        });
+        $('#gridVistasEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        //Buttons
+        $("#btnAddVistasEmpresa").click(function () {
+            openDiagVistasEmpresa("form-add-VistasEmpresa", "add", "", "");
+        });
+        $("#btnDelVistasEmpresa").click(function () {
+            var rowid = jQuery("#gridVistasEmpresa").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                var ids = $("#gridVistasEmpresaVal").jqGrid('getDataIDs');
+                ids = ids.toString();
+                ids = ids.split(",");
+                var e = 0;
+                
+                if( ids != ""){
+                    for (var i = 0; i < ids.length; i++) {
+                        var data = $("#gridVistasEmpresaVal").jqGrid('getRowData', ids[i]);
+                        if (data['propiedad'] == rowid) {
+                            e++;
+                        }
+                    }
+                }
+
+                if (e == 0) {
+                    $.ajax({
+                        url: "<?php echo $this->url('vistasempresas', array('action' => 'deleteGridItem')); ?>",
+                        global: false,
+                        type: "POST",
+                        data: "id=" + rowid,
+                        dataType: "json",
+                        async: false,
+                        success: function (msg) {
+                            gridReload('gridVistasEmpresa');
+                            gridReload('gridVistasEmpresaVal');
+                        }
+                    });
+                } else {
+                    msgAlert("diagAlert", "dataAlert", "No se puede eliminar la propiedad porque tiene valores asociados.");
+                }
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnEditVistasEmpresa").click(function () {
+            var rowid = jQuery("#gridVistasEmpresa").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagVistasEmpresa("form-edit-VistasEmpresa", "edit", "gridVistasEmpresa", rowid);
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        
+        //Dialog addVistasEmpresa
+        $("#form-add-VistasEmpresa").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            //fluid: true, //new option
+            buttons: {
+                'Aceptar': function () {
+                    var descripcion = $("#descripcion-add-VistasEmpresa").val();
+                    var extranet = $("#extranet-add-VistasEmpresa").val();
+
+                    if (descripcion != '') {
+                        var ids = $("#gridVistasEmpresa").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+
+                        if( ids != ""){
+                            for (var i = 0; i < ids.length; i++) {
+                                var data = $("#gridVistasEmpresa").jqGrid('getRowData', ids[i]);
+                                if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
+                                    e++;
+                                }
+                            }
+                        }
+
+                        if (e == 0) {
+                            var data = {
+                                "descripcion": descripcion,
+                                "extranet_permitido": extranet
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('vistasempresas', array('action' => 'editGridItem')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(data),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    gridReload('gridVistasEmpresa');
+                                    $("#form-add-VistasEmpresa").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                'Cancelar': function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+        //Dialog editVistasEmpresa
+        $("#form-edit-VistasEmpresa").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            //fluid: true, //new option
+            buttons: {
+                'Aceptar': function () {
+                    var rowid = jQuery("#gridVistasEmpresa").jqGrid('getGridParam', 'selrow');
+                    if (rowid != null) {
+                        var ids = $("#gridVistasEmpresa").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+                        var e = 0;
+                        
+                        if( ids != ""){
+                            for (var i = 0; i < ids.length; i++) {
+                                var data = $("#gridVistasEmpresa").jqGrid('getRowData', ids[i]);
+                                if (data['descripcion'].toLowerCase() == $("#descripcion-edit-VistasEmpresa").val().toLowerCase() && data['id'] != rowid) {
+                                    e++;
+                                }
+                            }
+                        }
+
+                        if (e == 0)
+                        {
+                            var data = {
+                                "id": rowid,
+                                "descripcion": $("#descripcion-edit-VistasEmpresa").val(),
+                                "extranet_permitido": $("#extranet-edit-VistasEmpresa").val()
+                            };
+                            $.ajax({
+                                url: "<?php echo $this->url('vistasempresas', array('action' => 'editGridItem')); ?>",
+                                global: false,
+                                type: "POST",
+                                data: "data=" + JSON.stringify(data),
+                                dataType: "json",
+                                async: false,
+                                success: function (msg) {
+                                    gridReload('gridVistasEmpresa');
+                                    $("#form-edit-VistasEmpresa").dialog('close');
+                                }
+                            });
+                        } else {
+                            $(this).dialog('close');
+                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        }
+                    }
+                },
+                'Cancelar': function () {
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                //nada por ahora
+            }
+        });
+
+        /*$('input').bind('keypress', function (event) {
+         var regex = new RegExp("^[a-zA-Z0-9_ \,._-]+$");
+         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+         if (!regex.test(key)) {
+         event.preventDefault();
+         return false;
+         }
+         });*/
+
+        $('#diagAlert').on('closed.bs.alert', function () {
+            $('.dataAlert').html("");
+        });
+    });
+
+    //jqGrid responsive
+    jQuery(window).bind('resize', function () {
+        //$(".ui-dialog-content").dialog("option", "position", ['center', 'center']);
+        // Get width of parent container
+        var width = jQuery("#jqGridVistasEmpresa").attr('clientWidth');
+        if (width == null || width < 1) {
+            // For IE, revert to offsetWidth if necessary
+            width = jQuery("#jqGridVistasEmpresa").attr('offsetWidth');
+        }
+        width = width - 2; // Fudge factor to prevent horizontal scrollbars
+        if (width > 0 &&
+                // Only resize if new width exceeds a minimal threshold
+                // Fixes IE issue with in-place resizing when mousing-over frame bars
+                Math.abs(width - jQuery("#gridVistasEmpresa").width()) > 5)
+        {
+            jQuery("#gridVistasEmpresa").setGridWidth(width);
+            //jQuery("#gridVistasEmpresaVal").setGridWidth(width);
+        }
+    }).trigger('resize');
+
+    /*// run function on all dialog opens
+     $(document).on("dialogopen", ".ui-dialog", function (event, ui) {
+     fluidDialog();
+     });*/
+
+    // remove window resize namespace
+    $(document).on("dialogclose", ".ui-dialog", function (event, ui) {
+        $(window).off("resize.responsive");
+    });
+
+    /*function fluidDialog() {
+     var $visible = $(".ui-dialog:visible");
+     // each open dialog
+     $visible.each(function () {
+     var $this = $(this);
+     var dialog = $this.find(".ui-dialog-content").data("dialog");
+     // if fluid option == true
+     if (dialog.options.maxWidth && dialog.options.width) {
+     // fix maxWidth bug
+     $this.css("max-width", dialog.options.maxWidth);
+     //reposition dialog
+     dialog.option("position", dialog.options.position);
+     }
+
+     if (dialog.options.fluid) {
+     // namespace window resize
+     $(window).on("resize.responsive", function () {
+     var wWidth = $(window).width();
+     // check window width against dialog width
+     if (wWidth < dialog.options.maxWidth + 50) {
+     // keep dialog from filling entire screen
+     $this.css("width", "90%");
+     }
+     //reposition dialog
+     dialog.option("position", dialog.options.position);
+     });
+     }
+
+     });
+     }*/
+
+    function gridReload(gridName) {
+        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
+    }
+
+    function openDiagVistasEmpresa(diagName, op, grid, id) {
+        clearDataVistasEmpresa();
+        if (op == "edit") {
+            rowdata = jQuery("#" + grid).getRowData(id);
+            $('#descripcion-edit-VistasEmpresa').val(rowdata['descripcion']);
+            $('#extranet-edit-VistasEmpresa').val(rowdata['extranet_permitido']);
+            $('#' + diagName).dialog('open');
+        } else {
+            $('#' + diagName).dialog('open');
+            $('#extranet-add-VistasEmpresa option:contains("C")').prop('selected', true);
+        }
+    }
+
+    function clearDataVistasEmpresa() {
+        $('#descripcion-add-VistasEmpresa').val("");
+        $('#descripcion-edit-VistasEmpresa').val("");
+    }
+
+    function msgAlert(diagName, selectorName, msg) {
+        $('#' + diagName).show();
+        $('.' + selectorName).html(msg);
+        setTimeout(function () {
+            $('#' + diagName).hide("drop", {direction: "up"}, "slow");
+            $('.' + selectorName).html("");
+        }, 3000);
+    }
+
+</script>
+
+<!-- Dialogo form-add-VistasEmpresa -->
+<div id="form-add-VistasEmpresa"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-VistasEmpresa" role="form">
+        <div class="form-group">
+            <label for="input-descripcion-add-VistasEmpresa" class="col-sm-4 control-label">Vista:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="descripcion-add-VistasEmpresa" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-extranet-add-VistasEmpresa" class="col-sm-4 control-label">Extranet:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="extranet-add-VistasEmpresa">
+                    <option value="C">Caracter</option>
+                    <option value="N">Numero</option>
+                    <option value="F">Fecha</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Dialogo form-edit-VistasEmpresa -->
+<div id="form-edit-VistasEmpresa"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-VistasEmpresa" role="form">
+        <div class="form-group">
+            <label for="input-descripcion-edit-VistasEmpresa" class="col-sm-4 control-label">Vista:</label>
+            <div class="col-sm-8">
+                <input type="text" class="form-control" id="descripcion-edit-VistasEmpresa" placeholder="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="input-extranet-edit-VistasEmpresa" class="col-sm-4 control-label">Extranet:</label>
+            <div class="col-sm-8">
+                <select class="form-control" id="extranet-edit-VistasEmpresa">
+                    <option value="C">Caracter</option>
+                    <option value="N">Numero</option>
+                    <option value="F">Fecha</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
