@@ -1,0 +1,39 @@
+<?php
+
+namespace Application\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * N7VistasFamiliares
+ *
+ * @ORM\Table(name="n7_vistas_familiares")
+ * @ORM\Entity
+ */
+class N7VistasFamiliares
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="descripcion", type="string", length=60, nullable=false)
+     */
+    private $descripcion;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="extranet_permitido", type="string", length=1, nullable=false)
+     */
+    private $extranetPermitido;
+
+
+}

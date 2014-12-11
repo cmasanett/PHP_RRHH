@@ -72,6 +72,33 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                     ]
                 ]
             ],
+            'vistasempresas' => ['type' => 'Segment',
+                'options' => ['route' => '/vistasempresas[/[:action][/:id]]',
+                    'constraints' => ['action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ],
+                    'defaults' => ['controller' => 'Application\Controller\VistasEmpresas',
+                        'action' => 'index'
+                    ]
+                ]
+            ],
+            'vistaslegajos' => ['type' => 'Segment',
+                'options' => ['route' => '/vistaslegajos[/[:action][/:id]]',
+                    'constraints' => ['action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ],
+                    'defaults' => ['controller' => 'Application\Controller\VistasLegajos',
+                        'action' => 'index'
+                    ]
+                ]
+            ],
+            'vistasfamiliares' => ['type' => 'Segment',
+                'options' => ['route' => '/vistasfamiliares[/[:action][/:id]]',
+                    'constraints' => ['action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ],
+                    'defaults' => ['controller' => 'Application\Controller\VistasFamiliares',
+                        'action' => 'index'
+                    ]
+                ]
+            ],
         ]
     ],
     'service_manager' => ['abstract_factories' => ['Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -88,10 +115,14 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
             ]
         ]
     ],
-    'controllers' => ['invokables' => ['Application\Controller\Usuarios' => 'Application\Controller\UsuariosController',
+    'controllers' => ['invokables' => [
+            'Application\Controller\Usuarios' => 'Application\Controller\UsuariosController',
             'Application\Controller\DatosEmpresas' => 'Application\Controller\DatosEmpresasController',
             'Application\Controller\DatosLegajos' => 'Application\Controller\DatosLegajosController',
-            'Application\Controller\DatosFamiliares' => 'Application\Controller\DatosFamiliaresController'
+            'Application\Controller\DatosFamiliares' => 'Application\Controller\DatosFamiliaresController',
+            'Application\Controller\VistasEmpresas' => 'Application\Controller\VistasEmpresasController',
+            'Application\Controller\VistasLegajos' => 'Application\Controller\VistasLegajosController',
+            'Application\Controller\VistasFamiliares' => 'Application\Controller\VistasFamiliaresController'
         ]
     ],
     'view_manager' => ['display_not_found_reason' => true,
