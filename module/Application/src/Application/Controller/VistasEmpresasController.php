@@ -79,122 +79,147 @@ class VistasEmpresasController extends AbstractActionController {
     }
 
     public function loadPropGridAction() {
-        $request = $this->getRequest();
-
-        $id = $this->params()->fromRoute("id", 0);
+        if ($this->request->isXmlHttpRequest()) {
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $dataJson = $request->getPost('id', 0);
+                    $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
+                }
+        }
         
-        $sidx = $request->getPost('sidx', 'id');
-        $sord = $request->getPost('sord', 'ASC');
-        $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+//        $request = $this->getRequest();
+//        $id = $this->params()->fromRoute("id", 0);
+//        
+//        $sidx = $request->getPost('sidx', 'id');
+//        $sord = $request->getPost('sord', 'ASC');
+//        $page = $request->getPost('page', 1);
+//        $limit = $request->getPost('rows', 10);
 
         try {
+//            $query0 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesE u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesE p WHERE p.formularioId = ?1)');
+//            $query0->setParameter(1, $id);
+//            $data = $query0->getResult();
 
-            $query0 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesE u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesE p WHERE p.formularioId = ?1)');
-            $query0->setParameter(1, $id);
-            $data = $query0->getResult();
+//            $count = count($data);
 
-            $count = count($data);
-
-            if ($count > 0) {
-                $total_pages = ceil($count / $limit);
-            } else {
-                $total_pages = 0;
-            }
-            if ($page > $total_pages) {
-                $page = $total_pages;
-            }
-
-            $start = $limit * $page - $limit;
-            if ($start < 0) {
-                $start = 0;
-            }
+//            if ($count > 0) {
+//                $total_pages = ceil($count / $limit);
+//            } else {
+//                $total_pages = 0;
+//            }
+//            if ($page > $total_pages) {
+//                $page = $total_pages;
+//            }
+//
+//            $start = $limit * $page - $limit;
+//            if ($start < 0) {
+//                $start = 0;
+//            }
 
 //            $row = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('id' => $ids), array($sidx => $sord), $limit, $start);
             $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesE u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesE p WHERE p.formularioId = ?1)');
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
 
-            $response ['page'] = $page;
-            $response ['total'] = $total_pages;
-            $response ['records'] = $count;
+            //$response ['page'] = $page;
+            //$response ['total'] = $total_pages;
+            //$response ['records'] = $count;
+            $response['rows'] = array();  
             $i = 0;
 
             foreach ($row as $r) {
-                $response ['rows'][$i]['id'] = $r->getId(); // id
-                $response['rows'][$i]['cell'] = array(
+                //$response ['rows'][$i]['id'] = $r->getId(); // id
+                //$response['rows'][$i]['cell'] = array(
+                    //$r->getId(),
+                    //$r->getDescripcion(),
+                    //$r->getTipoDeCampo()
+                //);
+                $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getDescripcion(),
                     $r->getTipoDeCampo()
                 );
                 $i ++;
             }
-
-            return $this->response->setContent(Json::encode($response));
+            return $this->response->setContent(Json::encode(array('type'=>'success','data'=>$response['rows'])));
+            //return $this->response->setContent(Json::encode($response));
         } catch (\Exception $ex) {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }
     }
     
     public function loadDataGridAction() {
-        $request = $this->getRequest();
-
-        $id = $this->params()->fromRoute("id", null);
-
-        $sidx = $request->getPost('sidx', 'propiedad');
-        $sord = $request->getPost('sord', 'ASC');
-        $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        if ($this->request->isXmlHttpRequest()) {
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $dataJson = $request->getPost('id', 0);
+                    $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
+                }
+        }
+//        $request = $this->getRequest();
+//        $id = $this->params()->fromRoute("id", 0);
+//        //$id = $request->getPost('id', 0);
+//        $sidx = $request->getPost('sidx', 'orden');
+//        $sord = $request->getPost('sord', 'ASC');
+//        $page = $request->getPost('page', 1);
+//        $limit = $request->getPost('rows', 10);
 
         try {
-//            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy(array('formularioId' => $id));
-            $qb0 = $this->getEntityManager()->createQueryBuilder();
-            $qb0->select('u',"p.descripcion")
-                ->from('Application\Entity\N7VistasPropiedadesE', 'u')
-                ->where('u.formularioId = ?1')
-                ->innerJoin('u.propiedadId', 'Application\Entity\N7PropiedadesE g', Expr\Join::WITH, $qb0->expr()->eq('g.id', '?1'))
-                ->orderBy('u.'.$sidx, $sord);
-            $qb0->setParameter(1, $id);
-            $query0 = $qb0->getQuery();
-            $data = $query0->getScalarResult();
-            echo $data;
-            $count = count($data);
+//            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy(array('formularioId' => $id));           
+//            $count = count($data);
+//            
+//            if ($count > 0) {
+//                $total_pages = ceil($count / $limit);
+//            } else {
+//                $total_pages = 0;
+//            }
+//            if ($page > $total_pages) {
+//                $page = $total_pages;
+//            }
+//
+//            $start = $limit * $page - $limit;
+//            if ($start < 0) {
+//                $start = 0;
+//            }
+
+//            $row = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy([ 'formularioId' => $id], array($sidx => $sord), $limit, $start);
             
-            if ($count > 0) {
-                $total_pages = ceil($count / $limit);
-            } else {
-                $total_pages = 0;
-            }
-            if ($page > $total_pages) {
-                $page = $total_pages;
-            }
+            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7VistasPropiedadesE u WHERE u.formularioId = ?1');
+            $query1->setParameter(1, $id);
+            $row = $query1->getResult();
 
-            $start = $limit * $page - $limit;
-            if ($start < 0) {
-                $start = 0;
-            }
-
-            $row = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy([ 'formularioId' => $id], array($sidx => $sord), $limit, $start);
-
-            $response ['page'] = $page;
-            $response ['total'] = $total_pages;
-            $response ['records'] = $count;
+            //$response ['page'] = $page;
+            //$response ['total'] = $total_pages;
+            //$response ['records'] = $count;
+            $response['rows'] = array();  
             $i = 0;
 
             foreach ($row as $r) {
-                $response ['rows'][$i]['id'] = $r->getId(); // id
-                $response['rows'][$i]['cell'] = array(
+                //$response ['rows'][$i]['id'] = $r->getId(); // id
+                //$response['rows'][$i]['cell'] = array(
+                    //$r->getId(),
+                    //$r->getPropiedadId(),
+                    //$r->getFormularioId(),
+                    //$r->getOrden(),
+                    //$r->getSoloLectura()
+                //);
+                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesE u WHERE u.id = ?1');
+                $query0->setParameter(1, $r->getPropiedadId());
+                $descripcion = $query0->getSingleScalarResult();
+                
+                $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
-                    $r->$this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesE u WHERE u.id = ?1')->setParameter(1, getPropiedadId())->getResult(),
+                    $descripcion,
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()
                 );
                 $i ++;
             }
-
-            return $this->response->setContent(Json::encode($response));
+            
+            return $this->response->setContent(Json::encode(array('type'=>'success','data'=>$response['rows'])));
+            //return $this->response->setContent(Json::encode($response));
         } catch (\Exception $ex) {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }

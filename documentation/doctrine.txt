@@ -1,1 +1,9 @@
-DOCTRINE 2
+$qb0 = $this->getEntityManager()->createQueryBuilder();
+            $qb0->select('u',"p.descripcion")
+                ->from('Application\Entity\N7VistasPropiedadesE', 'u')
+                ->where('u.formularioId = ?1')
+                ->innerJoin('u.propiedadId', 'Application\Entity\N7PropiedadesE g', Expr\Join::WITH, $qb0->expr()->eq('g.id', '?1'))
+                ->orderBy('u.'.$sidx, $sord);
+            $qb0->setParameter(1, $id);
+            $query0 = $qb0->getQuery();
+            $data = $query0->getScalarResult();
