@@ -93,7 +93,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             editurl: "<?php echo $this->url('vistasempresas', array('action' => 'editGridItem')); ?>",
             caption: "Vistas de Empresa",
             onSelectRow: function (id) {
-                //loadGridVistasEmpresaVal(id);
+                loadGridDatosVistasEmpresa(id);
             }
         });
         $("#gridVistasEmpresa").navGrid("#pagerVistasEmpresa",
@@ -123,7 +123,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 {name: 'id', index: 'id',
                     width: 10,
                     align: "center",
-                    hidden: true
+                    hidden: false
                 },
                 {name: 'descripcion', index: 'descripcion',
                     width: 30,
@@ -182,7 +182,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             url: "<?php echo $this->url('vistasempresas', array('action' => 'loadDataGrid')); ?>",
             datatype: 'json',
             mtype: 'POST',
-            colNames: ["Id", "PropiedadId", "FormularioId", "Orden", "Modificable"],
+            colNames: ["Id", "PropiedadId", "Propiedad", "FormularioId", "Orden", "Modificable"],
             colModel: [
                 {name: 'id', index: 'id',
                     width: 10,
@@ -193,6 +193,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     width: 10,
                     align: "center",
                     hidden: false
+                },
+                {name: 'propiedad', index: 'propiedad',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
                 },
                 {name: 'formularioId', index: 'formularioId',
                     width: 10,
@@ -470,6 +478,16 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
     }
 
+    function loadGridDatosVistasEmpresa(id) {
+        if (id != null) {
+            var sUrl = "<?php echo $this->url('vistasempresas', array('action' => 'loadDataGrid')); ?>" + "/" + id;
+            $("#gridDatosVistasEmpresa").setGridParam({datatype: 'json', url: sUrl}).trigger('reloadGrid');
+        }
+        else {
+            msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+        }
+    }
+
     function openDiagVistasEmpresa(diagName, op, grid, id) {
         clearDataVistasEmpresa();
         if (op == "edit") {
@@ -550,13 +568,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 <!-- Dialogo form-edit-VistasEmpresa -->
 <div id="form-edit-VistasEmpresa"  title="Editar registro">
     <form class="form-horizontal" id="valid-form-edit-VistasEmpresa" role="form">
-        <div class="form-group">
+        <div class="form-group col-xs-2 col-md-4">
             <label for="input-descripcion-edit-VistasEmpresa" class="col-sm-4 control-label">Vista:</label>
             <div class="col-sm-8">
                 <input type="text" class="form-control" id="descripcion-edit-VistasEmpresa" placeholder="">
             </div>
         </div>
-        <div class="form-group">
+        <div class="form-group col-xs-2 col-md-4">
             <label for="input-extranet-edit-VistasEmpresa" class="col-sm-4 control-label">Extranet:</label>
             <div class="col-sm-8">
                 <select class="form-control" id="extranet-edit-VistasEmpresa">
@@ -566,14 +584,22 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
-    <div class="row">
-        <div class="col-xs-6">
+   <div class="row">
+        <div class="col-xs-6 col-sm-6">
             <div id="jqGridPropiedadesEmpresa" style="padding-top:10px;">
                 <table id="gridPropiedadesEmpresa"></table>
                 <div id="pagerPropiedadesEmpresa"></div>
             </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-6 col-sm-1">
+             <div class="btn-group-vertical" style="padding-top:70px;">
+                <button type="button" class="btn btn-info btn-xs" id="btnAddAll">=>></button>
+                <button type="button" class="btn btn-info btn-xs" id="btnAddSingle">></button>
+                <button type="button" class="btn btn-info btn-xs" id="btnDelSingle"><</button>
+                <button type="button" class="btn btn-info btn-xs" id="btnDelAll"><<=</button>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-5">
             <div id="jqGridDatosVistasEmpresa" style="padding-top:10px;">
                 <table id="gridDatosVistasEmpresa"></table>
                 <div id="pagerDatosVistasEmpresa"></div>
