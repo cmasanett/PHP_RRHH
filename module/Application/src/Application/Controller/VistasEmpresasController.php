@@ -81,49 +81,19 @@ class VistasEmpresasController extends AbstractActionController {
     public function loadPropGridAction() {
         $request = $this->getRequest();
 
-        //$id = $this->params()->fromRoute("id", 1);
+        $id = $this->params()->fromRoute("id", 0);
         
         $sidx = $request->getPost('sidx', 'id');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
         $limit = $request->getPost('rows', 10);
 
-        
-        //propiedadId
-        
         try {
-            $qb = $this->getEntityManager()->createQueryBuilder();
-            $qb->select('N7VistasPropiedadesE.propiedadId')
-                ->from('Application\Entity\N7VistasPropiedadesE', 'N7VistasPropiedadesE')
-                ->orderBy('N7VistasPropiedadesE.id', 'ASC');
-            $query = $qb->getQuery();
-            $r1 = $query->getScalarResult();
-            $ids = array_map('current', $r1);
-            $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('id' => array("1","2","3")));
-            
-            //$ids = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findAll();  
-            //$data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('id' => array($ids)));
-//            if (!is_array($ids)) $ids = array($ids);
-//            $qb = $this->getEntityManager()->createQueryBuilder();
-//            $qb->add('select', $qb->expr()->count('r.id'))
-//                ->add('from', '\My\Entity\Rating r');
-//            if ($outcome === 'wins') $qb->add('where', $qb->expr()->in('r.winner', array('?1')));
-//            if ($outcome === 'fails') $qb->add('where', $qb->expr()->in('r.loser', array('?1')));
-//            $qb->select(array('vp')) // string 'u' is converted to array internally
-//                ->from('User', 'vp')
-//                ->where($qb->expr()->orX(
-//                    $qb->expr()->eq('vp.id', '?1'),
-//                    $qb->expr()->like('vp.nickname', '?2')
-//                ))
-//                ->orderBy('u.surname', 'ASC'));
-//            $qb->add('where', $qb->expr()->in('r.winner', '?1'));
-//            $qb->setParameter(1, $ids);
-//            $query = $qb->getQuery();
-//            //die('q = ' . $qb);
-//            $data = $query->getSingleScalarResult();
-            
-            //$data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy(array('formulario' => $id));
-            //$data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('formulario' => $id));
+
+            $query0 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesE u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesE p WHERE p.formularioId = ?1)');
+            $query0->setParameter(1, $id);
+            $data = $query0->getResult();
+
             $count = count($data);
 
             if ($count > 0) {
@@ -140,7 +110,10 @@ class VistasEmpresasController extends AbstractActionController {
                 $start = 0;
             }
 
-            $row = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('id' => array($ids)), array($sidx => $sord), $limit, $start);
+//            $row = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('id' => $ids), array($sidx => $sord), $limit, $start);
+            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesE u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesE p WHERE p.formularioId = ?1)');
+            $query1->setParameter(1, $id);
+            $row = $query1->getResult();
 
             $response ['page'] = $page;
             $response ['total'] = $total_pages;
@@ -174,9 +147,19 @@ class VistasEmpresasController extends AbstractActionController {
         $limit = $request->getPost('rows', 10);
 
         try {
-            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy(array('formularioId' => $id));
+//            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy(array('formularioId' => $id));
+            $qb0 = $this->getEntityManager()->createQueryBuilder();
+            $qb0->select('u',"p.descripcion")
+                ->from('Application\Entity\N7VistasPropiedadesE', 'u')
+                ->where('u.formularioId = ?1')
+                ->innerJoin('u.propiedadId', 'Application\Entity\N7PropiedadesE g', Expr\Join::WITH, $qb0->expr()->eq('g.id', '?1'))
+                ->orderBy('u.'.$sidx, $sord);
+            $qb0->setParameter(1, $id);
+            $query0 = $qb0->getQuery();
+            $data = $query0->getScalarResult();
+            echo $data;
             $count = count($data);
-
+            
             if ($count > 0) {
                 $total_pages = ceil($count / $limit);
             } else {
@@ -203,6 +186,7 @@ class VistasEmpresasController extends AbstractActionController {
                 $response['rows'][$i]['cell'] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
+                    $r->$this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesE u WHERE u.id = ?1')->setParameter(1, getPropiedadId())->getResult(),
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()
