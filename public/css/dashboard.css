@@ -49,7 +49,7 @@ body {
     }
 
     .sidebar2 {
-        max-width: 270px;
+        max-width: 255px;
         position: fixed;
         top: 51px;
         bottom: 0;
@@ -187,6 +187,11 @@ ul li:hover>ul{
 #diagAlert{
     display: none;
     width: 90%;
+}
+
+#diagAlertModal{
+    display: none;
+    width: 100%;
 }
 
 .flashAlert{

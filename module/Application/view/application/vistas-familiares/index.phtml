@@ -1,5 +1,5 @@
 <?php
-$title = 'Vistas de datos de Empresas';
+$title = 'Vistas de datos de Familiares';
 ?>
 <h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>
 <?php
@@ -28,14 +28,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     <div class="row">
         <div class="col-xs-6">
             <div class="btn-group">
-                <button type="button" class="btn btn-primary btn-lg" id="btnAddVistasEmpresa">Alta</button>
-                <button type="button" class="btn btn-primary btn-lg" id="btnDelVistasEmpresa">Baja</button>
-                <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasEmpresa">Modificacion</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddVistasFamiliares">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelVistasFamiliares">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasFamiliares">Modificacion</button>
             </div>
             <br>
-            <div id="jqGridVistasEmpresa" style="padding-top:10px;">
-                <table id="gridVistasEmpresa"></table>
-                <div id="pagerVistasEmpresa"></div>
+            <div id="jqGridVistasFamiliares" style="padding-top:10px;">
+                <table id="gridVistasFamiliares"></table>
+                <div id="pagerVistasFamiliares"></div>
             </div>
         </div>
     </div>
@@ -46,12 +46,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     var lastSel;
     $(document).ready(function () {
         //Grids
-        $("#gridVistasEmpresa").jqGrid({
+        $("#gridVistasFamiliares").jqGrid({
             width: 100,
             height: 230,
             autowidth: true,
             rownumbers: true,
-            url: "<?php echo $this->url('vistasempresas', array('action' => 'loadViewGrid')); ?>",
+            url: "<?php echo $this->url('vistasfamiliares', array('action' => 'loadViewGrid')); ?>",
             datatype: 'json',
             mtype: 'POST',
             colNames: ["Id", "Vista", "Extranet"],
@@ -82,7 +82,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     searchoptions: {value: ":;S:Si;N:No"}
                 }
             ],
-            pager: "#pagerVistasEmpresa",
+            pager: "#pagerVistasFamiliares",
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
@@ -95,23 +95,23 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             pgtext: false,
             pginput: false,
             loadonce: true,
-            editurl: "<?php echo $this->url('vistasempresas', array('action' => 'editGridItem')); ?>",
-            caption: "Vistas de Empresa"
+            editurl: "<?php echo $this->url('vistasfamiliares', array('action' => 'editGridItem')); ?>",
+            caption: "Vistas de Familiares"
         });
-        $("#gridVistasEmpresa").navGrid("#pagerVistasEmpresa",
+        $("#gridVistasFamiliares").navGrid("#pagerVistasFamiliares",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-        $("#gridVistasEmpresa").navButtonAdd("#pagerVistasEmpresa", {
+        $("#gridVistasFamiliares").navButtonAdd("#pagerVistasFamiliares", {
             caption: "Borrar filtros",
             title: "Borrar filtros",
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
-                jQuery("#gridVistasEmpresa")[0].clearToolbar();
-                gridReload('gridVistasEmpresa');
+                jQuery("#gridVistasFamiliares")[0].clearToolbar();
+                gridReload('gridVistasFamiliares');
             }
         });
-        $('#gridVistasEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        $('#gridVistasFamiliares').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
 
-        $("#gridPropiedadesEmpresa").jqGrid({
+        $("#gridPropiedadesFamiliares").jqGrid({
             width: 460,
             height: 150,
             shrinkToFit: true,
@@ -147,7 +147,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
                 }
             ],
-            pager: "#pagerPropiedadesEmpresa",
+            pager: "#pagerPropiedadesFamiliares",
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
@@ -161,21 +161,21 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             loadonce: true,
             caption: "Lista de datos posibles"
         });
-        $("#gridPropiedadesEmpresa").navGrid("#pagerPropiedadesEmpresa",
+        $("#gridPropiedadesFamiliares").navGrid("#pagerPropiedadesFamiliares",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-//        $("#gridPropiedadesEmpresa").navButtonAdd("#pagerPropiedadesEmpresa", {
+//        $("#gridPropiedadesFamiliares").navButtonAdd("#pagerPropiedadesFamiliares", {
 //            caption: "Borrar filtros",
 //            title: "Borrar filtros",
 //            buttonicon: 'ui-icon-refresh',
 //            onClickButton: function () {
-//                jQuery("#gridPropiedadesEmpresa")[0].clearToolbar();
-//                //loadGrid('gridPropiedadesEmpresa');
-//                //gridReload('gridPropiedadesEmpresa');
+//                jQuery("#gridPropiedadesFamiliares")[0].clearToolbar();
+//                //loadGrid('gridPropiedadesFamiliares');
+//                //gridReload('gridPropiedadesFamiliares');
 //            }
 //        });
-        $('#gridPropiedadesEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        $('#gridPropiedadesFamiliares').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
 
-        $("#gridDatosVistasEmpresa").jqGrid({
+        $("#gridDatosVistasFamiliares").jqGrid({
             width: 400,
             height: 150,
             shrinkToFit: true,
@@ -240,7 +240,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     editoptions: {value: ":;S:Si;N:No"}
                 }
             ],
-            pager: "#pagerDatosVistasEmpresa",
+            pager: "#pagerDatosVistasFamiliares",
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
@@ -257,41 +257,41 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             cellEdit: true,
             cellsubmit: 'clientArray'
         });
-        $("#gridDatosVistasEmpresa").navGrid("#pagerDatosVistasEmpresa",
+        $("#gridDatosVistasFamiliares").navGrid("#pagerDatosVistasFamiliares",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-//        $("#gridDatosVistasEmpresa").navButtonAdd("#pagerDatosVistasEmpresa", {
+//        $("#gridDatosVistasFamiliares").navButtonAdd("#pagerDatosVistasFamiliares", {
 //            caption: "Borrar filtros",
 //            title: "Borrar filtros",
 //            buttonicon: 'ui-icon-refresh',
 //            onClickButton: function () {
-//                jQuery("#gridDatosVistasEmpresa")[0].clearToolbar();
-//                //loadGrid('gridDatosVistasEmpresa');
-//                //gridReload('gridDatosVistasEmpresa');
+//                jQuery("#gridDatosVistasFamiliares")[0].clearToolbar();
+//                //loadGrid('gridDatosVistasFamiliares');
+//                //gridReload('gridDatosVistasFamiliares');
 //            }
 //        });
-        $('#gridDatosVistasEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
-        jQuery("#gridDatosVistasEmpresa").jqGrid('sortableRows', {
+        $('#gridDatosVistasFamiliares').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        jQuery("#gridDatosVistasFamiliares").jqGrid('sortableRows', {
             update: function (e, ui) {
-                reOrder('gridDatosVistasEmpresa', 'orden');
+                reOrder('gridDatosVistasFamiliares', 'orden');
             }
         });
 
         //Buttons
-        $("#btnAddVistasEmpresa").click(function () {
-            openDiagVistasEmpresa("form-add-VistasEmpresa", "add", "", "");
+        $("#btnAddVistasFamiliares").click(function () {
+            openDiagVistasFamiliares("form-add-VistasFamiliares", "add", "", "");
         });
-        $("#btnDelVistasEmpresa").click(function () {
-            var rowid = jQuery("#gridVistasEmpresa").jqGrid('getGridParam', 'selrow');
+        $("#btnDelVistasFamiliares").click(function () {
+            var rowid = jQuery("#gridVistasFamiliares").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
                 $.ajax({
-                    url: "<?php echo $this->url('vistasempresas', array('action' => 'deleteGridItem')); ?>",
+                    url: "<?php echo $this->url('vistasfamiliares', array('action' => 'deleteGridItem')); ?>",
                     global: false,
                     type: "POST",
                     data: "id=" + rowid,
                     dataType: "json",
                     async: false,
                     success: function (msg) {
-                        gridReload('gridVistasEmpresa');
+                        gridReload('gridVistasFamiliares');
                     }
                 });
             }
@@ -299,10 +299,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
             }
         });
-        $("#btnEditVistasEmpresa").click(function () {
-            var rowid = jQuery("#gridVistasEmpresa").jqGrid('getGridParam', 'selrow');
+        $("#btnEditVistasFamiliares").click(function () {
+            var rowid = jQuery("#gridVistasFamiliares").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagVistasEmpresa("form-add-VistasEmpresa", "edit", "gridVistasEmpresa", rowid);
+                openDiagVistasFamiliares("form-add-VistasFamiliares", "edit", "gridVistasFamiliares", rowid);
             }
             else {
                 msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
@@ -311,10 +311,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
         //btnAddAllData =>>
         $("#btnAddAllData").click(function () {
-            var dataGrid = jQuery("#gridPropiedadesEmpresa").jqGrid('getGridParam', 'data');
+            var dataGrid = jQuery("#gridPropiedadesFamiliares").jqGrid('getGridParam', 'data');
             if (dataGrid.length > 0) {
                 for (var i = 0; i < dataGrid.length; i++) {
-                    var ids = $("#gridDatosVistasEmpresa").jqGrid('getDataIDs');
+                    var ids = $("#gridDatosVistasFamiliares").jqGrid('getDataIDs');
                     ids = ids.toString();
                     ids = ids.split(",");
 
@@ -328,20 +328,20 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     };
 
                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                        $("#gridDatosVistasEmpresa").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
+                        $("#gridDatosVistasFamiliares").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
                     } else {
-                        $("#gridDatosVistasEmpresa").jqGrid('addRowData', 1, data);
+                        $("#gridDatosVistasFamiliares").jqGrid('addRowData', 1, data);
                     }
                 }
-                deleteGrid('gridPropiedadesEmpresa');
+                deleteGrid('gridPropiedadesFamiliares');
             }
         });
         //btnAddSingleData >
         $("#btnAddSingleData").click(function () {
-            var rowid = jQuery("#gridPropiedadesEmpresa").jqGrid('getGridParam', 'selrow');
+            var rowid = jQuery("#gridPropiedadesFamiliares").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                var dataRow = $("#gridPropiedadesEmpresa").jqGrid('getRowData', rowid);
-                var ids = $("#gridDatosVistasEmpresa").jqGrid('getDataIDs');
+                var dataRow = $("#gridPropiedadesFamiliares").jqGrid('getRowData', rowid);
+                var ids = $("#gridDatosVistasFamiliares").jqGrid('getDataIDs');
                 ids = ids.toString();
                 ids = ids.split(",");
 
@@ -355,11 +355,11 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 };
 
                 if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                    $("#gridDatosVistasEmpresa").jqGrid('addRowData', ids.length + 1, data);
+                    $("#gridDatosVistasFamiliares").jqGrid('addRowData', ids.length + 1, data);
                 } else {
-                    $("#gridDatosVistasEmpresa").jqGrid('addRowData', 1, data);
+                    $("#gridDatosVistasFamiliares").jqGrid('addRowData', 1, data);
                 }
-                $("#gridPropiedadesEmpresa").jqGrid('delRowData', rowid);
+                $("#gridPropiedadesFamiliares").jqGrid('delRowData', rowid);
             }
             else {
                 msgAlert("diagAlertModal", "dataAlertModal", "Por favor seleccione una fila.");
@@ -367,19 +367,19 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         });
         //btnDelSingleData <
         $("#btnDelSingleData").click(function () {
-            var rowid = jQuery("#gridDatosVistasEmpresa").jqGrid('getGridParam', 'selrow');
+            var rowid = jQuery("#gridDatosVistasFamiliares").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                var dataRow = $("#gridDatosVistasEmpresa").jqGrid('getRowData', rowid);
+                var dataRow = $("#gridDatosVistasFamiliares").jqGrid('getRowData', rowid);
                 var data = {
                     "id": dataRow['propiedadId'],
                     "descripcion": dataRow['propiedad'],
                     "tipo_de_campo": dataRow['tipo']
                 };
 
-                $("#gridPropiedadesEmpresa").jqGrid('addRowData', dataRow['propiedadId'], data);
-                $("#gridDatosVistasEmpresa").jqGrid('delRowData', rowid);
-                reOrder('gridDatosVistasEmpresa', 'orden');
-                $("#gridPropiedadesEmpresa").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
+                $("#gridPropiedadesFamiliares").jqGrid('addRowData', dataRow['propiedadId'], data);
+                $("#gridDatosVistasFamiliares").jqGrid('delRowData', rowid);
+                reOrder('gridDatosVistasFamiliares', 'orden');
+                $("#gridPropiedadesFamiliares").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
             }
             else {
                 msgAlert("diagAlertModal", "dataAlertModal", "Por favor seleccione una fila.");
@@ -387,10 +387,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         });
         //btnDelAllData <<=
         $("#btnDelAllData").click(function () {
-            var dataGrid = jQuery("#gridDatosVistasEmpresa").jqGrid('getGridParam', 'data');
+            var dataGrid = jQuery("#gridDatosVistasFamiliares").jqGrid('getGridParam', 'data');
             if (dataGrid.length > 0) {
                 for (var i = 0; i < dataGrid.length; i++) {
-                    var ids = $("#gridPropiedadesEmpresa").jqGrid('getDataIDs');
+                    var ids = $("#gridPropiedadesFamiliares").jqGrid('getDataIDs');
                     ids = ids.toString();
                     ids = ids.split(",");
 
@@ -401,18 +401,18 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     };
 
                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                        $("#gridPropiedadesEmpresa").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
+                        $("#gridPropiedadesFamiliares").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
                     } else {
-                        $("#gridPropiedadesEmpresa").jqGrid('addRowData', 1, data);
+                        $("#gridPropiedadesFamiliares").jqGrid('addRowData', 1, data);
                     }
                 }
-                $("#gridPropiedadesEmpresa").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
-                deleteGrid('gridDatosVistasEmpresa');
+                $("#gridPropiedadesFamiliares").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
+                deleteGrid('gridDatosVistasFamiliares');
             }
         });
 
-        //Dialog addVistasEmpresa
-        $("#form-add-VistasEmpresa").dialog({
+        //Dialog addVistasFamiliares
+        $("#form-add-VistasFamiliares").dialog({
             autoOpen: false,
             resizable: true,
             draggable: true,
@@ -430,11 +430,11 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             },
             buttons: {
                 'Aceptar': function () {
-                    var descripcion = $("#descripcion-add-VistasEmpresa").val();
-                    var extranet = $("#extranet-add-VistasEmpresa").val();
+                    var descripcion = $("#descripcion-add-VistasFamiliares").val();
+                    var extranet = $("#extranet-add-VistasFamiliares").val();
 
                     if (descripcion != '') {
-                        var ids = $("#gridVistasEmpresa").jqGrid('getDataIDs');
+                        var ids = $("#gridVistasFamiliares").jqGrid('getDataIDs');
                         ids = ids.toString();
                         ids = ids.split(",");
 
@@ -442,12 +442,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         var rowid = "";
 
                         if (oEdit) {
-                            rowid = jQuery("#gridVistasEmpresa").jqGrid('getGridParam', 'selrow');
+                            rowid = jQuery("#gridVistasFamiliares").jqGrid('getGridParam', 'selrow');
                             if (rowid != null) {
                                 if (ids != "") {
                                     for (var i = 0; i < ids.length; i++) {
-                                        var data = $("#gridVistasEmpresa").jqGrid('getRowData', ids[i]);
-                                        if (data['descripcion'].toLowerCase() == $("#descripcion-add-VistasEmpresa").val().toLowerCase() && data['id'] != rowid) {
+                                        var data = $("#gridVistasFamiliares").jqGrid('getRowData', ids[i]);
+                                        if (data['descripcion'].toLowerCase() == $("#descripcion-add-VistasFamiliares").val().toLowerCase() && data['id'] != rowid) {
                                             e++;
                                         }
                                     }
@@ -458,7 +458,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         } else {
                             if (ids != "") {
                                 for (var i = 0; i < ids.length; i++) {
-                                    var data = $("#gridVistasEmpresa").jqGrid('getRowData', ids[i]);
+                                    var data = $("#gridVistasFamiliares").jqGrid('getRowData', ids[i]);
                                     if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
                                         e++;
                                     }
@@ -466,7 +466,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             }
                         }
                         if (e == 0) {
-                            var dataGridDatosVistas = jQuery("#gridDatosVistasEmpresa").jqGrid('getGridParam', 'data');
+                            var dataGridDatosVistas = jQuery("#gridDatosVistasFamiliares").jqGrid('getGridParam', 'data');
                             if (dataGridDatosVistas.length > 0) {
                                 var data = {
                                     "id": rowid,
@@ -475,15 +475,15 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     "vistas_propiedades": dataGridDatosVistas
                                 };
                                 $.ajax({
-                                    url: "<?php echo $this->url('vistasempresas', array('action' => 'editGridItem')); ?>",
+                                    url: "<?php echo $this->url('vistasfamiliares', array('action' => 'editGridItem')); ?>",
                                     global: false,
                                     type: "POST",
                                     data: "data=" + JSON.stringify(data),
                                     dataType: "json",
                                     async: false,
                                     success: function (msg) {
-                                        gridReload('gridVistasEmpresa');
-                                        $("#form-add-VistasEmpresa").dialog('close');
+                                        gridReload('gridVistasFamiliares');
+                                        $("#form-add-VistasFamiliares").dialog('close');
                                     }
                                 });
                             } else {
@@ -497,14 +497,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     }
                 },
                 'Cancelar': function () {
-                    deleteGrid('gridPropiedadesEmpresa');
-                    deleteGrid('gridDatosVistasEmpresa');
+                    deleteGrid('gridPropiedadesFamiliares');
+                    deleteGrid('gridDatosVistasFamiliares');
                     $(this).dialog('close');
                 }
             },
             close: function () {
-                deleteGrid('gridPropiedadesEmpresa');
-                deleteGrid('gridDatosVistasEmpresa');
+                deleteGrid('gridPropiedadesFamiliares');
+                deleteGrid('gridDatosVistasFamiliares');
             }
         });
 
@@ -526,32 +526,32 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
     }
 
-    function openDiagVistasEmpresa(diagName, op, grid, id) {
-        clearDataVistasEmpresa();
+    function openDiagVistasFamiliares(diagName, op, grid, id) {
+        clearDataVistasFamiliares();
         if (op == "edit") {
             rowdata = jQuery("#" + grid).getRowData(id);
-            $('#descripcion-add-VistasEmpresa').val(rowdata['descripcion']);
-            $('#extranet-add-VistasEmpresa').val(rowdata['extranet_permitido']);
+            $('#descripcion-add-VistasFamiliares').val(rowdata['descripcion']);
+            $('#extranet-add-VistasFamiliares').val(rowdata['extranet_permitido']);
             $('#' + diagName).dialog("option", "title", "Editar registro");
             $('#' + diagName).dialog('open');
             $('#' + diagName).dialog('moveToTop');
-            loadGrid("gridPropiedadesEmpresa", rowdata['id']);
-            loadGrid("gridDatosVistasEmpresa", rowdata['id']);
+            loadGrid("gridPropiedadesFamiliares", rowdata['id']);
+            loadGrid("gridDatosVistasFamiliares", rowdata['id']);
             oEdit = true;
         } else {
             $('#' + diagName).dialog("option", "title", "Agregar registro");
             $('#' + diagName).dialog('open');
             $('#' + diagName).dialog('moveToTop');
-            $('#extranet-add-VistasEmpresa option:contains("C")').prop('selected', true);
-            loadGrid("gridPropiedadesEmpresa");
-            loadGrid("gridDatosVistasEmpresa");
+            $('#extranet-add-VistasFamiliares option:contains("C")').prop('selected', true);
+            loadGrid("gridPropiedadesFamiliares");
+            loadGrid("gridDatosVistasFamiliares");
             oEdit = false;
         }
     }
 
-    function clearDataVistasEmpresa() {
-        $('#descripcion-add-VistasEmpresa').val("");
-        $('#descripcion-edit-VistasEmpresa').val("");
+    function clearDataVistasFamiliares() {
+        $('#descripcion-add-VistasFamiliares').val("");
+        $('#descripcion-edit-VistasFamiliares').val("");
     }
 
     function msgAlert(diagName, selectorName, msg) {
@@ -566,9 +566,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
     function loadGrid(gridName, rowid) {
         switch (gridName) {
-            case 'gridPropiedadesEmpresa':
+            case 'gridPropiedadesFamiliares':
                 $.ajax({
-                    url: "<?php echo $this->url('vistasempresas', array('action' => 'loadPropGrid')); ?>",
+                    url: "<?php echo $this->url('vistasfamiliares', array('action' => 'loadPropGrid')); ?>",
                     global: false,
                     type: "POST",
                     data: "id=" + rowid,
@@ -576,7 +576,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     async: false,
                     success: function (result) {
                         if (result.type == "success") {// ok	
-                            deleteGrid('gridPropiedadesEmpresa');
+                            deleteGrid('gridPropiedadesFamiliares');
                             if (result.data.length > 0) {
                                 for (var i = 0; i < result.data.length; i++) {
                                     var dataLocal = {
@@ -584,14 +584,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                         "descripcion": result.data[i][1],
                                         "tipo_de_campo": result.data[i][2]
                                     };
-                                    var ids = jQuery("#gridPropiedadesEmpresa").jqGrid('getDataIDs');
+                                    var ids = jQuery("#gridPropiedadesFamiliares").jqGrid('getDataIDs');
                                     ids = ids.toString();
 
                                     ids = ids.split(",");
                                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                                        $("#gridPropiedadesEmpresa").jqGrid('addRowData', ids.length + 1, dataLocal);
+                                        $("#gridPropiedadesFamiliares").jqGrid('addRowData', ids.length + 1, dataLocal);
                                     } else {
-                                        $("#gridPropiedadesEmpresa").jqGrid('addRowData', 1, dataLocal);
+                                        $("#gridPropiedadesFamiliares").jqGrid('addRowData', 1, dataLocal);
                                     }
                                 }
                             }
@@ -599,9 +599,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     }
                 });
                 break;
-            case 'gridDatosVistasEmpresa':
+            case 'gridDatosVistasFamiliares':
                 $.ajax({
-                    url: "<?php echo $this->url('vistasempresas', array('action' => 'loadDataGrid')); ?>",
+                    url: "<?php echo $this->url('vistasfamiliares', array('action' => 'loadDataGrid')); ?>",
                     global: false,
                     type: "POST",
                     data: "id=" + rowid,
@@ -609,7 +609,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     async: false,
                     success: function (result) {
                         if (result.type == "success") {
-                            deleteGrid('gridDatosVistasEmpresa');
+                            deleteGrid('gridDatosVistasFamiliares');
                             if (result.data.length > 0) {
                                 for (var i = 0; i < result.data.length; i++) {
                                     var dataLocal = {
@@ -620,14 +620,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                         "orden": result.data[i][4],
                                         "solo_lectura": result.data[i][5]
                                     };
-                                    var ids = jQuery("#gridDatosVistasEmpresa").jqGrid('getDataIDs');
+                                    var ids = jQuery("#gridDatosVistasFamiliares").jqGrid('getDataIDs');
                                     ids = ids.toString();
 
                                     ids = ids.split(",");
                                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                                        $("#gridDatosVistasEmpresa").jqGrid('addRowData', ids.length + 1, dataLocal);
+                                        $("#gridDatosVistasFamiliares").jqGrid('addRowData', ids.length + 1, dataLocal);
                                     } else {
-                                        $("#gridDatosVistasEmpresa").jqGrid('addRowData', 1, dataLocal);
+                                        $("#gridDatosVistasFamiliares").jqGrid('addRowData', 1, dataLocal);
                                     }
                                 }
                             }
@@ -670,22 +670,22 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
 </script>
 
-<!-- Dialogo form-add-VistasEmpresa -->
-<div id="form-add-VistasEmpresa" class="container-fluid" title="" >
-    <form class="form-horizontal" id="valid-form-add-VistasEmpresa" role="form">
+<!-- Dialogo form-add-VistasFamiliares -->
+<div id="form-add-VistasFamiliares" class="container-fluid" title="" >
+    <form class="form-horizontal" id="valid-form-add-VistasFamiliares" role="form">
         <div class="row">
             <div class="form-group col-xs-2 col-md-4">
-                <label for="input-descripcion-add-VistasEmpresa" class="col-sm-4 control-label">Vista:</label>
+                <label for="input-descripcion-add-VistasFamiliares" class="col-sm-4 control-label">Vista:</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="descripcion-add-VistasEmpresa" placeholder="">
+                    <input type="text" class="form-control" id="descripcion-add-VistasFamiliares" placeholder="">
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-xs-2 col-md-4">
-                <label for="input-extranet-add-VistasEmpresa" class="col-sm-4 control-label">Extranet:</label>
+                <label for="input-extranet-add-VistasFamiliares" class="col-sm-4 control-label">Extranet:</label>
                 <div class="col-sm-8">
-                    <select class="form-control" id="extranet-add-VistasEmpresa">
+                    <select class="form-control" id="extranet-add-VistasFamiliares">
                         <option value="S">Si</option>
                         <option value="N">No</option>
                     </select>
@@ -695,9 +695,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     </form>
     <div class="row">
         <div class="col-xs-6 col-sm-6">
-            <div id="jqGridPropiedadesEmpresa" style="padding-top:10px;">
-                <table id="gridPropiedadesEmpresa"></table>
-                <div id="pagerPropiedadesEmpresa"></div>
+            <div id="jqGridPropiedadesFamiliares" style="padding-top:10px;">
+                <table id="gridPropiedadesFamiliares"></table>
+                <div id="pagerPropiedadesFamiliares"></div>
             </div>
         </div>
         <div class="col-xs-6 col-sm-1">
@@ -709,9 +709,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
         <div class="col-xs-6 col-sm-5">
-            <div id="jqGridDatosVistasEmpresa" style="padding-top:10px;">
-                <table id="gridDatosVistasEmpresa"></table>
-                <div id="pagerDatosVistasEmpresa"></div>
+            <div id="jqGridDatosVistasFamiliares" style="padding-top:10px;">
+                <table id="gridDatosVistasFamiliares"></table>
+                <div id="pagerDatosVistasFamiliares"></div>
             </div>
         </div>
     </div>

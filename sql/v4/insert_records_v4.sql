@@ -46,5 +46,5 @@ INSERT INTO `n7_propiedades_l` VALUES ('252', 'GRATIFICACION - INDICADOR', 'N');
 INSERT INTO `n7_propiedades_l` VALUES ('253', 'NIVEL DE ESTUDIOS', 'N');
 INSERT INTO `n7_propiedades_l` VALUES ('254', 'SINDICATO - FUERA DE CONVENIO', 'N');
 INSERT INTO `n7_propiedades_l` VALUES ('255', 'DECRETO 1242 BASE DE CALCULO', 'N');
-INSERT INTO `n7_vistas_legajos` VALUES ('1', 'Datos Generales', 'n'), ('2', 'Domicilios', 'n'), ('3', 'fechas', 'N'), ('4', 'Alta de Legajo', 'N');
+INSERT INTO `n7_vistas_legajos` VALUES ('1', 'Datos Generales', 'N'), ('2', 'Domicilios', 'N'), ('3', 'Fechas', 'N'), ('4', 'Alta de Legajo', 'N');
 INSERT INTO `n7_vistas_propiedades_l` VALUES ('1', '175', '3', '10', 'N'), ('2', '174', '3', '20', 'N'), ('3', '169', '1', '10', 'N'), ('4', '174', '1', '20', 'N'), ('6', '174', '4', '10', 'N');

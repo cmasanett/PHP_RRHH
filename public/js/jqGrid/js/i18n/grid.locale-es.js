@@ -12,7 +12,7 @@ $.jgrid = $.jgrid || {};
 $.extend($.jgrid,{
 	defaults : {
 		recordtext: "Mostrando {0} - {1} de {2}",
-	    emptyrecords: "Sin registros que mostrar",
+	    emptyrecords: "Sin registros", //"Sin registros que mostrar",
 		loadtext: "Cargando...",
 		pgtext : "Página {0} de {1}"
 	},
