@@ -59,7 +59,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 {name: 'id', index: 'id',
                     width: 10,
                     align: "center",
-                    sortable: true,
+                    sortable: false,
                     sorttype: 'int',
                     hidden: true
                 },
@@ -86,9 +86,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
-            //viewsortcols: [true, 'horizontal', true],
+            viewsortcols: [true, 'horizontal', true],
             gridview: true,
             hidegrid: false,
+            ignoreCase: true,
             autoencode: true,
             forceFit: false,
             pgbuttons: false,
@@ -124,7 +125,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 {name: 'id', index: 'id',
                     width: 10,
                     align: "center",
-                    sortable: true,
+                    sortable: false,
                     sorttype: 'int',
                     hidden: true
                 },
@@ -151,9 +152,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
-            //viewsortcols: [true, 'horizontal', true],
+            viewsortcols: [true, 'horizontal', true],
             gridview: true,
             hidegrid: false,
+            ignoreCase: true,
             autoencode: true,
             pgbuttons: false,
             pgtext: false,
@@ -188,7 +190,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 {name: 'id', index: 'id',
                     width: 10,
                     align: "center",
-                    sortable: true,
+                    sortable: false,
                     sorttype: 'int',
                     hidden: true
                 },
@@ -211,11 +213,15 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 {name: 'tipo', index: 'tipo',
                     width: 10,
                     align: "center",
+                    sortable: false,
+                    sorttype: 'text',
                     hidden: true
                 },
                 {name: 'formularioId', index: 'formularioId',
                     width: 10,
                     align: "center",
+                    sortable: false,
+                    sorttype: 'int',
                     hidden: true
                 },
                 {name: 'orden', index: 'orden',
@@ -244,9 +250,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
-            //viewsortcols: [true, 'horizontal', true],
+            viewsortcols: [true, 'horizontal', true],
             gridview: true,
             hidegrid: false,
+            ignoreCase: true,
             autoencode: true,
             pgbuttons: false,
             pgtext: false,
@@ -278,7 +285,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
         //Buttons
         $("#btnAddVistasFamiliares").click(function () {
-            openDiagVistasFamiliares("form-add-VistasFamiliares", "add", "", "");
+            openDiagVistasFamiliares("form-add-edit-VistasFamiliares", "add", "", "");
         });
         $("#btnDelVistasFamiliares").click(function () {
             var rowid = jQuery("#gridVistasFamiliares").jqGrid('getGridParam', 'selrow');
@@ -302,7 +309,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $("#btnEditVistasFamiliares").click(function () {
             var rowid = jQuery("#gridVistasFamiliares").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagVistasFamiliares("form-add-VistasFamiliares", "edit", "gridVistasFamiliares", rowid);
+                openDiagVistasFamiliares("form-add-edit-VistasFamiliares", "edit", "gridVistasFamiliares", rowid);
             }
             else {
                 msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
@@ -412,7 +419,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         });
 
         //Dialog addVistasFamiliares
-        $("#form-add-VistasFamiliares").dialog({
+        $("#form-add-edit-VistasFamiliares").dialog({
             autoOpen: false,
             resizable: true,
             draggable: true,
@@ -483,7 +490,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     async: false,
                                     success: function (msg) {
                                         gridReload('gridVistasFamiliares');
-                                        $("#form-add-VistasFamiliares").dialog('close');
+                                        $("#form-add-edit-VistasFamiliares").dialog('close');
                                     }
                                 });
                             } else {
@@ -670,9 +677,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
 </script>
 
-<!-- Dialogo form-add-VistasFamiliares -->
-<div id="form-add-VistasFamiliares" class="container-fluid" title="" >
-    <form class="form-horizontal" id="valid-form-add-VistasFamiliares" role="form">
+<!-- Dialogo form-add-edit-VistasFamiliares -->
+<div id="form-add-edit-VistasFamiliares" class="container-fluid" title="" >
+    <form class="form-horizontal" role="form">
         <div class="row">
             <div class="form-group col-xs-2 col-md-4">
                 <label for="input-descripcion-add-VistasFamiliares" class="col-sm-4 control-label">Vista:</label>

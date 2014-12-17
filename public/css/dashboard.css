@@ -194,6 +194,26 @@ ul li:hover>ul{
     width: 100%;
 }
 
+#diagAlertModalAddE{
+    display: none;
+    width: 100%;
+}
+
+#diagAlertModalEditE{
+    display: none;
+    width: 100%;
+}
+
+#diagAlertModalAddEV{
+    display: none;
+    width: 100%;
+}
+
+#diagAlertModalEditEV{
+    display: none;
+    width: 100%;
+}
+
 .flashAlert{
     width: 90%;
 }

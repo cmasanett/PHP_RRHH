@@ -27,7 +27,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 <div class="content">
     <div class="row">
         <div class="col-xs-6">
-            <div class=" btn-group">
+            <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-lg" id="btnAddDatosLegajos">Alta</button>
                 <button type="button" class="btn btn-primary btn-lg" id="btnDelDatosLegajos">Baja</button>
                 <button type="button" class="btn btn-primary btn-lg" id="btnEditDatosLegajos">Modificacion</button>
@@ -39,7 +39,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
         <div class="col-xs-6">
-            <div class=" btn-group">
+            <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-lg" id="btnAddDatosLegajosVal">Alta</button>
                 <button type="button" class="btn btn-primary btn-lg" id="btnDelDatosLegajosVal">Baja</button>
                 <button type="button" class="btn btn-primary btn-lg" id="btnEditDatosLegajosVal">Modificacion</button>
@@ -55,12 +55,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
 <script type="text/javascript">
     $(document).ready(function () {
+        //Grids
         $("#gridDatosLegajos").jqGrid({
             width: 100,
             height: 230,
             autowidth: true,
             rownumbers: true,
-            rownumWidth: 20,
             url: "<?php echo $this->url('datoslegajos', array('action' => 'loadDataGrid')); ?>",
             datatype: 'json',
             mtype: 'POST',
@@ -69,40 +69,37 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 {name: 'id', index: 'id',
                     width: 10,
                     align: "center",
+                    sortable: false,
+                    sorttype: 'int',
                     hidden: true
                 },
                 {name: 'descripcion', index: 'descripcion',
                     width: 30,
                     align: "center",
                     sortable: true,
+                    sorttype: 'text',
                     search: true,
                     stype: 'text',
                     searchoptions: {clearSearch: true}
-                    //editable: true,
-                    //editrules: {required: true},
-                    //editoptions: {size: 30}
                 },
                 {name: 'tipo_de_campo', index: 'tipo_de_campo',
-                    width: 10,
+                    width: 5,
                     align: "center",
                     sortable: true,
+                    sorttype: 'text',
                     search: true,
                     stype: 'select',
                     searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
-                    //editable: true,
-                    //edittype: 'select',
-                    //editoptions: {value: "Todos;N:N;C:C;F:F"}
                 }
             ],
             pager: "#pagerDatosLegajos",
-            //rowNum: 10,
-            //rowList: [10, 20, 30],
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
             viewsortcols: [true, 'horizontal', true],
             gridview: true,
             hidegrid: false,
+            ignoreCase: true,
             autoencode: true,
             forceFit: false,
             pgbuttons: false,
@@ -131,9 +128,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $("#gridDatosLegajosVal").jqGrid({
             width: 450,
             height: 230,
+            shrinkToFit: true,
+            forceFit: false,
             autowidth: false,
             rownumbers: true,
-            rownumWidth: 20,
             url: "<?php echo $this->url('datoslegajos', array('action' => 'loadDataGridVal')); ?>",
             datatype: "json",
             mtype: 'POST',
@@ -142,17 +140,25 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 {name: 'id', index: 'id',
                     width: 10,
                     align: "center",
+                    sortable: false,
+                    sorttype: 'int',
                     hidden: true
                 },
                 {name: 'propiedad', index: 'propiedad',
                     width: 10,
                     align: "center",
+                    sortable: true,
+                    sorttype: 'int',
                     hidden: true
                 },
                 {name: 'valor_posible', index: 'valor_posible',
                     width: 15,
                     align: "center",
                     sortable: false,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true},
                     editable: true,
                     editrules: {required: true},
                     editoptions: {size: 30}
@@ -161,22 +167,24 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     width: 15,
                     align: "center",
                     sortable: false,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true},
                     editable: true,
                     editrules: {required: true},
                     editoptions: {size: 30}
                 }
             ],
             pager: "#pagerDatosLegajosVal",
-            //rowNum: 10,
-            //rowList: [10, 20, 30],
             sortname: "propiedad",
             sortorder: "ASC",
             viewrecords: true,
             viewsortcols: [true, 'horizontal', true],
             gridview: true,
             hidegrid: false,
+            ignoreCase: true,
             autoencode: true,
-            forceFit: true,
             pgbuttons: false,
             pginput: false,
             loadonce: true,
@@ -191,7 +199,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridDatosLegajosVal")[0].clearToolbar();
-                //loadGridDatosLegajosVal(rowid);
             }
         });
         $('#gridDatosLegajosVal').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
@@ -333,8 +340,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 }
                             });
                         } else {
-                            $(this).dialog('close');
-                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                            msgAlert("diagAlertModalAddE", "dataAlertModal", "Ya existe un registro con esa combinacion.");
                         }
                     }
                 },
@@ -393,8 +399,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 }
                             });
                         } else {
-                            $(this).dialog('close');
-                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                            msgAlert("diagAlertModalEditE", "dataAlertModal", "Ya existe un registro con esa combinacion.");
                         }
                     }
                 },
@@ -452,8 +457,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             }
                         });
                     } else {
-                        $(this).dialog('close');
-                        msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                        msgAlert("diagAlertModalAddEV", "dataAlertModal", "Ya existe un registro con esa combinacion.");
                     }
                 },
                 Cancel: function () {
@@ -512,8 +516,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 }
                             });
                         } else {
-                            $(this).dialog('close');
-                            msgAlert("diagAlert", "dataAlert", "Ya existe un registro con esa combinacion.");
+                            msgAlert("diagAlertModalEditEV", "dataAlertModal", "Ya existe un registro con esa combinacion.");
                         }
                     }
                 },
@@ -537,6 +540,22 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
         $('#diagAlert').on('closed.bs.alert', function () {
             $('.dataAlert').html("");
+        });
+        
+        $('#diagAlertModalAddE').on('closed.bs.alert', function () {
+            $('.dataAlertModal').html("");
+        });
+        
+        $('#diagAlertModalEditE').on('closed.bs.alert', function () {
+            $('.dataAlertModal').html("");
+        });
+        
+        $('#diagAlertModalAddEV').on('closed.bs.alert', function () {
+            $('.dataAlertModal').html("");
+        });
+        
+        $('#diagAlertModalEditEV').on('closed.bs.alert', function () {
+            $('.dataAlertModal').html("");
         });
     });
 
@@ -603,6 +622,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             $('#' + diagName).hide("drop", {direction: "up"}, "slow");
             $('.' + selectorName).html("");
         }, 3000);
+        return;
     }
 
 </script>
@@ -627,6 +647,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
+    <div class="alert alert-warning" id="diagAlertModalAddE">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong><span class="dataAlertModal"></span></strong>
+    </div>
 </div>
 
 <!-- Dialogo form-edit-DatosLegajos -->
@@ -649,6 +673,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
+    <div class="alert alert-warning" id="diagAlertModalEditE">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong><span class="dataAlertModal"></span></strong>
+    </div>
 </div>
 
 <!-- Dialogo form-add-DatosLegajosVal -->
@@ -667,6 +695,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
+    <div class="alert alert-warning" id="diagAlertModalAddEV">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong><span class="dataAlertModal"></span></strong>
+    </div>
 </div>
 
 <!-- Dialogo form-add-DatosLegajosVal -->
@@ -685,4 +717,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
+    <div class="alert alert-warning" id="diagAlertModalEditE">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong><span class="dataAlertModal"></span></strong>
+    </div>
 </div>
