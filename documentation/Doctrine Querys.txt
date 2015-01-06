@@ -1,0 +1,56 @@
+            //$ids = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findAll();  
+            //$data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('id' => array($ids)));
+//            if (!is_array($ids)) $ids = array($ids);
+//            $qb = $this->getEntityManager()->createQueryBuilder();
+//            $qb->add('select', $qb->expr()->count('r.id'))
+//                ->add('from', '\My\Entity\Rating r');
+//            if ($outcome === 'wins') $qb->add('where', $qb->expr()->in('r.winner', array('?1')));
+//            if ($outcome === 'fails') $qb->add('where', $qb->expr()->in('r.loser', array('?1')));
+//            $qb->select(array('vp')) // string 'u' is converted to array internally
+//                ->from('User', 'vp')
+//                ->where($qb->expr()->orX(
+//                    $qb->expr()->eq('vp.id', '?1'),
+//                    $qb->expr()->like('vp.nickname', '?2')
+//                ))
+//                ->orderBy('u.surname', 'ASC'));
+//            $qb->add('where', $qb->expr()->in('r.winner', '?1'));
+//            $qb->setParameter(1, $ids);
+//            $query = $qb->getQuery();
+//            //die('q = ' . $qb);
+//            $data = $query->getSingleScalarResult();
+            
+            //$data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy(array('formulario' => $id));
+            //$data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('formulario' => $id));
+			
+            //ids = array("1","2","3");
+//            $qb1 = $this->getEntityManager()->createQueryBuilder();
+//            $qb1->select('N7PropiedadesE')
+//                ->from('Application\Entity\N7PropiedadesE', 'N7PropiedadesE')
+//                ->orderBy('N7PropiedadesE.id', 'ASC');
+//            $qb1->add('where', $qb1->expr()->in('N7PropiedadesE.id', '?1'));
+//            $qb1->setParameter(1, $ids);
+//            $query1 = $qb1->getQuery();
+//            $data = $query1->getScalarResult();
+//            $query = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesE u WHERE u.age > 20 ORDER BY u.id ASC');
+//            $n7PropiedadesE = $query->getResult();
+//
+//            $qb0 = $this->getEntityManager()->createQueryBuilder();
+//            $qb0->select('N7VistasPropiedadesE.propiedadId')
+//                ->from('Application\Entity\N7VistasPropiedadesE', 'N7VistasPropiedadesE')
+//                ->orderBy('N7VistasPropiedadesE.id', 'ASC');
+//            $query0 = $qb0->getQuery();
+//            $r0 = $query0->getScalarResult();
+//            $ids = array_map('current', $r0);
+//
+//            $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('id' => $ids));
+
+$qb0 = $this->getEntityManager()->createQueryBuilder();
+            $qb0->select('u',"p.descripcion")
+                ->from('Application\Entity\N7VistasPropiedadesE', 'u')
+                ->where('u.formularioId = ?1')
+                ->innerJoin('u.propiedadId', 'Application\Entity\N7PropiedadesE g', Expr\Join::WITH, $qb0->expr()->eq('g.id', '?1'))
+                ->orderBy('u.'.$sidx, $sord);
+            $qb0->setParameter(1, $id);
+            $query0 = $qb0->getQuery();
+            $data = $query0->getScalarResult();
+            

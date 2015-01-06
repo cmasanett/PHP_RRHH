@@ -1,0 +1,45 @@
+<?php
+
+namespace Application\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * N7EmpresaUsuario
+ *
+ * @ORM\Table(name="n7_empresa_usuario", indexes={@ORM\Index(name="usuario_id", columns={"usuario_id"}), @ORM\Index(name="empresa_id", columns={"empresa_id"})})
+ * @ORM\Entity
+ */
+class N7EmpresaUsuario
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var \Application\Entity\N7Usuarios
+     *
+     * @ORM\ManyToOne(targetEntity="Application\Entity\N7Usuarios")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="usuario_id", referencedColumnName="id")
+     * })
+     */
+    private $usuario;
+
+    /**
+     * @var \Application\Entity\N7Empresas
+     *
+     * @ORM\ManyToOne(targetEntity="Application\Entity\N7Empresas")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="empresa_id", referencedColumnName="id")
+     * })
+     */
+    private $empresa;
+
+
+}

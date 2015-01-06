@@ -2,36 +2,9 @@
 
 namespace Application\Model;
 
-/*
- * Usamos el componente tablegateway que nos permite hacer consultas
- * utilizando una capa de abstracción, aremos las consultas sobre
- * una tabla que indicamos en el constructor
- */
-
 use Zend\Db\TableGateway\TableGateway;
-
-/*
- * Usamos el componente Dd\Adapter que nos permite hacer consultas
- * convencionales en formato SQL así como para servir de conexión
- * para el componente SQL que nos provee de una capa de abstracción
- * mas potente que la que da tablagateway
- */
 use Zend\Db\Adapter\Adapter;
-
-/*
- * Usamos el componente SQL que nos permite realizar consultas
- * utilizando métodos.
- */
 use Zend\Db\Sql\Sql;
-
-/*
- * Igual que el anterior pero solamente con la cláusula select
- */
-use Zend\Db\Sql\Select;
-
-/*
- * Nos da algunas herramientas para trabajar con el resulset de las consultas, puede ser prescindible
- */
 use Zend\Db\ResultSet\ResultSet;
 
 class EmpresaModel extends TableGateway {
@@ -69,4 +42,3 @@ class EmpresaModel extends TableGateway {
     }
 
 }
-

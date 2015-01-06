@@ -143,14 +143,29 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
         ]
     ],
     // Doctrine config
-    'doctrine' => ['driver' => [__NAMESPACE__ . '_driver' => ['class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+    'doctrine' => array(
+        'driver' => array(
+            'application_entities' => array(
+                'class' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
                 'cache' => 'array',
-                'paths' => [__DIR__ . '/../src/' . __NAMESPACE__ . '/Entity'
-                ]
-            ],
-            'orm_default' => ['drivers' => [__NAMESPACE__ . '\Entity' => __NAMESPACE__ . '_driver'
-                ]
-            ]
-        ]
-    ]
+                'paths' => array(__DIR__ . '/../src/Application/Entity')
+            ),
+            'orm_default' => array(
+                'drivers' => array(
+                    'Application\Entity' => 'application_entities'
+                )
+            )
+        ),
+        'authentication' => array(
+            'orm_default' => array(
+                'object_manager' => 'Doctrine\ORM\EntityManager',
+                'identity_class' => 'Application\Entity\N7Usuarios',
+                'identity_property' => 'usuario',
+                'credential_property' => 'clave',
+                'credentialCallable' => function ($userObj, $password) {
+                    return ($userObj->getPassword() === md5($password));
+                },
+            ),
+        ),
+    )
 ];

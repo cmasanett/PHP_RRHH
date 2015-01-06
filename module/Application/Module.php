@@ -4,6 +4,7 @@ namespace Application;
 
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+use Zend\Authentication\AuthenticationService;
 
 class Module {
 
@@ -31,7 +32,6 @@ class Module {
         return array(
             'factories' => array(
                 'menuWidget' => function ($serviceManager) {
-                    // Get the Menu Service
                     $menuService = $serviceManager->getServiceLocator()->get('MenuService');
                     return new \Application\View\Helper\MenuWidget($menuService);
                 }
@@ -40,19 +40,25 @@ class Module {
     }
 
     public function getServiceConfig() {
-        return ['factories' => ['menuService' => 'Application\Service\MenuService',
-                'menuService' => function ($sl) {
-                    $entityManager = $sl->get('doctrine.entitymanager.orm_default');
-                    $vhManager = $sl->get('ViewHelperManager');
+        return array(
+            'factories' => array(
+                'menuService' => 'Application\Service\MenuService',
+                'menuService' => function ($serviceManager) {
+                    $entityManager = $serviceManager->get('doctrine.entitymanager.orm_default');
+                    $vhManager = $serviceManager->get('ViewHelperManager');
                     $plugin = $vhManager->get('basePath');
-                    $myService = new Service\MenuService();
-                    $myService->setEntityManager($entityManager);
-                    //$myService->setViewHelperManager($vhManager);
-                    $myService->setPlugin($plugin);
-                    return $myService;
+                    $menuService = new Service\MenuService();
+                    $menuService->setEntityManager($entityManager);
+                    //$menuService->setViewHelperManager($vhManager);
+                    $menuService->setPlugin($plugin);
+                    return $menuService;
                 },
-            ]
-        ];
+                'Zend\Authentication\AuthenticationService' => function($serviceManager) {
+                    $entityManager = $serviceManager->get('doctrine.authenticationservice.orm_default');
+                    return $entityManager;
+                },
+            )
+        );
     }
 
 }

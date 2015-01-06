@@ -2,53 +2,64 @@
 
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+//use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
-//Componentes de validaci�n
-use Zend\Validator;
-use Zend\I18n\Validator as I18nValidator;
-//Adaptador de la db
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\Sql\Sql;
-//Componente para cifrar contrase�as
-use Zend\Crypt\Password\Bcrypt;
-//Componentes de autenticaci�n
+////Componentes de validaci�n
+//use Zend\Validator;
+//use Zend\I18n\Validator as I18nValidator;
+////Adaptador de la db
+//use Zend\Db\Adapter\Adapter;
+//use Zend\Db\Sql\Sql;
+////Componente para cifrar contrase�as
+//use Zend\Crypt\Password\Bcrypt;
+////Componentes de autenticaci�n
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
-use Zend\Authentication\AuthenticationService;
-use Zend\Authentication\Storage\Session as SessionStorage;
-use Zend\Session\Container;
+//use Zend\Authentication\AuthenticationService;
+//use Zend\Authentication\Storage\Session as SessionStorage;
+//use Zend\Session\Container;
 //Incluir modelos
 //use Application\Model\UsuariosModel;
 use Application\Model\EmpresaModel;
+// Incluir entidades
+//use Application\Entity\N7Usuarios;
+//use Application\Entity\N7Empresa;
+//use Application\Entity\N7EmpresaUsuario;
 //Incluir formularios
 use Application\Form\LoginForm;
 use Application\Form\EmpresaForm;
 
-class UsuariosController extends AbstractActionController {
+class UsuariosController extends BaseController {
 
     private $dbAdapter;
-    private $auth;
+//    private $auth;
+    private $authService;
 
     public function __construct() {
-        $this->auth = new AuthenticationService();
+//        $this->auth = new AuthenticationService();
+        $this->authService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
     }
 
     public function loginAction() {
         $this->layout('layout/layout_login');
         $auth = $this->auth;
+        $authService = $this->authService;
         $identi = $auth->getStorage()->read();
         if ($identi != false && $identi != null) {
             return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/index');
         }
 
         $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
-
-        $db = $this->dbAdapter;
+//        $db = $this->dbAdapter;
 
         $form = new LoginForm("form");
 
         if ($this->getRequest()->isPost()) {
-            $authAdapter = new AuthAdapter($this->dbAdapter, 'usuarios', 'usuario', 'clave', 'MD5(?)');
+            $adapter = $authService->getAdapter();
+            $adapter->setIdentityValue($this->getRequest()->getPost("usuario"));
+            $adapter->setCredentialValue($this->getRequest()->getPost("clave"));
+            $authResult = $authService->authenticate();
+
+            $authAdapter = new AuthAdapter($this->dbAdapter, 'Application\Entity\N7Usuarios', 'usuario', 'clave', 'MD5(?)');
             $authAdapter->setIdentity($this->getRequest()->getPost("usuario"))
                     ->setCredential($this->getRequest()->getPost("clave"));
 
@@ -56,19 +67,26 @@ class UsuariosController extends AbstractActionController {
             $result = $auth->authenticate();
 
             if ($authAdapter->getResultRowObject() == false) {
-
                 $this->flashMessenger()->addMessage("Credenciales incorrectas, intente de nuevo.");
                 return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
             } else {
+                $qb0 = $this->getEntityManager()->createQueryBuilder();
+                $qb0->select('u', "*")
+                        ->from('Application\Entity\N7EmpresaUsuario', 'u')
+                        ->innerJoin('Application\Entity\N7Empresas', 'g', 'WITH', 'u.empresa_id = ?1', 'g.id')
+                        ->where('u.usuario_id = ?2');
+                $qb0->setParameter(2, $authAdapter->getResultRowObject('id')->id);
+                $query0 = $qb0->getQuery();
+                $result = $query0->getScalarResult();
 
-                $sql = new Sql($this->dbAdapter);
-                $select = $sql->select();
-                $select->from(array('p' => 'empresa_usuario'), array('*'))
-                        ->join(array('l' => 'empresas'), 'p.empresa_id = l.id', array('*'))
-                        ->where(array('usuario_id' => $authAdapter->getResultRowObject('id')->id));
-                $selectString = $sql->getSqlStringForSqlObject($select);
-                $execute = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
-                $result = $execute->toArray();
+//                $sql = new Sql($this->dbAdapter);
+//                $select = $sql->select();
+//                $select->from(array('p' => 'empresa_usuario'), array('*'))
+//                        ->join(array('l' => 'empresas'), 'p.empresa_id = l.id', array('*'))
+//                        ->where(array('usuario_id' => $authAdapter->getResultRowObject('id')->id));
+//                $selectString = $sql->getSqlStringForSqlObject($select);
+//                $execute = $this->dbAdapter->query($selectString, Adapter::QUERY_MODE_EXECUTE);
+//                $result = $execute->toArray();
 
                 if (count($result) == 0) {
                     $this->flashMessenger()->addMessage("Usted no tiene una empresa asociada para acceder al sistema.");

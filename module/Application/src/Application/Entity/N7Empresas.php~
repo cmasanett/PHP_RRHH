@@ -1,0 +1,242 @@
+<?php
+
+namespace Application\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * N7Empresas
+ *
+ * @ORM\Table(name="n7_empresas")
+ * @ORM\Entity
+ */
+class N7Empresas
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="codigo", type="string", length=4, nullable=false)
+     */
+    private $codigo;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="nombre", type="string", length=120, nullable=false)
+     */
+    private $nombre;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="domicilio", type="string", length=200, nullable=false)
+     */
+    private $domicilio;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="localidad", type="string", length=200, nullable=false)
+     */
+    private $localidad;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="codigo_postal", type="string", length=10, nullable=false)
+     */
+    private $codigoPostal;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="provincia", type="string", length=30, nullable=false)
+     */
+    private $provincia;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="email_administrador", type="string", length=200, nullable=false)
+     */
+    private $emailAdministrador;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="inactiva", type="string", length=1, nullable=false)
+     */
+    private $inactiva = '';
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v1", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v1;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v2", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v2;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v3", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v3;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v4", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v4;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v5", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v5;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v6", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v6;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v7", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v7;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v8", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v8;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v9", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v9;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v10", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v10;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v11", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v11;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v12", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v12;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v13", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v13;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v14", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v14;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v15", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v15;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v16", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v16;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v17", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v17;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v18", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v18;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v19", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v19;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="v20", type="decimal", precision=12, scale=4, nullable=false)
+     */
+    private $v20;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="dato_legajo_baja", type="integer", nullable=false)
+     */
+    private $datoLegajoBaja;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="comparacion", type="string", length=10, nullable=false)
+     */
+    private $comparacion;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="valor_dato_baja", type="string", length=120, nullable=false)
+     */
+    private $valorDatoBaja;
+
+
+}
