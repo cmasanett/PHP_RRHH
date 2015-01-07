@@ -14,7 +14,7 @@ use Zend\View\Model\ViewModel;
 //use Zend\Crypt\Password\Bcrypt;
 ////Componentes de autenticaci�n
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
-//use Zend\Authentication\AuthenticationService;
+use Zend\Authentication\AuthenticationService;
 //use Zend\Authentication\Storage\Session as SessionStorage;
 //use Zend\Session\Container;
 //Incluir modelos
@@ -31,18 +31,19 @@ use Application\Form\EmpresaForm;
 class UsuariosController extends BaseController {
 
     private $dbAdapter;
-//    private $auth;
-    private $authService;
+    private $auth;
+
+//    private $authService;
 
     public function __construct() {
-//        $this->auth = new AuthenticationService();
-        $this->authService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
+        $this->auth = new AuthenticationService();
+//        $this->authService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
     }
 
     public function loginAction() {
         $this->layout('layout/layout_login');
         $auth = $this->auth;
-        $authService = $this->authService;
+//        $authService = $this->authService;
         $identi = $auth->getStorage()->read();
         if ($identi != false && $identi != null) {
             return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/index');
@@ -54,12 +55,7 @@ class UsuariosController extends BaseController {
         $form = new LoginForm("form");
 
         if ($this->getRequest()->isPost()) {
-            $adapter = $authService->getAdapter();
-            $adapter->setIdentityValue($this->getRequest()->getPost("usuario"));
-            $adapter->setCredentialValue($this->getRequest()->getPost("clave"));
-            $authResult = $authService->authenticate();
-
-            $authAdapter = new AuthAdapter($this->dbAdapter, 'Application\Entity\N7Usuarios', 'usuario', 'clave', 'MD5(?)');
+            $authAdapter = new AuthAdapter($this->dbAdapter, 'n7_usuarios', 'usuario', 'clave', 'MD5(?)');
             $authAdapter->setIdentity($this->getRequest()->getPost("usuario"))
                     ->setCredential($this->getRequest()->getPost("clave"));
 
@@ -71,10 +67,10 @@ class UsuariosController extends BaseController {
                 return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
             } else {
                 $qb0 = $this->getEntityManager()->createQueryBuilder();
-                $qb0->select('u', "*")
-                        ->from('Application\Entity\N7EmpresaUsuario', 'u')
-                        ->innerJoin('Application\Entity\N7Empresas', 'g', 'WITH', 'u.empresa_id = ?1', 'g.id')
-                        ->where('u.usuario_id = ?2');
+                $qb0->select('p')
+                        ->from('Application\Entity\N7EmpresaUsuario', 'p')
+                        ->innerJoin('Application\Entity\N7Empresas', 'l', 'WITH', 'p.empresa = l.id')
+                        ->where('p.usuario = ?2');
                 $qb0->setParameter(2, $authAdapter->getResultRowObject('id')->id);
                 $query0 = $qb0->getQuery();
                 $result = $query0->getScalarResult();
@@ -97,8 +93,9 @@ class UsuariosController extends BaseController {
                     $session->usuarioActual = $authAdapter->getResultRowObject('id')->id;
                     $session->empresaCorrienteId = $result[0]["empresa_id"];
                     $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
-                    $empresa = new EmpresaModel($this->dbAdapter);
-                    $result = $empresa->getEmpresaById($result[0]["empresa_id"]);
+                    $result = $this->getEntityManager()->find('Application\Entity\N7Empresas', $result[0]["empresa_id"]);
+//                    $empresa = new EmpresaModel($this->dbAdapter);
+//                    $result = $empresa->getEmpresaById($result[0]["empresa_id"]);
                     $session->empresaCorriente = $result['nombre'];
                     $auth->getStorage()->write($session);
                     return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/index');

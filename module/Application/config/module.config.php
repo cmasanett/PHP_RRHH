@@ -153,8 +153,8 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
             'orm_default' => array(
                 'drivers' => array(
                     'Application\Entity' => 'application_entities'
-                )
-            )
+                ),
+            ),
         ),
         'authentication' => array(
             'orm_default' => array(
@@ -162,9 +162,9 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                 'identity_class' => 'Application\Entity\N7Usuarios',
                 'identity_property' => 'usuario',
                 'credential_property' => 'clave',
-                'credentialCallable' => function ($userObj, $password) {
-                    return ($userObj->getPassword() === md5($password));
-                },
+//                'credentialCallable' => function ($userObj, $password) {
+//                    return ($userObj->getPassword() === md5($password));
+//                },
             ),
         ),
     )
