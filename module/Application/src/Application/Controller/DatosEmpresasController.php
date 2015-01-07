@@ -4,7 +4,7 @@ namespace Application\Controller;
 
 use Zend\View\Model\ViewModel;
 use Zend\Json\Json;
-// Incluir entidades
+// Entities
 use Application\Entity\N7PropiedadesE;
 use Application\Entity\N7ValoresPosiblesEmpresas;
 

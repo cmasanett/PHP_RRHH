@@ -2,26 +2,16 @@
 
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Json\Json;
-// Incluir entidades
+// Entities
 use Application\Entity\N7VistasEmpresas;
 use Application\Entity\N7VistasPropiedadesE;
 
-class VistasEmpresasController extends AbstractActionController {
+class VistasEmpresasController extends BaseController {
 
     public function __construct() {
         
-    }
-
-    protected $em;
-
-    public function getEntityManager() {
-        if (null === $this->em) {
-            $this->em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-        }
-        return $this->em;
     }
 
     public function indexAction() {

@@ -99,6 +99,15 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                     ]
                 ]
             ],
+            'legajos' => ['type' => 'Segment',
+                'options' => ['route' => '/legajos[/[:action][/:id]]',
+                    'constraints' => ['action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                    ],
+                    'defaults' => ['controller' => 'Application\Controller\Legajos',
+                        'action' => 'index'
+                    ]
+                ]
+            ],
         ]
     ],
     'service_manager' => ['abstract_factories' => ['Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -122,7 +131,8 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
             'Application\Controller\DatosFamiliares' => 'Application\Controller\DatosFamiliaresController',
             'Application\Controller\VistasEmpresas' => 'Application\Controller\VistasEmpresasController',
             'Application\Controller\VistasLegajos' => 'Application\Controller\VistasLegajosController',
-            'Application\Controller\VistasFamiliares' => 'Application\Controller\VistasFamiliaresController'
+            'Application\Controller\VistasFamiliares' => 'Application\Controller\VistasFamiliaresController',
+            'Application\Controller\Legajos' => 'Application\Controller\LegajosController'
         ]
     ],
     'view_manager' => ['display_not_found_reason' => true,

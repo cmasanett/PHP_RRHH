@@ -1,5 +1,5 @@
 <?php
-$title = 'Vistas de datos de Legajos';
+$title = 'Administración de Legajos';
 ?>
 <h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>
 <?php
@@ -26,16 +26,88 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 <br>
 <div class="content">
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-xs-6 col-md-4">
             <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-lg" id="btnAddVistasLegajo">Alta</button>
                 <button type="button" class="btn btn-primary btn-lg" id="btnDelVistasLegajo">Baja</button>
-                <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasLegajo">Modificacion</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasLegajo">Modificación</button>
             </div>
             <br>
-            <div id="jqGridVistasLegajo" style="padding-top:10px;">
-                <table id="gridVistasLegajo"></table>
-                <div id="pagerVistasLegajo"></div>
+            <div id="jqGridLegajos" style="padding-top:10px;">
+                <table id="gridLegajos"></table>
+                <div id="pagerLegajos"></div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-sm-6 col-md-8">
+            <div id="tabsLegajos">
+                <ul>
+                    <li><a href="#tabsLegajoDesc">Legajo</a></li>
+                    <li><a href="#tabsFoto">Foto</a></li>
+                    <li><a href="#tabsFamiliares">Familiares</a></li>
+                    <li><a href="#tabsLiquidaciones">Liquidaciones</a></li>
+                </ul>
+                <div id="tabsLegajoDesc">
+                    <div id="tab-add-edit-Legajos" class="container-fluid">
+                        <div class="row">
+                            <div class="form-group col-xs-6 col-sm-6">
+                                <label for="input-vista-tab-legajos" class="control-label">Vista seleccionada:</label>
+                            </div>
+                        </div>
+                        <form class="form-inline" role="form">
+                            <div class="row">
+                                <div class="form-group col-xs-6 col-sm-6">
+                                    <select class="form-control" id="select-vista-tab-legajos"></select>
+                                    <button type="button" class="btn btn-default btn-xs" id="btnRefreshViewData">
+                                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refrescar vistas
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-xs-6 col-sm-6">
+                                <div id="jqGridPropiedadesLegajo" style="padding-top:10px;">
+                                    <table id="gridPropiedadesLegajo"></table>
+                                    <div id="pagerPropiedadesLegajo"></div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-1">
+                                <div class="btn-group-vertical" role="group" style="padding-top:70px;">
+                                    <button type="button" class="btn btn-info btn-xs" id="btnAddAllData">
+                                        <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
+                                    </button>
+                                    <button type="button" class="btn btn-success btn-xs" id="btnAddSingleData">
+                                        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Aplicar
+                                    </button>
+                                    <button type="button" class="btn btn-danger btn-xs" id="btnDelSingleData">
+                                        <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
+                                    </button>
+                                    <!--                                    <button type="button" class="btn btn-info btn-xs" id="btnDelAllData">
+                                                                            <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+                                                                        </button>-->
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-5">
+                                <div id="jqGridDatosVistasLegajo" style="padding-top:10px;">
+                                    <table id="gridDatosVistasLegajo"></table>
+                                    <div id="pagerDatosVistasLegajo"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-warning" id="diagAlertModal">
+                            <a href="#" class="close" data-dismiss="alert">&times;</a>
+                            <strong><span class="dataAlertModal"></span></strong>
+                        </div>
+                    </div>
+                </div>
+                <div id="tabsFoto">
+                    <p></p>
+                </div>
+                <div id="tabsFamiliares">
+                    <p></p>
+                </div>
+                <div id="tabsLiquidaciones">
+                    <p></p>
+                </div>
             </div>
         </div>
     </div>
@@ -44,17 +116,18 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 <script type="text/javascript">
     var oEdit = false;
     var lastSel;
+
     $(document).ready(function () {
         //Grids
-        $("#gridVistasLegajo").jqGrid({
+        $("#gridLegajos").jqGrid({
             width: 100,
             height: 230,
             autowidth: true,
             rownumbers: true,
-            url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadViewGrid')); ?>",
+            url: "<?php echo $this->url('legajos', array('action' => 'loadViewGrid')); ?>",
             datatype: 'json',
             mtype: 'POST',
-            colNames: ["Id", "Vista", "Extranet"],
+            colNames: ["Id", "Legajo", "Apellido y Nombre"],
             colModel: [
                 {name: 'id', index: 'id',
                     width: 10,
@@ -62,6 +135,15 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     sortable: false,
                     sorttype: 'int',
                     hidden: true
+                },
+                {name: 'legajo', index: 'legajo',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'int',
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
                 },
                 {name: 'descripcion', index: 'descripcion',
                     width: 30,
@@ -71,23 +153,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     search: true,
                     stype: 'text',
                     searchoptions: {clearSearch: true}
-                },
-                {name: 'extranet_permitido', index: 'extranet_permitido',
-                    width: 5,
-                    align: "center",
-                    sortable: true,
-                    sorttype: 'text',
-                    search: true,
-                    stype: 'select',
-                    searchoptions: {value: ":;S:Si;N:No"}
                 }
             ],
-            pager: "#pagerVistasLegajo",
+            pager: "#pagerLegajos",
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
             viewsortcols: [true, 'horizontal', true],
-            gridview: true,            
+            gridview: true,
             hidegrid: false,
             ignoreCase: true,
             autoencode: true,
@@ -96,21 +169,21 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             pgtext: false,
             pginput: false,
             loadonce: true,
-            editurl: "<?php echo $this->url('vistaslegajos', array('action' => 'editGridItem')); ?>",
-            caption: "Vistas de Legajo"
+            editurl: "<?php echo $this->url('legajos', array('action' => 'editGridItem')); ?>",
+            caption: "Legajos"
         });
-        $("#gridVistasLegajo").navGrid("#pagerVistasLegajo",
+        $("#gridLegajos").navGrid("#pagerLegajos",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-        $("#gridVistasLegajo").navButtonAdd("#pagerVistasLegajo", {
+        $("#gridLegajos").navButtonAdd("#pagerLegajos", {
             caption: "Borrar filtros",
             title: "Borrar filtros",
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
-                jQuery("#gridVistasLegajo")[0].clearToolbar();
-                gridReload('gridVistasLegajo');
+                jQuery("#gridLegajos")[0].clearToolbar();
+                gridReload('gridLegajos');
             }
         });
-        $('#gridVistasLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        $('#gridLegajos').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
 
         $("#gridPropiedadesLegajo").jqGrid({
             width: 460,
@@ -285,22 +358,28 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             }
         });
 
-        //Buttons
-        $("#btnAddVistasLegajo").click(function () {
-            openDiagVistasLegajo("form-add-edit-VistasLegajo", "add", "", "");
+
+        //Tabs
+        $("#tabsLegajos").tabs({
+            heightStyle: "auto"
         });
-        $("#btnDelVistasLegajo").click(function () {
-            var rowid = jQuery("#gridVistasLegajo").jqGrid('getGridParam', 'selrow');
+
+        //Buttons
+        $("#btnAddLegajos").click(function () {
+            openDiagLegajos("form-add-edit-Legajos", "add", "", "");
+        });
+        $("#btnDelLegajos").click(function () {
+            var rowid = jQuery("#gridLegajos").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
                 $.ajax({
-                    url: "<?php echo $this->url('vistaslegajos', array('action' => 'deleteGridItem')); ?>",
+                    url: "<?php echo $this->url('legajos', array('action' => 'deleteGridItem')); ?>",
                     global: false,
                     type: "POST",
                     data: "id=" + rowid,
                     dataType: "json",
                     async: false,
                     success: function (msg) {
-                        gridReload('gridVistasLegajo');
+                        gridReload('gridLegajos');
                     }
                 });
             }
@@ -308,10 +387,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
             }
         });
-        $("#btnEditVistasLegajo").click(function () {
-            var rowid = jQuery("#gridVistasLegajo").jqGrid('getGridParam', 'selrow');
+        $("#btnEditLegajos").click(function () {
+            var rowid = jQuery("#gridLegajos").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagVistasLegajo("form-add-edit-VistasLegajo", "edit", "gridVistasLegajo", rowid);
+                openDiagLegajos("form-add-edit-Legajos", "edit", "gridLegajos", rowid);
             }
             else {
                 msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
@@ -420,8 +499,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             }
         });
 
-        //Dialog addVistasLegajo
-        $("#form-add-edit-VistasLegajo").dialog({
+        //Dialog addLegajos
+        $("#form-add-edit-Legajos").dialog({
             autoOpen: false,
             resizable: true,
             draggable: true,
@@ -439,11 +518,11 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             },
             buttons: {
                 'Aceptar': function () {
-                    var descripcion = $("#descripcion-add-VistasLegajo").val();
-                    var extranet = $("#extranet-add-VistasLegajo").val();
+                    var descripcion = $("#descripcion-add-Legajos").val();
+                    var extranet = $("#extranet-add-Legajos").val();
 
                     if (descripcion != '') {
-                        var ids = $("#gridVistasLegajo").jqGrid('getDataIDs');
+                        var ids = $("#gridLegajos").jqGrid('getDataIDs');
                         ids = ids.toString();
                         ids = ids.split(",");
 
@@ -451,12 +530,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         var rowid = "";
 
                         if (oEdit) {
-                            rowid = jQuery("#gridVistasLegajo").jqGrid('getGridParam', 'selrow');
+                            rowid = jQuery("#gridLegajos").jqGrid('getGridParam', 'selrow');
                             if (rowid != null) {
                                 if (ids != "") {
                                     for (var i = 0; i < ids.length; i++) {
-                                        var data = $("#gridVistasLegajo").jqGrid('getRowData', ids[i]);
-                                        if (data['descripcion'].toLowerCase() == $("#descripcion-add-VistasLegajo").val().toLowerCase() && data['id'] != rowid) {
+                                        var data = $("#gridLegajos").jqGrid('getRowData', ids[i]);
+                                        if (data['descripcion'].toLowerCase() == $("#descripcion-add-Legajos").val().toLowerCase() && data['id'] != rowid) {
                                             e++;
                                         }
                                     }
@@ -467,7 +546,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         } else {
                             if (ids != "") {
                                 for (var i = 0; i < ids.length; i++) {
-                                    var data = $("#gridVistasLegajo").jqGrid('getRowData', ids[i]);
+                                    var data = $("#gridLegajos").jqGrid('getRowData', ids[i]);
                                     if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
                                         e++;
                                     }
@@ -484,15 +563,15 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     "vistas_propiedades": dataGridDatosVistas
                                 };
                                 $.ajax({
-                                    url: "<?php echo $this->url('vistaslegajos', array('action' => 'editGridItem')); ?>",
+                                    url: "<?php echo $this->url('legajos', array('action' => 'editGridItem')); ?>",
                                     global: false,
                                     type: "POST",
                                     data: "data=" + JSON.stringify(data),
                                     dataType: "json",
                                     async: false,
                                     success: function (msg) {
-                                        gridReload('gridVistasLegajo');
-                                        $("#form-add-edit-VistasLegajo").dialog('close');
+                                        gridReload('gridLegajos');
+                                        $("#form-add-edit-Legajos").dialog('close');
                                     }
                                 });
                             } else {
@@ -524,6 +603,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $('#diagAlertModal').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
         });
+
+        loadSelectView();
     });
 
     // remove window resize namespace
@@ -535,12 +616,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
     }
 
-    function openDiagVistasLegajo(diagName, op, grid, id) {
-        clearDataVistasLegajo();
+    function openDiagLegajos(diagName, op, grid, id) {
+        clearDataLegajos();
         if (op == "edit") {
             rowdata = jQuery("#" + grid).getRowData(id);
-            $('#descripcion-add-VistasLegajo').val(rowdata['descripcion']);
-            $('#extranet-add-VistasLegajo').val(rowdata['extranet_permitido']);
+            $('#descripcion-add-Legajos').val(rowdata['descripcion']);
+            $('#extranet-add-Legajos').val(rowdata['extranet_permitido']);
             $('#' + diagName).dialog("option", "title", "Editar registro");
             $('#' + diagName).dialog('open');
             $('#' + diagName).dialog('moveToTop');
@@ -551,16 +632,16 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             $('#' + diagName).dialog("option", "title", "Agregar registro");
             $('#' + diagName).dialog('open');
             $('#' + diagName).dialog('moveToTop');
-            $('#extranet-add-VistasLegajo option:contains("C")').prop('selected', true);
+            $('#extranet-add-Legajos option:contains("C")').prop('selected', true);
             loadGrid("gridPropiedadesLegajo");
             loadGrid("gridDatosVistasLegajo");
             oEdit = false;
         }
     }
 
-    function clearDataVistasLegajo() {
-        $('#descripcion-add-VistasLegajo').val("");
-        $('#descripcion-edit-VistasLegajo').val("");
+    function clearDataLegajos() {
+        $('#descripcion-add-Legajos').val("");
+        $('#descripcion-edit-Legajos').val("");
     }
 
     function msgAlert(diagName, selectorName, msg) {
@@ -577,7 +658,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         switch (gridName) {
             case 'gridPropiedadesLegajo':
                 $.ajax({
-                    url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadPropGrid')); ?>",
+                    url: "<?php echo $this->url('legajos', array('action' => 'loadPropGrid')); ?>",
                     global: false,
                     type: "POST",
                     data: "id=" + rowid,
@@ -610,7 +691,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 break;
             case 'gridDatosVistasLegajo':
                 $.ajax({
-                    url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadDataGrid')); ?>",
+                    url: "<?php echo $this->url('legajos', array('action' => 'loadDataGrid')); ?>",
                     global: false,
                     type: "POST",
                     data: "id=" + rowid,
@@ -677,24 +758,45 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         }
     }
 
+    function loadSelectView() {
+        var list_target_id = 'select-vista-tab-legajos';
+        $('#' + list_target_id).html('<option value="">Cargando...</option>');
+
+        $.ajax({
+            url: "<?php echo $this->url('legajos', array('action' => 'loadSelectView')); ?>",
+            global: false,
+            type: "POST",
+            dataType: "json",
+            async: false,
+            success: function (result) {
+                $('#' + list_target_id).html("");
+                $.each(result.data, function (i, d) {
+                    $('#' + list_target_id).append('<option value="' + i + '">' + d + '</option>');
+                });
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status + " " + thrownError);
+            }
+        });
+    }
 </script>
 
-<!-- Dialogo form-add-edit-VistasLegajo -->
-<div id="form-add-edit-VistasLegajo" class="container-fluid" title="" >
+<!-- Dialogo form-add-edit-Legajos -->
+<div id="form-add-edit-Legajos" class="container-fluid" title="" >
     <form class="form-horizontal" role="form">
         <div class="row">
             <div class="form-group col-xs-2 col-md-4">
-                <label for="input-descripcion-add-VistasLegajo" class="col-sm-4 control-label">Vista:</label>
+                <label for="input-descripcion-add-Legajos" class="col-sm-4 control-label">Vista:</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" id="descripcion-add-VistasLegajo" placeholder="">
+                    <input type="text" class="form-control" id="descripcion-add-Legajos" placeholder="">
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="form-group col-xs-2 col-md-4">
-                <label for="input-extranet-add-VistasLegajo" class="col-sm-4 control-label">Extranet:</label>
+                <label for="input-extranet-add-Legajos" class="col-sm-4 control-label">Extranet:</label>
                 <div class="col-sm-8">
-                    <select class="form-control" id="extranet-add-VistasLegajo">
+                    <select class="form-control" id="extranet-add-Legajos">
                         <option value="S">Si</option>
                         <option value="N">No</option>
                     </select>

@@ -30,7 +30,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             <div class="btn-group">
                 <button type="button" class="btn btn-primary btn-lg" id="btnAddVistasFamiliares">Alta</button>
                 <button type="button" class="btn btn-primary btn-lg" id="btnDelVistasFamiliares">Baja</button>
-                <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasFamiliares">Modificacion</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasFamiliares">Modificación</button>
             </div>
             <br>
             <div id="jqGridVistasFamiliares" style="padding-top:10px;">
@@ -710,11 +710,19 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
         <div class="col-xs-6 col-sm-1">
-            <div class="btn-group-vertical" style="padding-top:70px;">
-                <button type="button" class="btn btn-info btn-xs" id="btnAddAllData">=>></button>
-                <button type="button" class="btn btn-info btn-xs" id="btnAddSingleData">></button>
-                <button type="button" class="btn btn-info btn-xs" id="btnDelSingleData"><</button>
-                <button type="button" class="btn btn-info btn-xs" id="btnDelAllData"><<=</button>
+            <div class="btn-group-vertical" role="group" style="padding-top:70px;">
+                <button type="button" class="btn btn-info btn-xs" id="btnAddAllData">
+                    <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-info btn-xs" id="btnAddSingleData">
+                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-info btn-xs" id="btnDelSingleData">
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                </button>
+                <button type="button" class="btn btn-info btn-xs" id="btnDelAllData">
+                    <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
+                </button>
             </div>
         </div>
         <div class="col-xs-6 col-sm-5">

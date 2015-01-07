@@ -2,34 +2,23 @@
 
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Json\Json;
+// Entities
+use Application\Entity\N7VistasLegajos;
+use Application\Entity\N7VistasPropiedadesL;
 
-// Incluir entidades
-use Application\Entity\N7PropiedadesL;
-use Application\Entity\N7ValoresPosiblesLegajos;
-
-class DatosLegajosController extends AbstractActionController {
+class LegajosController extends BaseController {
 
     public function __construct() {
         
-    }
-    
-    protected $em;
-
-    public function getEntityManager() {
-        if (null === $this->em) {
-            $this->em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-        }
-        return $this->em;
     }
 
     public function indexAction() {
         return new ViewModel(array());
     }
 
-    public function loadDataGridAction() {
+    public function loadViewGridAction() {
         $request = $this->getRequest();
 
         $sidx = $request->getPost('sidx', 'id');
@@ -38,8 +27,7 @@ class DatosLegajosController extends AbstractActionController {
         $limit = $request->getPost('rows', 10);
 
         try {
-            $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesL')->findAll();
-
+            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findAll();
             $count = count($data);
 
             if ($count > 0) {
@@ -56,7 +44,7 @@ class DatosLegajosController extends AbstractActionController {
                 $start = 0;
             }
 
-            $row = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesL')->findBy(array(), array($sidx => $sord), $limit, $start);
+            $row = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findBy(array(), array($sidx => $sord), $limit, $start);
 
             $response ['page'] = $page;
             $response ['total'] = $total_pages;
@@ -64,105 +52,163 @@ class DatosLegajosController extends AbstractActionController {
             $i = 0;
 
             foreach ($row as $r) {
-                $response ['rows'] [$i] ['id'] = $r->getId(); // id
-                $response ['rows'] [$i] ['cell'] = array(
+                $response ['rows'][$i]['id'] = $r->getId(); //id
+                $response['rows'][$i]['cell'] = array(
+                    $r->getId(),
+                    $r->getDescripcion(),
+                    $r->getExtranetPermitido()
+                );
+                $i ++;
+            }
+
+            return $this->response->setContent(Json::encode($response));
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage($ex->getMessage());
+        }
+    }
+
+    public function loadPropGridAction() {
+        if ($this->request->isXmlHttpRequest()) {
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $dataJson = $request->getPost('id', 0);
+                $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
+            }
+        }
+
+        try {
+            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesL u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesL p WHERE p.formularioId = ?1)');
+            $query1->setParameter(1, $id);
+            $row = $query1->getResult();
+
+            $response['rows'] = array();
+            $i = 0;
+
+            foreach ($row as $r) {
+                $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getDescripcion(),
                     $r->getTipoDeCampo()
                 );
                 $i ++;
             }
-
-            return $this->response->setContent(Json::encode($response));
+            return $this->response->setContent(Json::encode(array('type' => 'success', 'data' => $response['rows'])));
         } catch (\Exception $ex) {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }
     }
 
-    public function loadDataGridValAction() {
-        $request = $this->getRequest();
-
-        $id = $this->params()->fromRoute("id", null);
-
-        $sidx = $request->getPost('sidx', 'propiedad');
-        $sord = $request->getPost('sord', 'ASC');
-        $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
-
-        try{
-            $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(array('propiedad' => $id));
-            $count = count($data);
-
-            if ($count > 0) {
-                $total_pages = ceil($count / $limit);
-            } else {
-                $total_pages = 0;
+    public function loadDataGridAction() {
+        if ($this->request->isXmlHttpRequest()) {
+            $request = $this->getRequest();
+            if ($request->isPost()) {
+                $dataJson = $request->getPost('id', 0);
+                $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
             }
-            if ($page > $total_pages) {
-                $page = $total_pages;
-            }
+        }
 
-            $start = $limit * $page - $limit;
-            if ($start < 0) {
-                $start = 0;
-            }
+        try {
+            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7VistasPropiedadesL u WHERE u.formularioId = ?1');
+            $query1->setParameter(1, $id);
+            $row = $query1->getResult();
 
-            $row = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(['propiedad' => $id], array($sidx => $sord), $limit, $start);
-
-            $response ['page'] = $page;
-            $response ['total'] = $total_pages;
-            $response ['records'] = $count;
+            $response['rows'] = array();
             $i = 0;
 
             foreach ($row as $r) {
-                $response ['rows'] [$i] ['id'] = $r->getId(); // id
-                $response ['rows'] [$i] ['cell'] = array(
+                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesL u WHERE u.id = ?1');
+                $query0->setParameter(1, $r->getPropiedadId());
+                $descripcion = $query0->getSingleScalarResult();
+
+                $response['rows'][$i] = array(
                     $r->getId(),
-                    $r->getPropiedad()->getId(),
-                    $r->getValorPosible(),
-                    $r->getSignificado()
+                    $r->getPropiedadId(),
+                    $descripcion,
+                    $r->getFormularioId(),
+                    $r->getOrden(),
+                    $r->getSoloLectura()
                 );
                 $i ++;
             }
 
-            return $this->response->setContent(Json::encode($response));
+            return $this->response->setContent(Json::encode(array('type' => 'success', 'data' => $response['rows'])));
         } catch (\Exception $ex) {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }
     }
 
     public function editGridItemAction() {
-        try{
+        try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
                 if ($request->isPost()) {
                     $data = Json::decode($request->getPost('data'), true);
                     if ($data) {
-                        if (isset($data['id'])) {
+                        if ($data['id'] != "") {
                             //Edit
-                            $n7PropiedadesL = new N7PropiedadesL();
-                            $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $data['id']);
-                            if ($n7PropiedadesL) {
-                                $n7PropiedadesL->setDescripcion($data['descripcion']);
-                                $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
-                                $statusPersist = $this->getEntityManager()->persist($n7PropiedadesL);
-                                $statusFlush = $this->getEntityManager()->flush();
+                            $n7VistasLegajos = new N7VistasLegajos ();
+                            $n7VistasLegajos = $this->getEntityManager()->find('Application\Entity\N7VistasLegajos', $data['id']);
+                            if ($n7VistasLegajos) {
+                                $n7VistasLegajos->setDescripcion($data['descripcion']);
+                                $n7VistasLegajos->setExtranetPermitido($data['extranet_permitido']);
+                                $this->getEntityManager()->persist($n7VistasLegajos);
+                                $this->getEntityManager()->flush();
+
+                                $q = $this->getEntityManager()->createQuery('delete from Application\Entity\N7VistasPropiedadesL m where m.formularioId = ?1');
+                                $q->setParameter(1, $data['id']);
+                                $numDeleted = $q->execute();
+
+                                $batchSize = 20;
+                                $i = 0;
+                                foreach ($data['vistas_propiedades'] as $r) {
+                                    $n7VistasPropiedadesL = new N7VistasPropiedadesL ();
+                                    $n7VistasPropiedadesL->setPropiedadId($r['propiedadId']);
+                                    $n7VistasPropiedadesL->setFormularioId($n7VistasLegajos->getId());
+                                    $n7VistasPropiedadesL->setOrden($r['orden']);
+                                    $n7VistasPropiedadesL->setSoloLectura($r['solo_lectura']);
+                                    $this->getEntityManager()->persist($n7VistasPropiedadesL);
+                                    if (($i % $batchSize) === 0) {
+                                        $this->getEntityManager()->flush();
+                                        $this->getEntityManager()->clear();
+                                    }
+                                    $i++;
+                                }
+                                $this->getEntityManager()->flush();
+                                $this->getEntityManager()->clear();
 
                                 return $this->response->setContent(Json::encode(array(
-                                                    'type' => 'editProp',
+                                                    'type' => 'editVista',
                                                     'success' => true
                                 )));
                             }
                         } else {
                             //Add
-                            $n7PropiedadesL = new N7PropiedadesL ();
-                            $n7PropiedadesL->setDescripcion($data['descripcion']);
-                            $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
-                            $statusPersist = $this->getEntityManager()->persist($n7PropiedadesL);
-                            $statusFlush = $this->getEntityManager()->flush();
+                            $n7VistasLegajos = new N7VistasLegajos ();
+                            $n7VistasLegajos->setDescripcion($data['descripcion']);
+                            $n7VistasLegajos->setExtranetPermitido($data['extranet_permitido']);
+                            $this->getEntityManager()->persist($n7VistasLegajos);
+                            $this->getEntityManager()->flush();
+
+                            $batchSize = 20;
+                            $i = 0;
+                            foreach ($data['vistas_propiedades'] as $r) {
+                                $n7VistasPropiedadesL = new N7VistasPropiedadesL ();
+                                $n7VistasPropiedadesL->setPropiedadId($r['propiedadId']);
+                                $n7VistasPropiedadesL->setFormularioId($n7VistasLegajos->getId());
+                                $n7VistasPropiedadesL->setOrden($r['orden']);
+                                $n7VistasPropiedadesL->setSoloLectura($r['solo_lectura']);
+                                $this->getEntityManager()->persist($n7VistasPropiedadesL);
+                                if (($i % $batchSize) === 0) {
+                                    $this->getEntityManager()->flush();
+                                    $this->getEntityManager()->clear();
+                                }
+                                $i++;
+                            }
+                            $this->getEntityManager()->flush();
+                            $this->getEntityManager()->clear();
 
                             return $this->response->setContent(Json::encode(array(
-                                                'type' => 'addProp',
+                                                'type' => 'addVista',
                                                 'success' => true
                             )));
                         }
@@ -177,21 +223,28 @@ class DatosLegajosController extends AbstractActionController {
     }
 
     public function deleteGridItemAction() {
-        try{
+        try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
                 if ($request->isPost()) {
                     $id = (int) $request->getPost('id');
-                    $n7PropiedadesL = new N7PropiedadesL ();
-                    $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $id);
-                    if ($n7PropiedadesL) {
-                        $statusRemove = $this->getEntityManager()->remove($n7PropiedadesL);
-                        $statusFlush = $this->getEntityManager()->flush();
 
-                        return $this->response->setContent(Json::encode(array(
-                                            'type' => 'delProp',
-                                            'success' => true
-                        )));
+                    $q = $this->getEntityManager()->createQuery('delete from Application\Entity\N7VistasPropiedadesL m where m.formularioId = ?1');
+                    $q->setParameter(1, $id);
+                    $numDeleted = $q->execute();
+
+                    if ($numDeleted >= 0) {
+                        $n7VistasLegajos = new N7VistasLegajos ();
+                        $n7VistasLegajos = $this->getEntityManager()->find('Application\Entity\N7VistasLegajos', $id);
+                        if ($n7VistasLegajos) {
+                            $this->getEntityManager()->remove($n7VistasLegajos);
+                            $this->getEntityManager()->flush();
+
+                            return $this->response->setContent(Json::encode(array(
+                                                'type' => 'delVista',
+                                                'success' => true
+                            )));
+                        }
                     }
                 } else {
                     return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
@@ -204,77 +257,17 @@ class DatosLegajosController extends AbstractActionController {
         }
     }
 
-    public function editGridItemValAction() {
-        try{
-            if ($this->request->isXmlHttpRequest()) {
-                $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $data = Json::decode($request->getPost('data'), true);
-                    if ($data) {
-                        if (isset($data['propiedad'])) {
-                            //Add
-                            $n7PropiedadesL = new N7PropiedadesL ();
-                            $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $data['propiedad']);
-                            if ($n7PropiedadesL) {
-                                $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
-                                $n7ValoresPosiblesLegajos->setPropiedad($n7PropiedadesL);
-                                $n7ValoresPosiblesLegajos->setValorPosible($data['valor_posible']);
-                                $n7ValoresPosiblesLegajos->setSignificado($data['significado']);
-                                $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);
-                                $this->getEntityManager()->flush();
-                            }
-                            return $this->response->setContent(Json::encode(array(
-                                                'type' => 'addVal',
-                                                'success' => true
-                            )));
-                        } else {
-                            if (isset($data['id'])) {
-                                //Edit
-                                $n7ValoresPosiblesLegajos = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesLegajos', $data['id']);
-                                if ($n7ValoresPosiblesLegajos) {
-                                    $n7ValoresPosiblesLegajos->setValorPosible($data['valor_posible']);
-                                    $n7ValoresPosiblesLegajos->setSignificado($data['significado']);
-                                    $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);
-                                    $this->getEntityManager()->flush();
+    public function loadSelectViewAction() {
+        try {
+            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findAll();
+            $selectData = array();
 
-                                    return $this->response->setContent(Json::encode(array(
-                                                        'type' => 'editVal',
-                                                        'success' => true
-                                    )));
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
+            foreach ($data as $res) {
+                //echo '<option value="'.$row['drink_name'].'">' . $row['drink_name'] . "</option>";
+                $selectData [$res->getId()] = $res->getDescripcion();
             }
-        } catch (\Exception $ex) {
-            $this->flashMessenger()->addMessage($ex->getMessage());
-        }
-    }
 
-    public function deleteGridItemValAction() {
-        try{
-            if ($this->request->isXmlHttpRequest()) {
-                $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $id = (int) $request->getPost('id');
-                    $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
-                    $n7ValoresPosiblesLegajos = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesLegajos', $id);
-                    if ($n7ValoresPosiblesLegajos) {
-                        $this->getEntityManager()->remove($n7ValoresPosiblesLegajos);
-                        $this->getEntityManager()->flush();
-
-                        return $this->response->setContent(Json::encode(array(
-                                            'type' => 'delVal',
-                                            'success' => true
-                        )));
-                    }
-                }
-            } else {
-                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
-            }
+            return $this->response->setContent(Json::encode(array('type' => 'success', 'data' => $selectData)));
         } catch (\Exception $ex) {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }

@@ -5,21 +5,9 @@ namespace Application\Controller;
 use Zend\View\Model\ViewModel;
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
 use Zend\Authentication\AuthenticationService;
+// Forms
 use Application\Form\LoginForm;
 use Application\Form\EmpresaForm;
-
-//use Zend\Mvc\Controller\AbstractActionController;
-//use Zend\Validator;
-//use Zend\I18n\Validator as I18nValidator;
-//use Zend\Db\Adapter\Adapter;
-//use Zend\Db\Sql\Sql;
-//use Zend\Crypt\Password\Bcrypt;
-//use Zend\Authentication\Storage\Session as SessionStorage;
-//use Zend\Session\Container;
-//use Application\Model\UsuariosModel;
-//use Application\Entity\N7Usuarios;
-//use Application\Entity\N7Empresa;
-//use Application\Entity\N7EmpresaUsuario;
 
 class UsuariosController extends BaseController {
 

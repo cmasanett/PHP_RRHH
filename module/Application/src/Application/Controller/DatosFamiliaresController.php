@@ -2,27 +2,16 @@
 
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Json\Json;
-
-// Incluir entidades
+// Entities
 use Application\Entity\N7PropiedadesF;
 use Application\Entity\N7ValoresPosiblesFamiliares;
 
-class DatosFamiliaresController extends AbstractActionController {
+class DatosFamiliaresController extends BaseController {
 
     public function __construct() {
         
-    }
-
-    protected $em;
-
-    public function getEntityManager() {
-        if (null === $this->em) {
-            $this->em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-        }
-        return $this->em;
     }
 
     public function indexAction() {
@@ -37,7 +26,7 @@ class DatosFamiliaresController extends AbstractActionController {
         $page = $request->getPost('page', 1);
         $limit = $request->getPost('rows', 10);
 
-        try{
+        try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesF')->findAll();
 
             $count = count($data);
@@ -89,7 +78,7 @@ class DatosFamiliaresController extends AbstractActionController {
         $page = $request->getPost('page', 1);
         $limit = $request->getPost('rows', 10);
 
-        try{
+        try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesFamiliares')->findBy(array('propiedad' => $id));
             $count = count($data);
 
@@ -132,7 +121,7 @@ class DatosFamiliaresController extends AbstractActionController {
     }
 
     public function editGridItemAction() {
-        try{
+        try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
                 if ($request->isPost()) {
@@ -177,7 +166,7 @@ class DatosFamiliaresController extends AbstractActionController {
     }
 
     public function deleteGridItemAction() {
-        try{
+        try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
                 if ($request->isPost()) {
@@ -205,7 +194,7 @@ class DatosFamiliaresController extends AbstractActionController {
     }
 
     public function editGridItemValAction() {
-        try{
+        try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
                 if ($request->isPost()) {
@@ -256,7 +245,7 @@ class DatosFamiliaresController extends AbstractActionController {
     }
 
     public function deleteGridItemValAction() {
-        try{
+        try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
                 if ($request->isPost()) {

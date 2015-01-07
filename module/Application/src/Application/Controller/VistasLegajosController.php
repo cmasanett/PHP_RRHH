@@ -2,26 +2,16 @@
 
 namespace Application\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Json\Json;
-// Incluir entidades
+// Entities
 use Application\Entity\N7VistasLegajos;
 use Application\Entity\N7VistasPropiedadesL;
 
-class VistasLegajosController extends AbstractActionController {
+class VistasLegajosController extends BaseController {
 
     public function __construct() {
         
-    }
-
-    protected $em;
-
-    public function getEntityManager() {
-        if (null === $this->em) {
-            $this->em = $this->getServiceLocator()->get('doctrine.entitymanager.orm_default');
-        }
-        return $this->em;
     }
 
     public function indexAction() {
@@ -117,11 +107,11 @@ class VistasLegajosController extends AbstractActionController {
             }
         }
 
-        try { 
+        try {
             $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7VistasPropiedadesL u WHERE u.formularioId = ?1');
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
-            
+
             $response['rows'] = array();
             $i = 0;
 
