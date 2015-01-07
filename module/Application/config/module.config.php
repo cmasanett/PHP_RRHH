@@ -27,7 +27,7 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                     ]
                 ]
             ],
-            'login' => ['type' => 'Literal',
+            'usuarios' => ['type' => 'Literal',
                 'options' => ['route' => '/usuarios',
                     'defaults' => ['__NAMESPACE__' => 'Application\Controller',
                         'controller' => 'Usuarios',
@@ -162,9 +162,9 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                 'identity_class' => 'Application\Entity\N7Usuarios',
                 'identity_property' => 'usuario',
                 'credential_property' => 'clave',
-//                'credentialCallable' => function ($userObj, $password) {
-//                    return ($userObj->getPassword() === md5($password));
-//                },
+                'credentialCallable' => function ($userObj, $password) {
+                    return ($userObj->getPassword() === md5($password));
+                },
             ),
         ),
     )

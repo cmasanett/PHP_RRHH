@@ -38,3 +38,17 @@ CREATE TABLE `n7_empresas` (
   `valor_dato_baja` varchar(120) COLLATE utf8_spanish_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- ----------------------------
+-- Table structure for n7_ppd_l
+-- ----------------------------
+CREATE TABLE `n7_ppd_l` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `objeto_id` int(11) unsigned NOT NULL,
+  `propiedad_id` int(11) unsigned NOT NULL,
+  `valor` varchar(120) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Index_3` (`propiedad_id`),
+  KEY `Index_2` (`objeto_id`) USING BTREE,
+  KEY `Index_4` (`objeto_id`,`propiedad_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;

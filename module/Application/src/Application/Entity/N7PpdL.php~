@@ -1,0 +1,46 @@
+<?php
+
+namespace Application\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * N7PpdL
+ *
+ * @ORM\Table(name="n7_ppd_l", indexes={@ORM\Index(name="Index_3", columns={"propiedad_id"}), @ORM\Index(name="Index_2", columns={"objeto_id"}), @ORM\Index(name="Index_4", columns={"objeto_id", "propiedad_id"})})
+ * @ORM\Entity
+ */
+class N7PpdL
+{
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="objeto_id", type="integer", nullable=false)
+     */
+    private $objetoId;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="propiedad_id", type="integer", nullable=false)
+     */
+    private $propiedadId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="valor", type="string", length=120, nullable=false)
+     */
+    private $valor;
+
+
+}
