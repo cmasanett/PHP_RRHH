@@ -1,0 +1,731 @@
+<?php
+$title = 'Vistas de datos de Legajos';
+?>
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>
+<?php
+$flash = $this->flashMessenger();
+$flash->setMessageOpenFormat('<div%s>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            &times;
+            </button>
+        <ul><li>')
+        ->setMessageSeparatorString('</li><li>')
+        ->setMessageCloseString('</li></ul></div>');
+
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger', 'flashAlert'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info', 'flashAlert'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning', 'flashAlert'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
+?>
+
+<div class="alert alert-warning" id="diagAlert">
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <strong><span class="dataAlert"></span></strong>
+</div>
+
+<br>
+<div class="content">
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary btn-lg" id="btnAddVistasLegajo">Alta</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnDelVistasLegajo">Baja</button>
+                <button type="button" class="btn btn-primary btn-lg" id="btnEditVistasLegajo">Modificacion</button>
+            </div>
+            <br>
+            <div id="jqGridVistasLegajo" style="padding-top:10px;">
+                <table id="gridVistasLegajo"></table>
+                <div id="pagerVistasLegajo"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var oEdit = false;
+    var lastSel;
+    $(document).ready(function () {
+        //Grids
+        $("#gridVistasLegajo").jqGrid({
+            width: 100,
+            height: 230,
+            autowidth: true,
+            rownumbers: true,
+            url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadViewGrid')); ?>",
+            datatype: 'json',
+            mtype: 'POST',
+            colNames: ["Id", "Vista", "Extranet"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    sortable: false,
+                    sorttype: 'int',
+                    hidden: true
+                },
+                {name: 'descripcion', index: 'descripcion',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                },
+                {name: 'extranet_permitido', index: 'extranet_permitido',
+                    width: 5,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;S:Si;N:No"}
+                }
+            ],
+            pager: "#pagerVistasLegajo",
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,            
+            hidegrid: false,
+            ignoreCase: true,
+            autoencode: true,
+            forceFit: false,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "<?php echo $this->url('vistaslegajos', array('action' => 'editGridItem')); ?>",
+            caption: "Vistas de Legajo"
+        });
+        $("#gridVistasLegajo").navGrid("#pagerVistasLegajo",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+        $("#gridVistasLegajo").navButtonAdd("#pagerVistasLegajo", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridVistasLegajo")[0].clearToolbar();
+                gridReload('gridVistasLegajo');
+            }
+        });
+        $('#gridVistasLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        $("#gridPropiedadesLegajo").jqGrid({
+            width: 460,
+            height: 150,
+            shrinkToFit: true,
+            forceFit: false,
+            autowidth: false,
+            rowNum: 1000,
+            rownumbers: true,
+            datatype: "local",
+            colNames: ["Id", "Propiedad", "Tipo"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    sortable: false,
+                    sorttype: 'int',
+                    hidden: true
+                },
+                {name: 'descripcion', index: 'descripcion',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                },
+                {name: 'tipo_de_campo', index: 'tipo_de_campo',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
+                }
+            ],
+            pager: "#pagerPropiedadesLegajo",
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            ignoreCase: true,
+            autoencode: true,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            caption: "Lista de datos posibles"
+        });
+        $("#gridPropiedadesLegajo").navGrid("#pagerPropiedadesLegajo",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+//        $("#gridPropiedadesLegajo").navButtonAdd("#pagerPropiedadesLegajo", {
+//            caption: "Borrar filtros",
+//            title: "Borrar filtros",
+//            buttonicon: 'ui-icon-refresh',
+//            onClickButton: function () {
+//                jQuery("#gridPropiedadesLegajo")[0].clearToolbar();
+//                //loadGrid('gridPropiedadesLegajo');
+//                //gridReload('gridPropiedadesLegajo');
+//            }
+//        });
+        $('#gridPropiedadesLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+
+        $("#gridDatosVistasLegajo").jqGrid({
+            width: 400,
+            height: 150,
+            shrinkToFit: true,
+            forceFit: false,
+            autowidth: false,
+            rowNum: 1000,
+            rownumbers: true,
+            datatype: 'local',
+            colNames: ["Id", "PropiedadId", "Propiedad", "Tipo", "FormularioId", "Orden", "Modificable"],
+            colModel: [
+                {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    sortable: false,
+                    sorttype: 'int',
+                    hidden: true
+                },
+                {name: 'propiedadId', index: 'propiedadId',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'int',
+                    hidden: true
+                },
+                {name: 'propiedad', index: 'propiedad',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                },
+                {name: 'tipo', index: 'tipo',
+                    width: 10,
+                    align: "center",
+                    sortable: false,
+                    sorttype: 'text',
+                    hidden: true
+                },
+                {name: 'formularioId', index: 'formularioId',
+                    width: 10,
+                    align: "center",
+                    sortable: false,
+                    sorttype: 'int',
+                    hidden: true
+                },
+                {name: 'orden', index: 'orden',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true},
+                    editable: false,
+                    editoptions: {size: 30}
+                },
+                {name: 'solo_lectura', index: 'solo_lectura',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;S:Si;N:No"},
+                    editable: true,
+                    edittype: 'select',
+                    editoptions: {value: ":;S:Si;N:No"}
+                }
+            ],
+            pager: "#pagerDatosVistasLegajo",
+            sortname: "id",
+            sortorder: "ASC",
+            viewrecords: true,
+            viewsortcols: [true, 'horizontal', true],
+            gridview: true,
+            hidegrid: false,
+            ignoreCase: true,
+            autoencode: true,
+            pgbuttons: false,
+            pgtext: false,
+            pginput: false,
+            loadonce: true,
+            editurl: "clientArray",
+            caption: "Datos en las vistas",
+            cellEdit: true,
+            cellsubmit: 'clientArray'
+        });
+        $("#gridDatosVistasLegajo").navGrid("#pagerDatosVistasLegajo",
+                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+//        $("#gridDatosVistasLegajo").navButtonAdd("#pagerDatosVistasLegajo", {
+//            caption: "Borrar filtros",
+//            title: "Borrar filtros",
+//            buttonicon: 'ui-icon-refresh',
+//            onClickButton: function () {
+//                jQuery("#gridDatosVistasLegajo")[0].clearToolbar();
+//                //loadGrid('gridDatosVistasLegajo');
+//                //gridReload('gridDatosVistasLegajo');
+//            }
+//        });
+        $('#gridDatosVistasLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        jQuery("#gridDatosVistasLegajo").jqGrid('sortableRows', {
+            update: function (e, ui) {
+                reOrder('gridDatosVistasLegajo', 'orden');
+            }
+        });
+
+        //Buttons
+        $("#btnAddVistasLegajo").click(function () {
+            openDiagVistasLegajo("form-add-edit-VistasLegajo", "add", "", "");
+        });
+        $("#btnDelVistasLegajo").click(function () {
+            var rowid = jQuery("#gridVistasLegajo").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                $.ajax({
+                    url: "<?php echo $this->url('vistaslegajos', array('action' => 'deleteGridItem')); ?>",
+                    global: false,
+                    type: "POST",
+                    data: "id=" + rowid,
+                    dataType: "json",
+                    async: false,
+                    success: function (msg) {
+                        gridReload('gridVistasLegajo');
+                    }
+                });
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+        $("#btnEditVistasLegajo").click(function () {
+            var rowid = jQuery("#gridVistasLegajo").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                openDiagVistasLegajo("form-add-edit-VistasLegajo", "edit", "gridVistasLegajo", rowid);
+            }
+            else {
+                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            }
+        });
+
+        //btnAddAllData =>>
+        $("#btnAddAllData").click(function () {
+            var dataGrid = jQuery("#gridPropiedadesLegajo").jqGrid('getGridParam', 'data');
+            if (dataGrid.length > 0) {
+                for (var i = 0; i < dataGrid.length; i++) {
+                    var ids = $("#gridDatosVistasLegajo").jqGrid('getDataIDs');
+                    ids = ids.toString();
+                    ids = ids.split(",");
+
+                    var data = {
+                        "propiedadId": dataGrid[i]['id'],
+                        "propiedad": dataGrid[i]['descripcion'],
+                        "tipo": dataGrid[i]['tipo_de_campo'],
+                        "formularioId": "",
+                        "orden": (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") ? ids.length + 1 : 1,
+                        "solo_lectura": "Si"
+                    };
+
+                    if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
+                        $("#gridDatosVistasLegajo").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
+                    } else {
+                        $("#gridDatosVistasLegajo").jqGrid('addRowData', 1, data);
+                    }
+                }
+                deleteGrid('gridPropiedadesLegajo');
+            }
+        });
+        //btnAddSingleData >
+        $("#btnAddSingleData").click(function () {
+            var rowid = jQuery("#gridPropiedadesLegajo").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                var dataRow = $("#gridPropiedadesLegajo").jqGrid('getRowData', rowid);
+                var ids = $("#gridDatosVistasLegajo").jqGrid('getDataIDs');
+                ids = ids.toString();
+                ids = ids.split(",");
+
+                var data = {
+                    "propiedadId": dataRow['id'],
+                    "propiedad": dataRow['descripcion'],
+                    "tipo": dataRow['tipo_de_campo'],
+                    "formularioId": "",
+                    "orden": (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") ? ids.length + 1 : 1,
+                    "solo_lectura": "Si"
+                };
+
+                if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
+                    $("#gridDatosVistasLegajo").jqGrid('addRowData', ids.length + 1, data);
+                } else {
+                    $("#gridDatosVistasLegajo").jqGrid('addRowData', 1, data);
+                }
+                $("#gridPropiedadesLegajo").jqGrid('delRowData', rowid);
+            }
+            else {
+                msgAlert("diagAlertModal", "dataAlertModal", "Por favor seleccione una fila.");
+            }
+        });
+        //btnDelSingleData <
+        $("#btnDelSingleData").click(function () {
+            var rowid = jQuery("#gridDatosVistasLegajo").jqGrid('getGridParam', 'selrow');
+            if (rowid != null) {
+                var dataRow = $("#gridDatosVistasLegajo").jqGrid('getRowData', rowid);
+                var data = {
+                    "id": dataRow['propiedadId'],
+                    "descripcion": dataRow['propiedad'],
+                    "tipo_de_campo": dataRow['tipo']
+                };
+
+                $("#gridPropiedadesLegajo").jqGrid('addRowData', dataRow['propiedadId'], data);
+                $("#gridDatosVistasLegajo").jqGrid('delRowData', rowid);
+                reOrder('gridDatosVistasLegajo', 'orden');
+                $("#gridPropiedadesLegajo").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
+            }
+            else {
+                msgAlert("diagAlertModal", "dataAlertModal", "Por favor seleccione una fila.");
+            }
+        });
+        //btnDelAllData <<=
+        $("#btnDelAllData").click(function () {
+            var dataGrid = jQuery("#gridDatosVistasLegajo").jqGrid('getGridParam', 'data');
+            if (dataGrid.length > 0) {
+                for (var i = 0; i < dataGrid.length; i++) {
+                    var ids = $("#gridPropiedadesLegajo").jqGrid('getDataIDs');
+                    ids = ids.toString();
+                    ids = ids.split(",");
+
+                    var data = {
+                        "id": dataGrid[i]['propiedadId'],
+                        "descripcion": dataGrid[i]['propiedad'],
+                        "tipo_de_campo": dataGrid[i]['tipo']
+                    };
+
+                    if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
+                        $("#gridPropiedadesLegajo").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
+                    } else {
+                        $("#gridPropiedadesLegajo").jqGrid('addRowData', 1, data);
+                    }
+                }
+                $("#gridPropiedadesLegajo").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
+                deleteGrid('gridDatosVistasLegajo');
+            }
+        });
+
+        //Dialog addVistasLegajo
+        $("#form-add-edit-VistasLegajo").dialog({
+            autoOpen: false,
+            resizable: true,
+            draggable: true,
+            closeOnEscape: false,
+            modal: true,
+            width: 'auto', //1000, 
+            height: 'auto', //500,
+            maxWidth: 1200,
+            //position: ['center',110] , //{ my: "center", at: "center", of: window }
+            //fluid: true, //new option
+            open: function (event, ui) {
+                $(event.target).parent().css('position', 'fixed');
+                $(event.target).parent().css('top', '110px');
+                $(event.target).parent().css('left', '275px');
+            },
+            buttons: {
+                'Aceptar': function () {
+                    var descripcion = $("#descripcion-add-VistasLegajo").val();
+                    var extranet = $("#extranet-add-VistasLegajo").val();
+
+                    if (descripcion != '') {
+                        var ids = $("#gridVistasLegajo").jqGrid('getDataIDs');
+                        ids = ids.toString();
+                        ids = ids.split(",");
+
+                        var e = 0;
+                        var rowid = "";
+
+                        if (oEdit) {
+                            rowid = jQuery("#gridVistasLegajo").jqGrid('getGridParam', 'selrow');
+                            if (rowid != null) {
+                                if (ids != "") {
+                                    for (var i = 0; i < ids.length; i++) {
+                                        var data = $("#gridVistasLegajo").jqGrid('getRowData', ids[i]);
+                                        if (data['descripcion'].toLowerCase() == $("#descripcion-add-VistasLegajo").val().toLowerCase() && data['id'] != rowid) {
+                                            e++;
+                                        }
+                                    }
+                                }
+                            } else {
+                                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                            }
+                        } else {
+                            if (ids != "") {
+                                for (var i = 0; i < ids.length; i++) {
+                                    var data = $("#gridVistasLegajo").jqGrid('getRowData', ids[i]);
+                                    if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
+                                        e++;
+                                    }
+                                }
+                            }
+                        }
+                        if (e == 0) {
+                            var dataGridDatosVistas = jQuery("#gridDatosVistasLegajo").jqGrid('getGridParam', 'data');
+                            if (dataGridDatosVistas.length > 0) {
+                                var data = {
+                                    "id": rowid,
+                                    "descripcion": descripcion,
+                                    "extranet_permitido": extranet,
+                                    "vistas_propiedades": dataGridDatosVistas
+                                };
+                                $.ajax({
+                                    url: "<?php echo $this->url('vistaslegajos', array('action' => 'editGridItem')); ?>",
+                                    global: false,
+                                    type: "POST",
+                                    data: "data=" + JSON.stringify(data),
+                                    dataType: "json",
+                                    async: false,
+                                    success: function (msg) {
+                                        gridReload('gridVistasLegajo');
+                                        $("#form-add-edit-VistasLegajo").dialog('close');
+                                    }
+                                });
+                            } else {
+                                msgAlert("diagAlertModal", "dataAlertModal", "No ha agregado datos para la vista.");
+                            }
+                        } else {
+                            msgAlert("diagAlertModal", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                        }
+                    } else {
+                        msgAlert("diagAlertModal", "dataAlertModal", "Ingrese un valor al campo Vista.");
+                    }
+                },
+                'Cancelar': function () {
+                    deleteGrid('gridPropiedadesLegajo');
+                    deleteGrid('gridDatosVistasLegajo');
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                deleteGrid('gridPropiedadesLegajo');
+                deleteGrid('gridDatosVistasLegajo');
+            }
+        });
+
+        $('#diagAlert').on('closed.bs.alert', function () {
+            $('.dataAlert').html("");
+        });
+
+        $('#diagAlertModal').on('closed.bs.alert', function () {
+            $('.dataAlertModal').html("");
+        });
+    });
+
+    // remove window resize namespace
+    $(document).on("dialogclose", ".ui-dialog", function (event, ui) {
+        $(window).off("resize.responsive");
+    });
+
+    function gridReload(gridName) {
+        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
+    }
+
+    function openDiagVistasLegajo(diagName, op, grid, id) {
+        clearDataVistasLegajo();
+        if (op == "edit") {
+            rowdata = jQuery("#" + grid).getRowData(id);
+            $('#descripcion-add-VistasLegajo').val(rowdata['descripcion']);
+            $('#extranet-add-VistasLegajo').val(rowdata['extranet_permitido']);
+            $('#' + diagName).dialog("option", "title", "Editar registro");
+            $('#' + diagName).dialog('open');
+            $('#' + diagName).dialog('moveToTop');
+            loadGrid("gridPropiedadesLegajo", rowdata['id']);
+            loadGrid("gridDatosVistasLegajo", rowdata['id']);
+            oEdit = true;
+        } else {
+            $('#' + diagName).dialog("option", "title", "Agregar registro");
+            $('#' + diagName).dialog('open');
+            $('#' + diagName).dialog('moveToTop');
+            $('#extranet-add-VistasLegajo option:contains("C")').prop('selected', true);
+            loadGrid("gridPropiedadesLegajo");
+            loadGrid("gridDatosVistasLegajo");
+            oEdit = false;
+        }
+    }
+
+    function clearDataVistasLegajo() {
+        $('#descripcion-add-VistasLegajo').val("");
+        $('#descripcion-edit-VistasLegajo').val("");
+    }
+
+    function msgAlert(diagName, selectorName, msg) {
+        $('#' + diagName).show();
+        $('.' + selectorName).html(msg);
+        setTimeout(function () {
+            $('#' + diagName).hide("drop", {direction: "up"}, "slow");
+            $('.' + selectorName).html("");
+        }, 3000);
+        return;
+    }
+
+    function loadGrid(gridName, rowid) {
+        switch (gridName) {
+            case 'gridPropiedadesLegajo':
+                $.ajax({
+                    url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadPropGrid')); ?>",
+                    global: false,
+                    type: "POST",
+                    data: "id=" + rowid,
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {
+                        if (result.type == "success") {// ok	
+                            deleteGrid('gridPropiedadesLegajo');
+                            if (result.data.length > 0) {
+                                for (var i = 0; i < result.data.length; i++) {
+                                    var dataLocal = {
+                                        "id": result.data[i][0],
+                                        "descripcion": result.data[i][1],
+                                        "tipo_de_campo": result.data[i][2]
+                                    };
+                                    var ids = jQuery("#gridPropiedadesLegajo").jqGrid('getDataIDs');
+                                    ids = ids.toString();
+
+                                    ids = ids.split(",");
+                                    if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
+                                        $("#gridPropiedadesLegajo").jqGrid('addRowData', ids.length + 1, dataLocal);
+                                    } else {
+                                        $("#gridPropiedadesLegajo").jqGrid('addRowData', 1, dataLocal);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                break;
+            case 'gridDatosVistasLegajo':
+                $.ajax({
+                    url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadDataGrid')); ?>",
+                    global: false,
+                    type: "POST",
+                    data: "id=" + rowid,
+                    dataType: "json",
+                    async: false,
+                    success: function (result) {
+                        if (result.type == "success") {
+                            deleteGrid('gridDatosVistasLegajo');
+                            if (result.data.length > 0) {
+                                for (var i = 0; i < result.data.length; i++) {
+                                    var dataLocal = {
+                                        "id": result.data[i][0],
+                                        "propiedadId": result.data[i][1],
+                                        "propiedad": result.data[i][2],
+                                        "formularioId": result.data[i][3],
+                                        "orden": result.data[i][4],
+                                        "solo_lectura": result.data[i][5]
+                                    };
+                                    var ids = jQuery("#gridDatosVistasLegajo").jqGrid('getDataIDs');
+                                    ids = ids.toString();
+
+                                    ids = ids.split(",");
+                                    if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
+                                        $("#gridDatosVistasLegajo").jqGrid('addRowData', ids.length + 1, dataLocal);
+                                    } else {
+                                        $("#gridDatosVistasLegajo").jqGrid('addRowData', 1, dataLocal);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                break;
+        }
+    }
+
+    function deleteGrid(gridName) {
+        var $table;
+        $table = $('#' + gridName);
+
+        var ids = $table.jqGrid('getDataIDs');
+        ids = ids.toString();
+        ids = ids.split(",");
+        if (ids.length > 0) {
+            for (var i = 0; i < ids.length; i++) {
+                $table.delRowData(ids[i]);
+            }
+        }
+        $table.clearGridData(true).trigger("reloadGrid");
+    }
+
+    function reOrder(gridName, sortField) {
+        var ids = $("#" + gridName).jqGrid('getDataIDs');
+        ids = ids.toString();
+        ids = ids.split(",");
+
+        var orden = 1;
+
+        if (ids != "") {
+            for (var i = 0; i < ids.length; i++) {
+                jQuery('#' + gridName).setCell(ids[i], sortField, orden);
+                orden++;
+            }
+        }
+    }
+
+</script>
+
+<!-- Dialogo form-add-edit-VistasLegajo -->
+<div id="form-add-edit-VistasLegajo" class="container-fluid" title="" >
+    <form class="form-horizontal" role="form">
+        <div class="row">
+            <div class="form-group col-xs-2 col-md-4">
+                <label for="input-descripcion-add-VistasLegajo" class="col-sm-4 control-label">Vista:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" id="descripcion-add-VistasLegajo" placeholder="">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-2 col-md-4">
+                <label for="input-extranet-add-VistasLegajo" class="col-sm-4 control-label">Extranet:</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="extranet-add-VistasLegajo">
+                        <option value="S">Si</option>
+                        <option value="N">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-xs-6 col-sm-6">
+            <div id="jqGridPropiedadesLegajo" style="padding-top:10px;">
+                <table id="gridPropiedadesLegajo"></table>
+                <div id="pagerPropiedadesLegajo"></div>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-1">
+            <div class="btn-group-vertical" style="padding-top:70px;">
+                <button type="button" class="btn btn-info btn-xs" id="btnAddAllData">=>></button>
+                <button type="button" class="btn btn-info btn-xs" id="btnAddSingleData">></button>
+                <button type="button" class="btn btn-info btn-xs" id="btnDelSingleData"><</button>
+                <button type="button" class="btn btn-info btn-xs" id="btnDelAllData"><<=</button>
+            </div>
+        </div>
+        <div class="col-xs-6 col-sm-5">
+            <div id="jqGridDatosVistasLegajo" style="padding-top:10px;">
+                <table id="gridDatosVistasLegajo"></table>
+                <div id="pagerDatosVistasLegajo"></div>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-warning" id="diagAlertModal">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong><span class="dataAlertModal"></span></strong>
+    </div>
+</div>
