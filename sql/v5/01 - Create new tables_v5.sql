@@ -2,7 +2,7 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 -- Table structure for n7_empresas
 -- ----------------------------
-DROP TABLE IF EXISTS `n7_empresas`;
+-- DROP TABLE IF EXISTS `n7_empresas`;
 CREATE TABLE `n7_empresas` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `codigo` char(4) COLLATE utf8_spanish_ci NOT NULL,
@@ -51,4 +51,17 @@ CREATE TABLE `n7_ppd_l` (
   KEY `Index_3` (`propiedad_id`),
   KEY `Index_2` (`objeto_id`) USING BTREE,
   KEY `Index_4` (`objeto_id`,`propiedad_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+-- ------------------------------
+-- Table structure for n7_legajos
+-- ------------------------------
+CREATE TABLE `n7_legajos` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `empresa_id` int(11) unsigned NOT NULL,
+  `legajo` decimal (15,0) NOT NULL,
+  `apellido_y_nombre` varchar(80) COLLATE utf8_spanish_ci NOT NULL,
+  `foto` varchar(240) COLLATE utf8_spanish_ci NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `Index_1` (`empresa_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;

@@ -55,7 +55,7 @@ class DatosEmpresasController extends BaseController {
                 $response ['rows'][$i]['id'] = $r->getId(); // id
                 $response['rows'][$i]['cell'] = array(
                     $r->getId(),
-                    $r->getDescripcion(),
+                    utf8_encode($r->getDescripcion()),
                     $r->getTipoDeCampo()
                 );
                 $i ++;
@@ -108,8 +108,8 @@ class DatosEmpresasController extends BaseController {
                             $r->
                             getId(),
                     $r->getPropiedad()->getId(),
-                    $r->getValorPosible(),
-                    $r->getSignificado()
+                    utf8_encode($r->getValorPosible()),
+                    utf8_encode($r->getSignificado())
                 );
                 $i ++;
             }

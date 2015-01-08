@@ -44,6 +44,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 <script type="text/javascript">
     var oEdit = false;
     var lastSel;
+    
     $(document).ready(function () {
         //Grids
         $("#gridVistasLegajo").jqGrid({
@@ -117,7 +118,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             height: 150,
             shrinkToFit: true,
             forceFit: false,
-            autowidth: false,
+            autowidth: true,
             rowNum: 1000,
             rownumbers: true,
             datatype: "local",
@@ -183,7 +184,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             height: 150,
             shrinkToFit: true,
             forceFit: false,
-            autowidth: false,
+            autowidth: true,
             rowNum: 1000,
             rownumbers: true,
             datatype: 'local',
@@ -516,11 +517,11 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 deleteGrid('gridDatosVistasLegajo');
             }
         });
-
+        
+        //AlertManager
         $('#diagAlert').on('closed.bs.alert', function () {
             $('.dataAlert').html("");
         });
-
         $('#diagAlertModal').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
         });
@@ -710,7 +711,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
         <div class="col-xs-6 col-sm-1">
-            <div class="btn-group-vertical" role="group" style="padding-top:70px;">
+            <div class="btn-group-vertical" role="group" style="padding-top:70px; padding-left:10px;">
                 <button type="button" class="btn btn-info btn-xs" id="btnAddAllData">
                     <span class="glyphicon glyphicon-forward" aria-hidden="true"></span>
                 </button>

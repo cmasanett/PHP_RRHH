@@ -5,8 +5,12 @@ namespace Application\Controller;
 use Zend\View\Model\ViewModel;
 use Zend\Json\Json;
 // Entities
+use Application\Entity\N7Legajos;
+use Application\Entity\N7PpdL;
+use Application\Entity\N7PropiedadesL;
 use Application\Entity\N7VistasLegajos;
 use Application\Entity\N7VistasPropiedadesL;
+use Application\Entity\N7ValoresPosiblesLegajos;
 
 class LegajosController extends BaseController {
 
@@ -18,7 +22,7 @@ class LegajosController extends BaseController {
         return new ViewModel(array());
     }
 
-    public function loadViewGridAction() {
+    public function loadLegajosGridAction() {
         $request = $this->getRequest();
 
         $sidx = $request->getPost('sidx', 'id');
@@ -27,7 +31,7 @@ class LegajosController extends BaseController {
         $limit = $request->getPost('rows', 10);
 
         try {
-            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findAll();
+            $data = $this->getEntityManager()->getRepository('Application\Entity\N7Legajos')->findAll();
             $count = count($data);
 
             if ($count > 0) {
@@ -44,7 +48,7 @@ class LegajosController extends BaseController {
                 $start = 0;
             }
 
-            $row = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findBy(array(), array($sidx => $sord), $limit, $start);
+            $row = $this->getEntityManager()->getRepository('Application\Entity\N7Legajos')->findBy(array(), array($sidx => $sord), $limit, $start);
 
             $response ['page'] = $page;
             $response ['total'] = $total_pages;
@@ -55,8 +59,10 @@ class LegajosController extends BaseController {
                 $response ['rows'][$i]['id'] = $r->getId(); //id
                 $response['rows'][$i]['cell'] = array(
                     $r->getId(),
-                    $r->getDescripcion(),
-                    $r->getExtranetPermitido()
+                    $r->getEmpresaId(),
+                    $r->getLegajo(),
+                    utf8_encode($r->getApellidoYNombre()),
+                    $r->getFoto()
                 );
                 $i ++;
             }
@@ -67,7 +73,7 @@ class LegajosController extends BaseController {
         }
     }
 
-    public function loadPropGridAction() {
+    public function loadPpdLegajoGridAction() {
         if ($this->request->isXmlHttpRequest()) {
             $request = $this->getRequest();
             if ($request->isPost()) {
@@ -77,18 +83,46 @@ class LegajosController extends BaseController {
         }
 
         try {
-            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesL u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesL p WHERE p.formularioId = ?1)');
+            $dataPpdL = $this->getEntityManager()->getRepository('Application\Entity\N7PpdL')->findBy(array('objetoId' => $id));
+            $qb0 = $this->getEntityManager()->createQueryBuilder();
+            $qb0->select('p.id', 'p.descripcion','','','','cp.solo_lectura','p.tipo_de_campo')
+                    ->from('Application\Entity\N7EmpresaUsuario', 'p')
+                    ->innerJoin('Application\Entity\N7Empresas', 'l', 'WITH', 'p.empresa = l.id')
+                    ->where('p.usuario = ?1');
+            $qb0->setParameter(1, $authAdapter->getResultRowObject('id')->id);
+            $query0 = $qb0->getQuery();
+            $result = $query0->getArrayResult();
+            $cantEmpresasAsociadas = count($result);
+//SELECT 
+//    p.id,
+//    p.descripcion,
+//    SPACE(120) AS contenido,
+//    SPACE(120) AS contant,
+//    000000000.00 AS pp_id,
+//    vp.solo_lectura,
+//    p.tipo_de_campo
+//FROM
+//    zend_php_demo.n7_propiedades_l p,
+//    zend_php_demo.n7_vistas_propiedades_l vp,
+//    zend_php_demo.n7_vistas_legajos v
+//WHERE
+//    p.id = vp.propiedad_id
+//        AND vp.formulario_id = v.id
+//		AND v.descripcion = "Alta de Legajo"
+//ORDER BY vp.orden
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
 
             $response['rows'] = array();
             $i = 0;
 
+            colNames: ["Id", "Descripcion", "Contenido", "Contant", "PPId", "Solo Lectura", "Tipo"],
             foreach ($row as $r) {
                 $response['rows'][$i] = array(
                     $r->getId(),
-                    $r->getDescripcion(),
-                    $r->getTipoDeCampo()
+                    $r->getObjetoId,
+                    $r->getPropiedadId,
+                    utf8_encode($r->getValor())
                 );
                 $i ++;
             }
@@ -108,25 +142,17 @@ class LegajosController extends BaseController {
         }
 
         try {
-            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7VistasPropiedadesL u WHERE u.formularioId = ?1');
-            $query1->setParameter(1, $id);
-            $row = $query1->getResult();
+            $row = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(array('propiedad' => $id));
 
             $response['rows'] = array();
             $i = 0;
 
             foreach ($row as $r) {
-                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesL u WHERE u.id = ?1');
-                $query0->setParameter(1, $r->getPropiedadId());
-                $descripcion = $query0->getSingleScalarResult();
-
                 $response['rows'][$i] = array(
                     $r->getId(),
-                    $r->getPropiedadId(),
-                    $descripcion,
-                    $r->getFormularioId(),
-                    $r->getOrden(),
-                    $r->getSoloLectura()
+                    $r->getPropiedad()->getId(),
+                    utf8_encode($r->getValorPosible()),
+                    utf8_encode($r->getSignificado())
                 );
                 $i ++;
             }

@@ -87,7 +87,7 @@ class VistasLegajosController extends BaseController {
             foreach ($row as $r) {
                 $response['rows'][$i] = array(
                     $r->getId(),
-                    $r->getDescripcion(),
+                    utf8_encode($r->getDescripcion()),
                     $r->getTipoDeCampo()
                 );
                 $i ++;
@@ -123,7 +123,7 @@ class VistasLegajosController extends BaseController {
                 $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
-                    $descripcion,
+                    utf8_encode($descripcion),
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()

@@ -49,47 +49,58 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 <div id="tabsLegajoDesc">
                     <div id="tab-add-edit-Legajos" class="container-fluid">
                         <div class="row">
-                            <div class="form-group col-xs-6 col-sm-6">
-                                <label for="input-vista-tab-legajos" class="control-label">Vista seleccionada:</label>
-                            </div>
-                        </div>
-                        <form class="form-inline" role="form">
-                            <div class="row">
-                                <div class="form-group col-xs-6 col-sm-6">
-                                    <select class="form-control" id="select-vista-tab-legajos"></select>
-                                    <button type="button" class="btn btn-default btn-xs" id="btnRefreshViewData">
-                                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refrescar vistas
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
-                        <div class="row">
                             <div class="col-xs-6 col-sm-6">
-                                <div id="jqGridPropiedadesLegajo" style="padding-top:10px;">
-                                    <table id="gridPropiedadesLegajo"></table>
-                                    <div id="pagerPropiedadesLegajo"></div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="control-label small" for="input-vista-tab-legajos">Vista seleccionada:</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <form class="form-inline" role="form">
+                                        <div class="form-group form-group-sm">
+                                            <select class="form-control" id="select-vista-tab-legajos"></select>
+                                            <button type="button" class="btn btn-default btn-xs" id="btnRefreshViewData">
+                                                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Refrescar vistas
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="row">
+                                    <div id="jqGridDatosPpdLegajo" style="padding-top:10px;">
+                                        <table id="gridDatosPpdLegajo"></table>
+                                        <div id="pagerDatosPpdLegajo"></div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-xs-6 col-sm-1">
-                                <div class="btn-group-vertical" role="group" style="padding-top:70px;">
-                                    <button type="button" class="btn btn-info btn-xs" id="btnAddAllData">
-                                        <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
-                                    </button>
-                                    <button type="button" class="btn btn-success btn-xs" id="btnAddSingleData">
-                                        <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Aplicar
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-xs" id="btnDelSingleData">
-                                        <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
-                                    </button>
-                                    <!--                                    <button type="button" class="btn btn-info btn-xs" id="btnDelAllData">
-                                                                            <span class="glyphicon glyphicon-backward" aria-hidden="true"></span>
-                                                                        </button>-->
+                                <div class="row"></div>
+                                <div class="row"></div>
+                                <div class="row">
+                                    <div class="btn-group-vertical" role="group" style="padding-top:70px;">
+                                        <button type="button" class="btn btn-info btn-xs" id="btnAddAllData">
+                                            <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
+                                        </button>
+                                        <button type="button" class="btn btn-success btn-xs" id="btnAddSingleData">
+                                            <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Aplicar
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-xs" id="btnDelSingleData">
+                                            <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-xs-6 col-sm-5">
-                                <div id="jqGridDatosVistasLegajo" style="padding-top:10px;">
-                                    <table id="gridDatosVistasLegajo"></table>
-                                    <div id="pagerDatosVistasLegajo"></div>
+                                <div class="row">
+                                    <div class="form-group form-group-sm">
+                                        <label class="control-label small" for="input-vista-tab-legajos">Valores posibles:</label>
+                                    </div>
+                                </div>
+                                <div class="row"></div>
+                                <div class="row">
+                                    <div id="jqGridDatosLegajosVal" style="padding-top:10px;">
+                                        <table id="gridDatosLegajosVal"></table>
+                                        <div id="pagerDatosLegajosVal"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -121,18 +132,25 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         //Grids
         $("#gridLegajos").jqGrid({
             width: 100,
-            height: 230,
+            height: 250,
             autowidth: true,
             rownumbers: true,
-            url: "<?php echo $this->url('legajos', array('action' => 'loadViewGrid')); ?>",
+            url: "<?php echo $this->url('legajos', array('action' => 'loadLegajosGrid')); ?>",
             datatype: 'json',
             mtype: 'POST',
-            colNames: ["Id", "Legajo", "Apellido y Nombre"],
+            colNames: ["Id", "EmpresaId", "Legajo", "Apellido y Nombre", "Foto"],
             colModel: [
                 {name: 'id', index: 'id',
                     width: 10,
                     align: "center",
                     sortable: false,
+                    sorttype: 'int',
+                    hidden: true
+                },
+                {name: 'empresa', index: 'empresa',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
                     sorttype: 'int',
                     hidden: true
                 },
@@ -145,7 +163,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     stype: 'text',
                     searchoptions: {clearSearch: true}
                 },
-                {name: 'descripcion', index: 'descripcion',
+                {name: 'apellido_y_nombre', index: 'apellido_y_nombre',
                     width: 30,
                     align: "center",
                     sortable: true,
@@ -153,6 +171,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     search: true,
                     stype: 'text',
                     searchoptions: {clearSearch: true}
+                },
+                {name: 'foto', index: 'foto',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'int',
+                    hidden: true
                 }
             ],
             pager: "#pagerLegajos",
@@ -170,7 +195,24 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             pginput: false,
             loadonce: true,
             editurl: "<?php echo $this->url('legajos', array('action' => 'editGridItem')); ?>",
-            caption: "Legajos"
+            //caption: "Legajos",
+            gridComplete: function () {
+                var ids = $("#gridLegajos").jqGrid('getDataIDs');
+                ids = ids.toString();
+                ids = ids.split(",");
+
+                for (var i = 0; i < ids.length; i++) {
+                    var cl = ids[i];
+                    var data = $("#gridLegajos").jqGrid('getRowData', ids[i]);
+                    if (data['legajo'] == '2') {
+                        jQuery("#gridLegajos").jqGrid('setRowData', cl, false, {color: '#FFFFFF', background: '#FF9147'});
+                    }
+                }
+            },
+            onSelectRow: function (id) {
+                loadGrid("gridDatosPpdLegajo", id);
+                loadGrid("gridDatosLegajosVal", id);
+            }
         });
         $("#gridLegajos").navGrid("#pagerLegajos",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
@@ -185,16 +227,16 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         });
         $('#gridLegajos').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
 
-        $("#gridPropiedadesLegajo").jqGrid({
+        $("#gridDatosPpdLegajo").jqGrid({
             width: 460,
             height: 150,
             shrinkToFit: true,
             forceFit: false,
-            autowidth: false,
+            autowidth: true,
             rowNum: 1000,
             rownumbers: true,
             datatype: "local",
-            colNames: ["Id", "Propiedad", "Tipo"],
+            colNames: ["Id", "Descripcion", "Contenido", "Contant", "PPId", "Solo Lectura", "Tipo"],
             colModel: [
                 {name: 'id', index: 'id',
                     width: 10,
@@ -212,6 +254,40 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     stype: 'text',
                     searchoptions: {clearSearch: true}
                 },
+                {name: 'contenido', index: 'contenido',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                },
+                {name: 'contant', index: 'contant',
+                    width: 30,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'text',
+                    searchoptions: {clearSearch: true}
+                },
+                {name: 'pp_id', index: 'pp_id',
+                    width: 10,
+                    align: "center",
+                    sortable: false,
+                    sorttype: 'int',
+                    hidden: true
+                },
+                {name: 'solo_lectura', index: 'solo_lectura',
+                    width: 10,
+                    align: "center",
+                    sortable: true,
+                    sorttype: 'text',
+                    search: true,
+                    stype: 'select',
+                    searchoptions: {value: ":;S:Si;N:o"}
+                },
                 {name: 'tipo_de_campo', index: 'tipo_de_campo',
                     width: 10,
                     align: "center",
@@ -222,7 +298,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"}
                 }
             ],
-            pager: "#pagerPropiedadesLegajo",
+            pager: "#pagerDatosPpdLegajo",
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
@@ -234,33 +310,33 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             pgbuttons: false,
             pgtext: false,
             pginput: false,
-            loadonce: true,
-            caption: "Lista de datos posibles"
+            loadonce: true
+            //caption: ""
         });
-        $("#gridPropiedadesLegajo").navGrid("#pagerPropiedadesLegajo",
+        $("#gridDatosPpdLegajo").navGrid("#pagerDatosPpdLegajo",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-//        $("#gridPropiedadesLegajo").navButtonAdd("#pagerPropiedadesLegajo", {
+//        $("#gridDatosPpdLegajo").navButtonAdd("#pagerDatosPpdLegajo", {
 //            caption: "Borrar filtros",
 //            title: "Borrar filtros",
 //            buttonicon: 'ui-icon-refresh',
 //            onClickButton: function () {
-//                jQuery("#gridPropiedadesLegajo")[0].clearToolbar();
-//                //loadGrid('gridPropiedadesLegajo');
-//                //gridReload('gridPropiedadesLegajo');
+//                jQuery("#gridDatosPpdLegajo")[0].clearToolbar();
+//                //loadGrid('gridDatosPpdLegajo');
+//                //gridReload('gridDatosPpdLegajo');
 //            }
 //        });
-        $('#gridPropiedadesLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        $('#gridDatosPpdLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
 
-        $("#gridDatosVistasLegajo").jqGrid({
+        $("#gridDatosLegajosVal").jqGrid({
             width: 400,
-            height: 150,
+            height: 205,
             shrinkToFit: true,
             forceFit: false,
-            autowidth: false,
+            autowidth: true,
             rowNum: 1000,
             rownumbers: true,
             datatype: 'local',
-            colNames: ["Id", "PropiedadId", "Propiedad", "Tipo", "FormularioId", "Orden", "Modificable"],
+            colNames: ["Id", "PropiedadId", "Valor", "Significado"],
             colModel: [
                 {name: 'id', index: 'id',
                     width: 10,
@@ -269,59 +345,33 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     sorttype: 'int',
                     hidden: true
                 },
-                {name: 'propiedadId', index: 'propiedadId',
+                {name: 'propiedad', index: 'propiedad',
                     width: 10,
                     align: "center",
                     sortable: true,
                     sorttype: 'int',
                     hidden: true
                 },
-                {name: 'propiedad', index: 'propiedad',
-                    width: 30,
+                {name: 'valor_posible', index: 'valor_posible',
+                    width: 15,
                     align: "center",
-                    sortable: true,
+                    sortable: false,
                     sorttype: 'text',
                     search: true,
                     stype: 'text',
                     searchoptions: {clearSearch: true}
                 },
-                {name: 'tipo', index: 'tipo',
-                    width: 10,
+                {name: 'significado', index: 'significado',
+                    width: 15,
                     align: "center",
                     sortable: false,
                     sorttype: 'text',
-                    hidden: true
-                },
-                {name: 'formularioId', index: 'formularioId',
-                    width: 10,
-                    align: "center",
-                    sortable: false,
-                    sorttype: 'int',
-                    hidden: true
-                },
-                {name: 'orden', index: 'orden',
-                    width: 10,
-                    align: "center",
-                    sortable: true,
                     search: true,
                     stype: 'text',
-                    searchoptions: {clearSearch: true},
-                    editable: false,
-                    editoptions: {size: 30}
-                },
-                {name: 'solo_lectura', index: 'solo_lectura',
-                    width: 10,
-                    align: "center",
-                    sortable: true,
-                    search: true,
-                    stype: 'select',
-                    searchoptions: {value: ":;S:Si;N:No"},
-                    editable: true,
-                    edittype: 'select',
-                    editoptions: {value: ":;S:Si;N:No"}
+                    searchoptions: {clearSearch: true}
                 }
             ],
-            pager: "#pagerDatosVistasLegajo",
+            pager: "#pagerDatosLegajosVal",
             sortname: "id",
             sortorder: "ASC",
             viewrecords: true,
@@ -335,33 +385,32 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             pginput: false,
             loadonce: true,
             editurl: "clientArray",
-            caption: "Datos en las vistas",
+            //caption: "",
             cellEdit: true,
             cellsubmit: 'clientArray'
         });
-        $("#gridDatosVistasLegajo").navGrid("#pagerDatosVistasLegajo",
+        $("#gridDatosLegajosVal").navGrid("#pagerDatosLegajosVal",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-//        $("#gridDatosVistasLegajo").navButtonAdd("#pagerDatosVistasLegajo", {
+//        $("#gridDatosLegajosVal").navButtonAdd("#pagerDatosLegajosVal", {
 //            caption: "Borrar filtros",
 //            title: "Borrar filtros",
 //            buttonicon: 'ui-icon-refresh',
 //            onClickButton: function () {
-//                jQuery("#gridDatosVistasLegajo")[0].clearToolbar();
-//                //loadGrid('gridDatosVistasLegajo');
-//                //gridReload('gridDatosVistasLegajo');
+//                jQuery("#gridDatosLegajosVal")[0].clearToolbar();
+//                //loadGrid('gridDatosLegajosVal');
+//                //gridReload('gridDatosLegajosVal');
 //            }
 //        });
-        $('#gridDatosVistasLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
-        jQuery("#gridDatosVistasLegajo").jqGrid('sortableRows', {
+        $('#gridDatosLegajosVal').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
+        jQuery("#gridDatosLegajosVal").jqGrid('sortableRows', {
             update: function (e, ui) {
-                reOrder('gridDatosVistasLegajo', 'orden');
+                reOrder('gridDatosLegajosVal', 'orden');
             }
         });
 
-
         //Tabs
         $("#tabsLegajos").tabs({
-            heightStyle: "auto"
+            heightStyle: "content"
         });
 
         //Buttons
@@ -399,10 +448,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
         //btnAddAllData =>>
         $("#btnAddAllData").click(function () {
-            var dataGrid = jQuery("#gridPropiedadesLegajo").jqGrid('getGridParam', 'data');
+            var dataGrid = jQuery("#gridDatosPpdLegajo").jqGrid('getGridParam', 'data');
             if (dataGrid.length > 0) {
                 for (var i = 0; i < dataGrid.length; i++) {
-                    var ids = $("#gridDatosVistasLegajo").jqGrid('getDataIDs');
+                    var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
                     ids = ids.toString();
                     ids = ids.split(",");
 
@@ -416,20 +465,20 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     };
 
                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                        $("#gridDatosVistasLegajo").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
+                        $("#gridDatosLegajosVal").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
                     } else {
-                        $("#gridDatosVistasLegajo").jqGrid('addRowData', 1, data);
+                        $("#gridDatosLegajosVal").jqGrid('addRowData', 1, data);
                     }
                 }
-                deleteGrid('gridPropiedadesLegajo');
+                deleteGrid('gridDatosPpdLegajo');
             }
         });
         //btnAddSingleData >
         $("#btnAddSingleData").click(function () {
-            var rowid = jQuery("#gridPropiedadesLegajo").jqGrid('getGridParam', 'selrow');
+            var rowid = jQuery("#gridDatosPpdLegajo").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                var dataRow = $("#gridPropiedadesLegajo").jqGrid('getRowData', rowid);
-                var ids = $("#gridDatosVistasLegajo").jqGrid('getDataIDs');
+                var dataRow = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
+                var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
                 ids = ids.toString();
                 ids = ids.split(",");
 
@@ -443,11 +492,11 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 };
 
                 if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                    $("#gridDatosVistasLegajo").jqGrid('addRowData', ids.length + 1, data);
+                    $("#gridDatosLegajosVal").jqGrid('addRowData', ids.length + 1, data);
                 } else {
-                    $("#gridDatosVistasLegajo").jqGrid('addRowData', 1, data);
+                    $("#gridDatosLegajosVal").jqGrid('addRowData', 1, data);
                 }
-                $("#gridPropiedadesLegajo").jqGrid('delRowData', rowid);
+                $("#gridDatosPpdLegajo").jqGrid('delRowData', rowid);
             }
             else {
                 msgAlert("diagAlertModal", "dataAlertModal", "Por favor seleccione una fila.");
@@ -455,19 +504,19 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         });
         //btnDelSingleData <
         $("#btnDelSingleData").click(function () {
-            var rowid = jQuery("#gridDatosVistasLegajo").jqGrid('getGridParam', 'selrow');
+            var rowid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                var dataRow = $("#gridDatosVistasLegajo").jqGrid('getRowData', rowid);
+                var dataRow = $("#gridDatosLegajosVal").jqGrid('getRowData', rowid);
                 var data = {
                     "id": dataRow['propiedadId'],
                     "descripcion": dataRow['propiedad'],
                     "tipo_de_campo": dataRow['tipo']
                 };
 
-                $("#gridPropiedadesLegajo").jqGrid('addRowData', dataRow['propiedadId'], data);
-                $("#gridDatosVistasLegajo").jqGrid('delRowData', rowid);
-                reOrder('gridDatosVistasLegajo', 'orden');
-                $("#gridPropiedadesLegajo").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
+                $("#gridDatosPpdLegajo").jqGrid('addRowData', dataRow['propiedadId'], data);
+                $("#gridDatosLegajosVal").jqGrid('delRowData', rowid);
+                reOrder('gridDatosLegajosVal', 'orden');
+                $("#gridDatosPpdLegajo").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
             }
             else {
                 msgAlert("diagAlertModal", "dataAlertModal", "Por favor seleccione una fila.");
@@ -475,10 +524,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         });
         //btnDelAllData <<=
         $("#btnDelAllData").click(function () {
-            var dataGrid = jQuery("#gridDatosVistasLegajo").jqGrid('getGridParam', 'data');
+            var dataGrid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'data');
             if (dataGrid.length > 0) {
                 for (var i = 0; i < dataGrid.length; i++) {
-                    var ids = $("#gridPropiedadesLegajo").jqGrid('getDataIDs');
+                    var ids = $("#gridDatosPpdLegajo").jqGrid('getDataIDs');
                     ids = ids.toString();
                     ids = ids.split(",");
 
@@ -489,13 +538,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     };
 
                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                        $("#gridPropiedadesLegajo").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
+                        $("#gridDatosPpdLegajo").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
                     } else {
-                        $("#gridPropiedadesLegajo").jqGrid('addRowData', 1, data);
+                        $("#gridDatosPpdLegajo").jqGrid('addRowData', 1, data);
                     }
                 }
-                $("#gridPropiedadesLegajo").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
-                deleteGrid('gridDatosVistasLegajo');
+                $("#gridDatosPpdLegajo").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
+                deleteGrid('gridDatosLegajosVal');
             }
         });
 
@@ -554,7 +603,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             }
                         }
                         if (e == 0) {
-                            var dataGridDatosVistas = jQuery("#gridDatosVistasLegajo").jqGrid('getGridParam', 'data');
+                            var dataGridDatosVistas = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'data');
                             if (dataGridDatosVistas.length > 0) {
                                 var data = {
                                     "id": rowid,
@@ -585,21 +634,21 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     }
                 },
                 'Cancelar': function () {
-                    deleteGrid('gridPropiedadesLegajo');
-                    deleteGrid('gridDatosVistasLegajo');
+                    deleteGrid('gridDatosPpdLegajo');
+                    deleteGrid('gridDatosLegajosVal');
                     $(this).dialog('close');
                 }
             },
             close: function () {
-                deleteGrid('gridPropiedadesLegajo');
-                deleteGrid('gridDatosVistasLegajo');
+                deleteGrid('gridDatosPpdLegajo');
+                deleteGrid('gridDatosLegajosVal');
             }
         });
 
+        //AlertManager
         $('#diagAlert').on('closed.bs.alert', function () {
             $('.dataAlert').html("");
         });
-
         $('#diagAlertModal').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
         });
@@ -625,16 +674,16 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             $('#' + diagName).dialog("option", "title", "Editar registro");
             $('#' + diagName).dialog('open');
             $('#' + diagName).dialog('moveToTop');
-            loadGrid("gridPropiedadesLegajo", rowdata['id']);
-            loadGrid("gridDatosVistasLegajo", rowdata['id']);
+            loadGrid("gridDatosPpdLegajo", rowdata['id']);
+            loadGrid("gridDatosLegajosVal", rowdata['id']);
             oEdit = true;
         } else {
             $('#' + diagName).dialog("option", "title", "Agregar registro");
             $('#' + diagName).dialog('open');
             $('#' + diagName).dialog('moveToTop');
             $('#extranet-add-Legajos option:contains("C")').prop('selected', true);
-            loadGrid("gridPropiedadesLegajo");
-            loadGrid("gridDatosVistasLegajo");
+            loadGrid("gridDatosPpdLegajo");
+            loadGrid("gridDatosLegajosVal");
             oEdit = false;
         }
     }
@@ -656,9 +705,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
     function loadGrid(gridName, rowid) {
         switch (gridName) {
-            case 'gridPropiedadesLegajo':
+            case 'gridDatosPpdLegajo':
                 $.ajax({
-                    url: "<?php echo $this->url('legajos', array('action' => 'loadPropGrid')); ?>",
+                    url: "<?php echo $this->url('legajos', array('action' => 'loadPpdLegajoGrid')); ?>",
                     global: false,
                     type: "POST",
                     data: "id=" + rowid,
@@ -666,7 +715,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     async: false,
                     success: function (result) {
                         if (result.type == "success") {// ok	
-                            deleteGrid('gridPropiedadesLegajo');
+                            deleteGrid('gridDatosPpdLegajo');
                             if (result.data.length > 0) {
                                 for (var i = 0; i < result.data.length; i++) {
                                     var dataLocal = {
@@ -674,14 +723,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                         "descripcion": result.data[i][1],
                                         "tipo_de_campo": result.data[i][2]
                                     };
-                                    var ids = jQuery("#gridPropiedadesLegajo").jqGrid('getDataIDs');
+                                    var ids = jQuery("#gridDatosPpdLegajo").jqGrid('getDataIDs');
                                     ids = ids.toString();
 
                                     ids = ids.split(",");
                                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                                        $("#gridPropiedadesLegajo").jqGrid('addRowData', ids.length + 1, dataLocal);
+                                        $("#gridDatosPpdLegajo").jqGrid('addRowData', ids.length + 1, dataLocal);
                                     } else {
-                                        $("#gridPropiedadesLegajo").jqGrid('addRowData', 1, dataLocal);
+                                        $("#gridDatosPpdLegajo").jqGrid('addRowData', 1, dataLocal);
                                     }
                                 }
                             }
@@ -689,7 +738,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     }
                 });
                 break;
-            case 'gridDatosVistasLegajo':
+            case 'gridDatosLegajosVal':
                 $.ajax({
                     url: "<?php echo $this->url('legajos', array('action' => 'loadDataGrid')); ?>",
                     global: false,
@@ -699,7 +748,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     async: false,
                     success: function (result) {
                         if (result.type == "success") {
-                            deleteGrid('gridDatosVistasLegajo');
+                            deleteGrid('gridDatosLegajosVal');
                             if (result.data.length > 0) {
                                 for (var i = 0; i < result.data.length; i++) {
                                     var dataLocal = {
@@ -710,14 +759,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                         "orden": result.data[i][4],
                                         "solo_lectura": result.data[i][5]
                                     };
-                                    var ids = jQuery("#gridDatosVistasLegajo").jqGrid('getDataIDs');
+                                    var ids = jQuery("#gridDatosLegajosVal").jqGrid('getDataIDs');
                                     ids = ids.toString();
 
                                     ids = ids.split(",");
                                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                                        $("#gridDatosVistasLegajo").jqGrid('addRowData', ids.length + 1, dataLocal);
+                                        $("#gridDatosLegajosVal").jqGrid('addRowData', ids.length + 1, dataLocal);
                                     } else {
-                                        $("#gridDatosVistasLegajo").jqGrid('addRowData', 1, dataLocal);
+                                        $("#gridDatosLegajosVal").jqGrid('addRowData', 1, dataLocal);
                                     }
                                 }
                             }
@@ -806,9 +855,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     </form>
     <div class="row">
         <div class="col-xs-6 col-sm-6">
-            <div id="jqGridPropiedadesLegajo" style="padding-top:10px;">
-                <table id="gridPropiedadesLegajo"></table>
-                <div id="pagerPropiedadesLegajo"></div>
+            <div id="jqGridDatosPpdLegajo" style="padding-top:10px;">
+                <table id="gridDatosPpdLegajo"></table>
+                <div id="pagerDatosPpdLegajo"></div>
             </div>
         </div>
         <div class="col-xs-6 col-sm-1">
@@ -820,9 +869,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
         <div class="col-xs-6 col-sm-5">
-            <div id="jqGridDatosVistasLegajo" style="padding-top:10px;">
-                <table id="gridDatosVistasLegajo"></table>
-                <div id="pagerDatosVistasLegajo"></div>
+            <div id="jqGridDatosLegajosVal" style="padding-top:10px;">
+                <table id="gridDatosLegajosVal"></table>
+                <div id="pagerDatosLegajosVal"></div>
             </div>
         </div>
     </div>

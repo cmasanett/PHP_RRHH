@@ -542,22 +542,19 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
          }
          });*/
 
+        //AlertManager
         $('#diagAlert').on('closed.bs.alert', function () {
             $('.dataAlert').html("");
-        });
-        
+        });      
         $('#diagAlertModalAddE').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
-        });
-        
+        });       
         $('#diagAlertModalEditE').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
-        });
-        
+        });        
         $('#diagAlertModalAddEV').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
-        });
-        
+        });       
         $('#diagAlertModalEditEV').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
         });

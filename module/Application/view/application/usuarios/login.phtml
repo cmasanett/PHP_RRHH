@@ -1,29 +1,29 @@
 <?php
-	$this->headTitle("Login de usuarios");
-	$form = $this->form;
-	
-	$formLabel = $this->plugin('formLabel');
-	$form->prepare();
-	echo $this->form()->openTag($form);
+$this->headTitle("Login de usuarios");
+$form = $this->form;
+
+$formLabel = $this->plugin('formLabel');
+$form->prepare();
+echo $this->form()->openTag($form);
 ?>
 <h2 class="form-signin-heading">Ingresar al sistema</h2>
 <div class="form-signin">
-	<?php
-	    $userName = $form->get('usuario');
-	    echo "Usuario: ".$this->formInput($userName);
-	    if(isset($error["usuario"])){
-	      echo $error["usuario"]['usuarioInvalid'];
-	    }
-	?>
+    <?php
+    $userName = $form->get('usuario');
+    echo "Usuario: " . $this->formInput($userName);
+    if (isset($error["usuario"])) {
+        echo $error["usuario"]['usuarioInvalid'];
+    }
+    ?>
 </div>
 <div class="form-signin">
-	<?php
-	    $pass = $form->get('clave');
-	    echo "Clave: ".$this->formInput($pass);   
-	    echo $this->formElementErrors($pass);
-	?>
+    <?php
+    $pass = $form->get('clave');
+    echo "Clave: " . $this->formInput($pass);
+    echo $this->formElementErrors($pass);
+    ?>
 </div>
 <br></br>
 <?php
-	echo $this->formElement($form->get('submit'));
-	echo $this->form()->closeTag();
+echo $this->formElement($form->get('submit'));
+echo $this->form()->closeTag();

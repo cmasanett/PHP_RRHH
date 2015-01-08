@@ -55,7 +55,7 @@ class VistasEmpresasController extends BaseController {
                 $response ['rows'][$i]['id'] = $r->getId(); //id
                 $response['rows'][$i]['cell'] = array(
                     $r->getId(),
-                    $r->getDescripcion(),
+                    utf8_encode($r->getDescripcion()),
                     $r->getExtranetPermitido()
                 );
                 $i ++;
@@ -122,7 +122,7 @@ class VistasEmpresasController extends BaseController {
                 //);
                 $response['rows'][$i] = array(
                     $r->getId(),
-                    $r->getDescripcion(),
+                    utf8_encode($r->getDescripcion()),
                     $r->getTipoDeCampo()
                 );
                 $i ++;
@@ -195,7 +195,7 @@ class VistasEmpresasController extends BaseController {
                 $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
-                    $descripcion,
+                    utf8_encode($descripcion),
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()
