@@ -77,55 +77,65 @@ class LegajosController extends BaseController {
         if ($this->request->isXmlHttpRequest()) {
             $request = $this->getRequest();
             if ($request->isPost()) {
-                $dataJson = $request->getPost('id', 0);
-                $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
+                $data = Json::decode($request->getPost('data'), true);
+                if ($data) {
+                    if (isset($data['id'])) {
+                        $id = $data['id'];
+                        $vistaLegajoSel = $data['vistaLegajoSel'];
+                    }
+                }
             }
         }
 
         try {
-            $dataPpdL = $this->getEntityManager()->getRepository('Application\Entity\N7PpdL')->findBy(array('objetoId' => $id));
-            $qb0 = $this->getEntityManager()->createQueryBuilder();
-            $qb0->select('p.id', 'p.descripcion','','','','cp.solo_lectura','p.tipo_de_campo')
-                    ->from('Application\Entity\N7EmpresaUsuario', 'p')
-                    ->innerJoin('Application\Entity\N7Empresas', 'l', 'WITH', 'p.empresa = l.id')
-                    ->where('p.usuario = ?1');
-            $qb0->setParameter(1, $authAdapter->getResultRowObject('id')->id);
-            $query0 = $qb0->getQuery();
-            $result = $query0->getArrayResult();
-            $cantEmpresasAsociadas = count($result);
-//SELECT 
-//    p.id,
-//    p.descripcion,
-//    SPACE(120) AS contenido,
-//    SPACE(120) AS contant,
-//    000000000.00 AS pp_id,
-//    vp.solo_lectura,
-//    p.tipo_de_campo
-//FROM
-//    zend_php_demo.n7_propiedades_l p,
-//    zend_php_demo.n7_vistas_propiedades_l vp,
-//    zend_php_demo.n7_vistas_legajos v
-//WHERE
-//    p.id = vp.propiedad_id
-//        AND vp.formulario_id = v.id
-//		AND v.descripcion = "Alta de Legajo"
-//ORDER BY vp.orden
-            $query1->setParameter(1, $id);
-            $row = $query1->getResult();
+            $row0 = $this->getEntityManager()->getRepository('Application\Entity\N7PpdL')->findBy(array('objetoId' => $id));
+            $qb1 = $this->getEntityManager()->createQueryBuilder();
+            $qb1->select('p.id', 'p.descripcion', 'vp.soloLectura', 'p.tipoDeCampo')
+                    ->from('Application\Entity\N7VistasPropiedadesL', 'vp')
+                    ->innerJoin('Application\Entity\N7PropiedadesL', 'p', 'WITH', 'vp.propiedadId = p.id')
+                    ->innerJoin('Application\Entity\N7VistasLegajos', 'v', 'WITH', 'vp.formularioId = v.id')
+                    ->where('v.id = ?1')
+                    ->orderBy('vp.orden', 'ASC');
+            $qb1->setParameter(1, $vistaLegajoSel);
+            $query1 = $qb1->getQuery();
+            $row1 = $query1->getArrayResult();
 
             $response['rows'] = array();
             $i = 0;
 
-            colNames: ["Id", "Descripcion", "Contenido", "Contant", "PPId", "Solo Lectura", "Tipo"],
-            foreach ($row as $r) {
-                $response['rows'][$i] = array(
-                    $r->getId(),
-                    $r->getObjetoId,
-                    $r->getPropiedadId,
-                    utf8_encode($r->getValor())
-                );
-                $i ++;
+            foreach ($row0 as $r) {
+                foreach ($row1 as $j) {
+                    if ($r->getPropiedadId() == $j['id']) {
+                        $response['rows'][$i] = array(
+                            $j['id'],
+                            utf8_encode($j['descripcion']),
+                            utf8_encode($r->getValor()),
+                            utf8_encode($r->getValor()),
+                            $r->getId(),
+                            $j['soloLectura'],
+                            $j['tipoDeCampo']
+                        );
+                        $i ++;
+                    }
+                }
             }
+
+//            foreach ($row as $r) {
+//                $response['rows'][$i] = array(
+//                    $r['id'],
+//                    utf8_encode($r['descripcion']),
+//                    utf8_encode(""),
+//                    utf8_encode(""),
+//                    "",
+//                    $r['soloLectura'],
+//                    $r['tipoDeCampo'],
+////                    $r->getId(),
+////                    $r->getObjetoId,
+////                    $r->getPropiedadId,
+////                    utf8_encode(utf8_encode($r->getValor()))
+//                );
+//                $i ++;
+//            }
             return $this->response->setContent(Json::encode(array('type' => 'success', 'data' => $response['rows'])));
         } catch (\Exception $ex) {
             $this->flashMessenger()->addMessage($ex->getMessage());
@@ -172,71 +182,40 @@ class LegajosController extends BaseController {
                     if ($data) {
                         if ($data['id'] != "") {
                             //Edit
-                            $n7VistasLegajos = new N7VistasLegajos ();
-                            $n7VistasLegajos = $this->getEntityManager()->find('Application\Entity\N7VistasLegajos', $data['id']);
-                            if ($n7VistasLegajos) {
-                                $n7VistasLegajos->setDescripcion($data['descripcion']);
-                                $n7VistasLegajos->setExtranetPermitido($data['extranet_permitido']);
-                                $this->getEntityManager()->persist($n7VistasLegajos);
+                            $n7Legajos = new N7Legajos ();
+                            $n7Legajos = $this->getEntityManager()->find('Application\Entity\N7Legajos', $data['id']);
+                            if ($n7Legajos) {
+                                //$n7Legajos->setEmpresaId($data['empresaId']);
+                                $n7Legajos->setLegajo($data['legajo']);
+                                $n7Legajos->setApellidoYNombre($data['apellido_y_nombre']);
+                                //$n7Legajos->setFoto($data['foto']);
+                                $this->getEntityManager()->persist($n7Legajos);
                                 $this->getEntityManager()->flush();
-
-                                $q = $this->getEntityManager()->createQuery('delete from Application\Entity\N7VistasPropiedadesL m where m.formularioId = ?1');
-                                $q->setParameter(1, $data['id']);
-                                $numDeleted = $q->execute();
-
-                                $batchSize = 20;
-                                $i = 0;
-                                foreach ($data['vistas_propiedades'] as $r) {
-                                    $n7VistasPropiedadesL = new N7VistasPropiedadesL ();
-                                    $n7VistasPropiedadesL->setPropiedadId($r['propiedadId']);
-                                    $n7VistasPropiedadesL->setFormularioId($n7VistasLegajos->getId());
-                                    $n7VistasPropiedadesL->setOrden($r['orden']);
-                                    $n7VistasPropiedadesL->setSoloLectura($r['solo_lectura']);
-                                    $this->getEntityManager()->persist($n7VistasPropiedadesL);
-                                    if (($i % $batchSize) === 0) {
-                                        $this->getEntityManager()->flush();
-                                        $this->getEntityManager()->clear();
-                                    }
-                                    $i++;
-                                }
-                                $this->getEntityManager()->flush();
-                                $this->getEntityManager()->clear();
 
                                 return $this->response->setContent(Json::encode(array(
-                                                    'type' => 'editVista',
+                                                    'type' => 'editLegajo',
                                                     'success' => true
                                 )));
                             }
                         } else {
                             //Add
-                            $n7VistasLegajos = new N7VistasLegajos ();
-                            $n7VistasLegajos->setDescripcion($data['descripcion']);
-                            $n7VistasLegajos->setExtranetPermitido($data['extranet_permitido']);
-                            $this->getEntityManager()->persist($n7VistasLegajos);
-                            $this->getEntityManager()->flush();
+                            $identi = $this->getAuthenticationService()->getStorage()->read();
+                            if ($identi != false && $identi != null) {
+                                $n7Legajos = new N7Legajos ();
+                                $n7Legajos->setEmpresaId($identi->empresaCorrienteId);
+                                //$n7Legajos->setEmpresaId($data['empresaId']);
+                                $n7Legajos->setLegajo($data['legajo']);
+                                $n7Legajos->setApellidoYNombre($data['apellido_y_nombre']);
+                                //$n7Legajos->setFoto($data['foto']);
+                                $n7Legajos->setFoto("");
+                                $this->getEntityManager()->persist($n7Legajos);
+                                $this->getEntityManager()->flush();
 
-                            $batchSize = 20;
-                            $i = 0;
-                            foreach ($data['vistas_propiedades'] as $r) {
-                                $n7VistasPropiedadesL = new N7VistasPropiedadesL ();
-                                $n7VistasPropiedadesL->setPropiedadId($r['propiedadId']);
-                                $n7VistasPropiedadesL->setFormularioId($n7VistasLegajos->getId());
-                                $n7VistasPropiedadesL->setOrden($r['orden']);
-                                $n7VistasPropiedadesL->setSoloLectura($r['solo_lectura']);
-                                $this->getEntityManager()->persist($n7VistasPropiedadesL);
-                                if (($i % $batchSize) === 0) {
-                                    $this->getEntityManager()->flush();
-                                    $this->getEntityManager()->clear();
-                                }
-                                $i++;
+                                return $this->response->setContent(Json::encode(array(
+                                                    'type' => 'addLegajo',
+                                                    'success' => true
+                                )));
                             }
-                            $this->getEntityManager()->flush();
-                            $this->getEntityManager()->clear();
-
-                            return $this->response->setContent(Json::encode(array(
-                                                'type' => 'addVista',
-                                                'success' => true
-                            )));
                         }
                     }
                 }
@@ -254,23 +233,16 @@ class LegajosController extends BaseController {
                 $request = $this->getRequest();
                 if ($request->isPost()) {
                     $id = (int) $request->getPost('id');
+                    $n7Legajos = new N7Legajos ();
+                    $n7Legajos = $this->getEntityManager()->find('Application\Entity\N7Legajos', $id);
+                    if ($n7Legajos) {
+                        $this->getEntityManager()->remove($n7Legajos);
+                        $this->getEntityManager()->flush();
 
-                    $q = $this->getEntityManager()->createQuery('delete from Application\Entity\N7VistasPropiedadesL m where m.formularioId = ?1');
-                    $q->setParameter(1, $id);
-                    $numDeleted = $q->execute();
-
-                    if ($numDeleted >= 0) {
-                        $n7VistasLegajos = new N7VistasLegajos ();
-                        $n7VistasLegajos = $this->getEntityManager()->find('Application\Entity\N7VistasLegajos', $id);
-                        if ($n7VistasLegajos) {
-                            $this->getEntityManager()->remove($n7VistasLegajos);
-                            $this->getEntityManager()->flush();
-
-                            return $this->response->setContent(Json::encode(array(
-                                                'type' => 'delVista',
-                                                'success' => true
-                            )));
-                        }
+                        return $this->response->setContent(Json::encode(array(
+                                            'type' => 'delLegajo',
+                                            'success' => true
+                        )));
                     }
                 } else {
                     return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());

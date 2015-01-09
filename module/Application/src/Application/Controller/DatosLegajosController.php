@@ -134,8 +134,8 @@ class DatosLegajosController extends BaseController {
                             if ($n7PropiedadesL) {
                                 $n7PropiedadesL->setDescripcion($data['descripcion']);
                                 $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
-                                $statusPersist = $this->getEntityManager()->persist($n7PropiedadesL);
-                                $statusFlush = $this->getEntityManager()->flush();
+                                $this->getEntityManager()->persist($n7PropiedadesL);
+                                $this->getEntityManager()->flush();
 
                                 return $this->response->setContent(Json::encode(array(
                                                     'type' => 'editProp',
@@ -147,8 +147,8 @@ class DatosLegajosController extends BaseController {
                             $n7PropiedadesL = new N7PropiedadesL ();
                             $n7PropiedadesL->setDescripcion($data['descripcion']);
                             $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
-                            $statusPersist = $this->getEntityManager()->persist($n7PropiedadesL);
-                            $statusFlush = $this->getEntityManager()->flush();
+                            $this->getEntityManager()->persist($n7PropiedadesL);
+                            $this->getEntityManager()->flush();
 
                             return $this->response->setContent(Json::encode(array(
                                                 'type' => 'addProp',
@@ -174,8 +174,8 @@ class DatosLegajosController extends BaseController {
                     $n7PropiedadesL = new N7PropiedadesL ();
                     $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $id);
                     if ($n7PropiedadesL) {
-                        $statusRemove = $this->getEntityManager()->remove($n7PropiedadesL);
-                        $statusFlush = $this->getEntityManager()->flush();
+                        $this->getEntityManager()->remove($n7PropiedadesL);
+                        $this->getEntityManager()->flush();
 
                         return $this->response->setContent(Json::encode(array(
                                             'type' => 'delProp',

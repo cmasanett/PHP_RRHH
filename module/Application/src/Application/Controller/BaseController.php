@@ -3,6 +3,7 @@
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Authentication\AuthenticationService;
 
 class BaseController extends AbstractActionController {
 
@@ -10,6 +11,7 @@ class BaseController extends AbstractActionController {
      * @var Doctrine\ORM\EntityManager
      */
     protected $em;
+    protected $au;
 
     /**
      * for managing entities via Doctrine
@@ -20,6 +22,13 @@ class BaseController extends AbstractActionController {
             $this->em = $this->getServiceLocator()->get('Doctrine\ORM\EntityManager');
         }
         return $this->em;
+    }
+
+    public function getAuthenticationService() {
+        if (null === $this->au) {
+            $this->au = new AuthenticationService();
+        }
+        return $this->au;
     }
 
 }

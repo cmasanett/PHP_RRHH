@@ -4,28 +4,29 @@ namespace Application\Controller;
 
 use Zend\View\Model\ViewModel;
 use Zend\Authentication\Adapter\DbTable as AuthAdapter;
-use Zend\Authentication\AuthenticationService;
 // Forms
 use Application\Form\LoginForm;
 use Application\Form\EmpresaForm;
 
 class UsuariosController extends BaseController {
 
-    private $dbAdapter;
-    private $auth;
+//    private $dbAdapter;
+//    private $auth;
 
 //    private $authService;
 
     public function __construct() {
-        $this->auth = new AuthenticationService();
+        $this->auth = $this->getAuthenticationService();
+//        $this->auth = new AuthenticationService();
 //        $this->authService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
     }
 
     public function loginAction() {
         $this->layout('layout/layout_login');
-        $auth = $this->auth;
+//        $auth = $this->getAuthenticationService();
+//        $auth = $this->auth;
 //        $authService = $this->authService;
-        $identi = $auth->getStorage()->read();
+        $identi = $this->auth->getStorage()->read();
         if ($identi != false && $identi != null) {
             //return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/index');
         }
@@ -40,8 +41,8 @@ class UsuariosController extends BaseController {
             $authAdapter->setIdentity($this->getRequest()->getPost("usuario"))
                     ->setCredential($this->getRequest()->getPost("clave"));
 
-            $auth->setAdapter($authAdapter);
-            $authResult = $auth->authenticate();
+            $this->auth->setAdapter($authAdapter);
+            $authResult = $this->auth->authenticate();
 
 //            if ($authAdapter->getResultRowObject() == false) {
             if ($authResult->isValid()) {
@@ -64,13 +65,13 @@ class UsuariosController extends BaseController {
                     $session->usuarioActual = $authAdapter->getResultRowObject('id')->id;
                     $session->empresaCorrienteId = $result[0]["id"];
                     $session->empresaCorriente = $result[0]['nombre'];
-                    $auth->getStorage()->write($session);
+                    $this->auth->getStorage()->write($session);
                     return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/index');
                 } elseif ($cantEmpresasAsociadas > 1) {
                     $session = new \stdClass();
                     $session->userInfo = $authAdapter->getResultRowObject(null, 'clave');
                     $session->usuarioActual = $authAdapter->getResultRowObject('id')->id;
-                    $auth->getStorage()->write($session);
+                    $this->auth->getStorage()->write($session);
                     return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/empresa');
                 }
             } else {

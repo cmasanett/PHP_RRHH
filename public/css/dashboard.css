@@ -214,6 +214,11 @@ ul li:hover>ul{
     width: 100%;
 }
 
+#diagAlertTab{
+    display: none;
+    width: 100%;
+}
+
 .flashAlert{
     width: 90%;
 }
