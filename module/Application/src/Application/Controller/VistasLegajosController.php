@@ -108,7 +108,7 @@ class VistasLegajosController extends BaseController {
         }
 
         try {
-            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7VistasPropiedadesL u WHERE u.formularioId = ?1');
+            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7VistasPropiedadesL u WHERE u.formularioId = ?1 ORDER BY u.orden ASC');
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
 

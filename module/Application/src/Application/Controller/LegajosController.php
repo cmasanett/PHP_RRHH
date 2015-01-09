@@ -270,5 +270,62 @@ class LegajosController extends BaseController {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }
     }
+    
+    public function editGridItemValAction() {
+        try {
+            if ($this->request->isXmlHttpRequest()) {
+                $request = $this->getRequest();
+                if ($request->isPost()) {
+                    $data = Json::decode($request->getPost('data'), true);
+                    if ($data) {
+//                        if ($data['id'] != "") {
+//                            //Edit
+//                            $n7PpdL = new N7PpdL ();
+//                            $n7PpdL = $this->getEntityManager()->find('Application\Entity\N7PpdL', $data['id']);
+//                            if ($n7PpdL) {
+//                                //$n7Legajos->setEmpresaId($data['empresaId']);
+//                                $n7Legajos->setLegajo($data['legajo']);
+//                                $n7Legajos->setApellidoYNombre($data['apellido_y_nombre']);
+//                                //$n7Legajos->setFoto($data['foto']);
+//                                $this->getEntityManager()->persist($n7Legajos);
+//                                $this->getEntityManager()->flush();
+//                                
+//                                $q = $this->getEntityManager()->createQuery('delete from Application\Entity\N7VistasPropiedadesL m where m.formularioId = ?1');
+//                                $q->setParameter(1, $data['id']);
+//                                $numDeleted = $q->execute();
+//
+//                                $batchSize = 20;
+//                                $i = 0;
+//                                foreach ($data['vistas_propiedades'] as $r) {
+//                                    $n7VistasPropiedadesL = new N7VistasPropiedadesL ();
+//                                    $n7VistasPropiedadesL->setPropiedadId($r['propiedadId']);
+//                                    $n7VistasPropiedadesL->setFormularioId($n7VistasLegajos->getId());
+//                                    $n7VistasPropiedadesL->setOrden($r['orden']);
+//                                    $n7VistasPropiedadesL->setSoloLectura($r['solo_lectura']);
+//                                    $this->getEntityManager()->persist($n7VistasPropiedadesL);
+//                                    if (($i % $batchSize) === 0) {
+//                                        $this->getEntityManager()->flush();
+//                                        $this->getEntityManager()->clear();
+//                                    }
+//                                    $i++;
+//                                }
+//                                $this->getEntityManager()->flush();
+//                                $this->getEntityManager()->clear();
+//
+//                                return $this->response->setContent(Json::encode(array(
+//                                                    'type' => 'editPpdLegajo',
+//                                                    'success' => true
+//                                )));
+//                            }
+//                        }
+                    }
+                }
+            } else {
+                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl());
+            }
+        } catch (\Exception $ex) {
+            $this->flashMessenger()->addMessage($ex->getMessage());
+        }
+    }
 
 }

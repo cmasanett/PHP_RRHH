@@ -76,50 +76,16 @@ class VistasEmpresasController extends BaseController {
             }
         }
 
-//        $request = $this->getRequest();
-//        $id = $this->params()->fromRoute("id", 0);
-//        
-//        $sidx = $request->getPost('sidx', 'id');
-//        $sord = $request->getPost('sord', 'ASC');
-//        $page = $request->getPost('page', 1);
-//        $limit = $request->getPost('rows', 10);
-
         try {
-//            $query0 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesE u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesE p WHERE p.formularioId = ?1)');
-//            $query0->setParameter(1, $id);
-//            $data = $query0->getResult();
-//            $count = count($data);
-//            if ($count > 0) {
-//                $total_pages = ceil($count / $limit);
-//            } else {
-//                $total_pages = 0;
-//            }
-//            if ($page > $total_pages) {
-//                $page = $total_pages;
-//            }
-//
-//            $start = $limit * $page - $limit;
-//            if ($start < 0) {
-//                $start = 0;
-//            }
-//            $row = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findBy(array('id' => $ids), array($sidx => $sord), $limit, $start);
             $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesE u WHERE u.id NOT IN (SELECT p.propiedadId FROM Application\Entity\N7VistasPropiedadesE p WHERE p.formularioId = ?1)');
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
 
-            //$response ['page'] = $page;
-            //$response ['total'] = $total_pages;
-            //$response ['records'] = $count;
             $response['rows'] = array();
             $i = 0;
 
             foreach ($row as $r) {
-                //$response ['rows'][$i]['id'] = $r->getId(); // id
-                //$response['rows'][$i]['cell'] = array(
-                //$r->getId(),
-                //$r->getDescripcion(),
-                //$r->getTipoDeCampo()
-                //);
+
                 $response['rows'][$i] = array(
                     $r->getId(),
                     utf8_encode($r->getDescripcion()),
@@ -128,7 +94,6 @@ class VistasEmpresasController extends BaseController {
                 $i ++;
             }
             return $this->response->setContent(Json::encode(array('type' => 'success', 'data' => $response['rows'])));
-            //return $this->response->setContent(Json::encode($response));
         } catch (\Exception $ex) {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }
@@ -142,52 +107,16 @@ class VistasEmpresasController extends BaseController {
                 $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
             }
         }
-//        $request = $this->getRequest();
-//        $id = $this->params()->fromRoute("id", 0);
-//        //$id = $request->getPost('id', 0);
-//        $sidx = $request->getPost('sidx', 'orden');
-//        $sord = $request->getPost('sord', 'ASC');
-//        $page = $request->getPost('page', 1);
-//        $limit = $request->getPost('rows', 10);
 
         try {
-//            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy(array('formularioId' => $id));           
-//            $count = count($data);
-//            
-//            if ($count > 0) {
-//                $total_pages = ceil($count / $limit);
-//            } else {
-//                $total_pages = 0;
-//            }
-//            if ($page > $total_pages) {
-//                $page = $total_pages;
-//            }
-//
-//            $start = $limit * $page - $limit;
-//            if ($start < 0) {
-//                $start = 0;
-//            }
-//            $row = $this->getEntityManager()->getRepository('Application\Entity\N7VistasPropiedadesE')->findBy([ 'formularioId' => $id], array($sidx => $sord), $limit, $start);
-
-            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7VistasPropiedadesE u WHERE u.formularioId = ?1');
+            $query1 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7VistasPropiedadesE u WHERE u.formularioId = ?1 ORDER BY u.orden ASC');
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
 
-            //$response ['page'] = $page;
-            //$response ['total'] = $total_pages;
-            //$response ['records'] = $count;
             $response['rows'] = array();
             $i = 0;
 
             foreach ($row as $r) {
-                //$response ['rows'][$i]['id'] = $r->getId(); // id
-                //$response['rows'][$i]['cell'] = array(
-                //$r->getId(),
-                //$r->getPropiedadId(),
-                //$r->getFormularioId(),
-                //$r->getOrden(),
-                //$r->getSoloLectura()
-                //);
                 $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesE u WHERE u.id = ?1');
                 $query0->setParameter(1, $r->getPropiedadId());
                 $descripcion = $query0->getSingleScalarResult();
@@ -204,7 +133,6 @@ class VistasEmpresasController extends BaseController {
             }
 
             return $this->response->setContent(Json::encode(array('type' => 'success', 'data' => $response['rows'])));
-            //return $this->response->setContent(Json::encode($response));
         } catch (\Exception $ex) {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }

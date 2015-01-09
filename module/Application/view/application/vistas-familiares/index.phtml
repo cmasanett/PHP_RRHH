@@ -140,7 +140,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     stype: 'text',
                     searchoptions: {clearSearch: true}
                 },
-                {name: 'tipo_de_campo', index: 'tipo_de_campo',
+                {name: 'tipo', index: 'tipo',
                     width: 10,
                     align: "center",
                     sortable: true,
@@ -188,7 +188,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             rowNum: 1000,
             rownumbers: true,
             datatype: 'local',
-            colNames: ["Id", "PropiedadId", "Propiedad", "Tipo", "FormularioId", "Orden", "Modificable"],
+            colNames: ["Id", "PropiedadId", "Propiedad", "Tipo", "FormularioId", "Orden", "SL"],
             colModel: [
                 {name: 'id', index: 'id',
                     width: 10,
@@ -231,6 +231,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     width: 10,
                     align: "center",
                     sortable: true,
+                    sorttype: 'int',
                     search: true,
                     stype: 'text',
                     searchoptions: {clearSearch: true},
@@ -250,7 +251,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 }
             ],
             pager: "#pagerDatosVistasFamiliares",
-            sortname: "id",
+            sortname: "orden",
             sortorder: "ASC",
             viewrecords: true,
             viewsortcols: [true, 'horizontal', true],
@@ -331,10 +332,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     var data = {
                         "propiedadId": dataGrid[i]['id'],
                         "propiedad": dataGrid[i]['descripcion'],
-                        "tipo": dataGrid[i]['tipo_de_campo'],
+                        "tipo": dataGrid[i]['tipo'],
                         "formularioId": "",
                         "orden": (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") ? ids.length + 1 : 1,
-                        "solo_lectura": "Si"
+                        "solo_lectura": "N"
                     };
 
                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
@@ -358,10 +359,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 var data = {
                     "propiedadId": dataRow['id'],
                     "propiedad": dataRow['descripcion'],
-                    "tipo": dataRow['tipo_de_campo'],
+                    "tipo": dataRow['tipo'],
                     "formularioId": "",
                     "orden": (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") ? ids.length + 1 : 1,
-                    "solo_lectura": "Si"
+                    "solo_lectura": "N"
                 };
 
                 if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
@@ -383,7 +384,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 var data = {
                     "id": dataRow['propiedadId'],
                     "descripcion": dataRow['propiedad'],
-                    "tipo_de_campo": dataRow['tipo']
+                    "tipo": dataRow['tipo']
                 };
 
                 $("#gridPropiedadesFamiliares").jqGrid('addRowData', dataRow['propiedadId'], data);
@@ -407,7 +408,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     var data = {
                         "id": dataGrid[i]['propiedadId'],
                         "descripcion": dataGrid[i]['propiedad'],
-                        "tipo_de_campo": dataGrid[i]['tipo']
+                        "tipo": dataGrid[i]['tipo']
                     };
 
                     if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
@@ -592,7 +593,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     var dataLocal = {
                                         "id": result.data[i][0],
                                         "descripcion": result.data[i][1],
-                                        "tipo_de_campo": result.data[i][2]
+                                        "tipo": result.data[i][2]
                                     };
                                     var ids = jQuery("#gridPropiedadesFamiliares").jqGrid('getDataIDs');
                                     ids = ids.toString();

@@ -77,13 +77,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 <div class="row"></div>
                                 <div class="row">
                                     <div class="btn-group-vertical" role="group" style="padding-top:70px;">
-                                        <button type="button" class="btn btn-info btn-xs" id="btnAddAllData">
+                                        <button type="button" class="btn btn-info btn-xs" id="btnAddValProp">
                                             <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
                                         </button>
-                                        <button type="button" class="btn btn-success btn-xs" id="btnAddSingleData">
+                                        <button type="button" class="btn btn-success btn-xs" id="btnSaveData">
                                             <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Aplicar
                                         </button>
-                                        <button type="button" class="btn btn-danger btn-xs" id="btnDelSingleData">
+                                        <button type="button" class="btn btn-danger btn-xs" id="btnRestoreData">
                                             <span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span>
                                         </button>
                                     </div>
@@ -213,8 +213,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $("#select-vista-tab-legajos").val("");
                 deleteGrid("gridDatosPpdLegajo");
                 deleteGrid("gridDatosLegajosVal");
-                //loadGrid("gridDatosPpdLegajo", id);
-                //loadGrid("gridDatosLegajosVal", id);
+                loadVistasSelect();
             }
         });
         $("#gridLegajos").navGrid("#pagerLegajos",
@@ -325,13 +324,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     var cl = ids[i];
                     var data = $("#gridDatosPpdLegajo").jqGrid('getRowData', ids[i]);
                     if (data['solo_lectura'] == 'S') {
-                        jQuery("#gridDatosPpdLegajo").jqGrid('setRowData', cl, false, {color: '#000000', background: '#FFFF99'});
+                        jQuery("#gridDatosPpdLegajo").jqGrid('setRowData', cl, false, {color: '#000000', background: '#FFC285'});
                     }
                 }
             },
             onSelectRow: function (rowid) {
-                var data = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
-                loadGrid('gridDatosLegajosVal', data['id']);
+                var dataPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
+                loadGrid('gridDatosLegajosVal', dataPpdLegajo['id']);
+                setSelectionGrid('gridDatosLegajosVal', dataPpdLegajo);
             }
         });
         $("#gridDatosPpdLegajo").navGrid("#pagerDatosPpdLegajo",
@@ -366,7 +366,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     sorttype: 'int',
                     hidden: true
                 },
-                {name: 'propiedad', index: 'propiedad',
+                {name: 'propiedadId', index: 'propiedadId',
                     width: 10,
                     align: "center",
                     sortable: true,
@@ -374,7 +374,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     hidden: true
                 },
                 {name: 'valor_posible', index: 'valor_posible',
-                    width: 15,
+                    width: 10,
                     align: "center",
                     sortable: false,
                     sorttype: 'text',
@@ -383,7 +383,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     searchoptions: {clearSearch: true}
                 },
                 {name: 'significado', index: 'significado',
-                    width: 15,
+                    width: 30,
                     align: "center",
                     sortable: false,
                     sorttype: 'text',
@@ -405,7 +405,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             pgtext: false,
             pginput: false,
             loadonce: true
-            //caption: ""
+                    //caption: ""
         });
         $("#gridDatosLegajosVal").navGrid("#pagerDatosLegajosVal",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
@@ -420,11 +420,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 //            }
 //        });
         $('#gridDatosLegajosVal').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
-        jQuery("#gridDatosLegajosVal").jqGrid('sortableRows', {
-            update: function (e, ui) {
-                reOrder('gridDatosLegajosVal', 'orden');
-            }
-        });
 
         //Tabs
         $("#tabsLegajos").tabs({
@@ -467,105 +462,53 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             loadSelectView();
         });
 
-        //btnAddAllData =>>
-        $("#btnAddAllData").click(function () {
-            var dataGrid = jQuery("#gridDatosPpdLegajo").jqGrid('getGridParam', 'data');
-            if (dataGrid.length > 0) {
-                for (var i = 0; i < dataGrid.length; i++) {
-                    var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
-                    ids = ids.toString();
-                    ids = ids.split(",");
-
-                    var data = {
-                        "propiedadId": dataGrid[i]['id'],
-                        "propiedad": dataGrid[i]['descripcion'],
-                        "tipo": dataGrid[i]['tipo_de_campo'],
-                        "formularioId": "",
-                        "orden": (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") ? ids.length + 1 : 1,
-                        "solo_lectura": "Si"
-                    };
-
-                    if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                        $("#gridDatosLegajosVal").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
-                    } else {
-                        $("#gridDatosLegajosVal").jqGrid('addRowData', 1, data);
-                    }
-                }
-                deleteGrid('gridDatosPpdLegajo');
-            }
-        });
-        //btnAddSingleData >
-        $("#btnAddSingleData").click(function () {
-            var rowid = jQuery("#gridDatosPpdLegajo").jqGrid('getGridParam', 'selrow');
-            if (rowid != null) {
-                var dataRow = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
-                var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
-                ids = ids.toString();
-                ids = ids.split(",");
-
-                var data = {
-                    "propiedadId": dataRow['id'],
-                    "propiedad": dataRow['descripcion'],
-                    "tipo": dataRow['tipo_de_campo'],
-                    "formularioId": "",
-                    "orden": (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") ? ids.length + 1 : 1,
-                    "solo_lectura": "Si"
-                };
-
-                if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                    $("#gridDatosLegajosVal").jqGrid('addRowData', ids.length + 1, data);
-                } else {
-                    $("#gridDatosLegajosVal").jqGrid('addRowData', 1, data);
-                }
-                $("#gridDatosPpdLegajo").jqGrid('delRowData', rowid);
-            }
-            else {
-                msgAlert("diagAlertModal", "dataAlertModal", "Por favor seleccione una fila.");
-            }
-        });
-        //btnDelSingleData <
-        $("#btnDelSingleData").click(function () {
+        //btnAddValProp
+        $("#btnAddValProp").click(function () {
             var rowid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                var dataRow = $("#gridDatosLegajosVal").jqGrid('getRowData', rowid);
-                var data = {
-                    "id": dataRow['propiedadId'],
-                    "descripcion": dataRow['propiedad'],
-                    "tipo_de_campo": dataRow['tipo']
-                };
-
-                $("#gridDatosPpdLegajo").jqGrid('addRowData', dataRow['propiedadId'], data);
-                $("#gridDatosLegajosVal").jqGrid('delRowData', rowid);
-                reOrder('gridDatosLegajosVal', 'orden');
-                $("#gridDatosPpdLegajo").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
+                var dataRowLegajosVal = $("#gridDatosLegajosVal").jqGrid('getRowData', rowid);
+                var rowidPpdLegajo = jQuery("#gridDatosPpdLegajo").jqGrid('getGridParam', 'selrow');
+                jQuery('#gridDatosPpdLegajo').setCell(rowidPpdLegajo, 'contenido', dataRowLegajosVal['valor_posible']);
+                jQuery('#gridDatosPpdLegajo').setCell(rowidPpdLegajo, 'contant', dataRowLegajosVal['valor_posible']);
             }
             else {
-                msgAlert("diagAlertModal", "dataAlertModal", "Por favor seleccione una fila.");
+                msgAlert("diagAlertTab", "dataAlertTab", "Por favor seleccione una fila.");
             }
         });
-        //btnDelAllData <<=
-        $("#btnDelAllData").click(function () {
-            var dataGrid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'data');
-            if (dataGrid.length > 0) {
-                for (var i = 0; i < dataGrid.length; i++) {
-                    var ids = $("#gridDatosPpdLegajo").jqGrid('getDataIDs');
-                    ids = ids.toString();
-                    ids = ids.split(",");
-
-                    var data = {
-                        "id": dataGrid[i]['propiedadId'],
-                        "descripcion": dataGrid[i]['propiedad'],
-                        "tipo_de_campo": dataGrid[i]['tipo']
-                    };
-
-                    if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                        $("#gridDatosPpdLegajo").jqGrid('addRowData', parseInt(ids[ids.length - 1]) + 1, data);
-                    } else {
-                        $("#gridDatosPpdLegajo").jqGrid('addRowData', 1, data);
-                    }
+        //btnSaveData
+        $("#btnSaveData").click(function () {
+            var dataGridDatosPpdLegajo = jQuery("#gridDatosPpdLegajo").jqGrid('getGridParam', 'data');
+            if (dataGridDatosPpdLegajo.length > 0) {
+                if (checkConsistency(dataGridDatosPpdLegajo)) {
+                    $.ajax({
+                        url: "<?php echo $this->url('legajos', array('action' => 'editGridItemVal')); ?>",
+                        global: false,
+                        type: "POST",
+                        data: "data=" + JSON.stringify(dataGridDatosPpdLegajo),
+                        dataType: "json",
+                        async: false,
+                        success: function (msg) {
+                            var rowidLegajos = jQuery("#gridLegajos").jqGrid('getGridParam', 'selrow');
+                            if (rowidLegajos != null) {
+                                loadGrid('gridDatosPpdLegajo', rowidLegajos);
+                                deleteGrid('gridDatosLegajosVal');
+                            }
+                        }
+                    });
+                } else {
+                    //msgAlert("diagAlertTab", "dataAlertTab", "Por favor seleccione una fila.");
                 }
-                $("#gridDatosPpdLegajo").setGridParam({datatype: 'local', sortname: 'id'}).trigger('reloadGrid');
+            }
+        });
+        //btnRestoreData
+        $("#btnRestoreData").click(function () {
+            var rowidLegajos = jQuery("#gridLegajos").jqGrid('getGridParam', 'selrow');
+            if (rowidLegajos != null) {
+                loadGrid('gridDatosPpdLegajo', rowidLegajos);
                 deleteGrid('gridDatosLegajosVal');
+            }
+            else {
+                //msgAlert("diagAlertTab", "dataAlertTab", "Por favor seleccione una fila.");
             }
         });
 
@@ -672,6 +615,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             //alert($(this).val());
             var rowid = jQuery("#gridLegajos").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
+                deleteGrid("gridDatosPpdLegajo");
+                deleteGrid("gridDatosLegajosVal");
                 loadGrid('gridDatosPpdLegajo', rowid);
             }
             else {
@@ -819,22 +764,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $table.clearGridData(true).trigger("reloadGrid");
     }
 
-    function reOrder(gridName, sortField) {
-        var ids = $("#" + gridName).jqGrid('getDataIDs');
-        ids = ids.toString();
-        ids = ids.split(",");
-
-        var orden = 1;
-
-        if (ids != "") {
-            for (var i = 0; i < ids.length; i++) {
-                jQuery('#' + gridName).setCell(ids[i], sortField, orden);
-                orden++;
-            }
-        }
-    }
-
-    function loadSelectView() {
+    function loadVistasSelect() {
         var list_target_id = 'select-vista-tab-legajos';
         $('#' + list_target_id).html('<option value="">Cargando...</option>');
 
@@ -854,6 +784,38 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 alert(xhr.status + " " + thrownError);
             }
         });
+    }
+
+    function setSelectionGrid(gridName, data) {
+        var ids = $("#" + gridName).jqGrid('getDataIDs');
+        ids = ids.toString();
+        ids = ids.split(",");
+
+        for (var i = 0; i < ids.length; i++) {
+            var dataDatosLegajosVal = $("#" + gridName).jqGrid('getRowData', ids[i]);
+            if (dataDatosLegajosVal['valor_posible'] == data['contenido']) {
+                jQuery("#" + gridName).jqGrid('setSelection', dataDatosLegajosVal['id'], false);
+            }
+        }
+    }
+
+    function checkConsistency(data) {
+        var status = false;
+
+        for (var i = 0; i < data.length; i++) {
+            if (data[i]['solo_lectura'] == "S") {
+                data[i]['contenido'] = data[i]['contant']
+            } else {
+
+            }
+
+            var dataDatosLegajosVal = $("#" + gridName).jqGrid('getRowData', ids[i]);
+            if (dataDatosLegajosVal['valor_posible'] == data['contenido']) {
+                jQuery("#" + gridName).jqGrid('setSelection', dataDatosLegajosVal['id'], false);
+            }
+        }
+        //msgAlert("diagAlertTab", "dataAlertTab", "Por favor seleccione una fila.");
+        return status;
     }
 </script>
 
