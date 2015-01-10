@@ -24,7 +24,7 @@ class DatosEmpresasController extends BaseController {
         $sidx = $request->getPost('sidx', 'id');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesE')->findAll();
@@ -75,7 +75,7 @@ class DatosEmpresasController extends BaseController {
         $sidx = $request->getPost('sidx', 'propiedad');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesEmpresas')->findBy(array('propiedad' => $id));
@@ -132,7 +132,7 @@ class DatosEmpresasController extends BaseController {
                             $n7PropiedadesE = new N7PropiedadesE ();
                             $n7PropiedadesE = $this->getEntityManager()->find('Application\Entity\N7PropiedadesE', $data['id']);
                             if ($n7PropiedadesE) {
-                                $n7PropiedadesE->setDescripcion($data['descripcion']);
+                                $n7PropiedadesE->setDescripcion(utf8_decode($data['descripcion']));
                                 $n7PropiedadesE->setTipoDeCampo($data['tipo_de_campo']);
                                 $this->getEntityManager()->persist($n7PropiedadesE);
                                 $this->getEntityManager()->flush();
@@ -145,7 +145,7 @@ class DatosEmpresasController extends BaseController {
                         } else {
                             //Add
                             $n7PropiedadesE = new N7PropiedadesE ();
-                            $n7PropiedadesE->setDescripcion($data['descripcion']);
+                            $n7PropiedadesE->setDescripcion(utf8_decode($data['descripcion']));
                             $n7PropiedadesE->setTipoDeCampo($data['tipo_de_campo']);
                             $this->getEntityManager()->persist(
                                     $n7PropiedadesE);
@@ -210,8 +210,8 @@ class DatosEmpresasController extends BaseController {
                             if ($n7PropiedadesE) {
                                 $n7ValoresPosiblesEmpresas = new N7ValoresPosiblesEmpresas ();
                                 $n7ValoresPosiblesEmpresas->setPropiedad($n7PropiedadesE);
-                                $n7ValoresPosiblesEmpresas->setValorPosible($data['valor_posible']);
-                                $n7ValoresPosiblesEmpresas->setSignificado($data['significado']);
+                                $n7ValoresPosiblesEmpresas->setValorPosible(utf8_decode($data['valor_posible']));
+                                $n7ValoresPosiblesEmpresas->setSignificado(utf8_decode($data['significado']));
                                 $this->getEntityManager()->persist($n7ValoresPosiblesEmpresas);
                                 $this->getEntityManager()->flush();
                             }
@@ -226,8 +226,8 @@ class DatosEmpresasController extends BaseController {
                                 $n7ValoresPosiblesEmpresas = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesEmpresas'
                                         , $data['id']);
                                 if ($n7ValoresPosiblesEmpresas) {
-                                    $n7ValoresPosiblesEmpresas->setValorPosible($data['valor_posible']);
-                                    $n7ValoresPosiblesEmpresas->setSignificado($data['significado']);
+                                    $n7ValoresPosiblesEmpresas->setValorPosible(utf8_decode($data['valor_posible']));
+                                    $n7ValoresPosiblesEmpresas->setSignificado(utf8_decode($data['significado']));
                                     $this->getEntityManager()->persist($n7ValoresPosiblesEmpresas);
                                     $this->getEntityManager()->flush();
 

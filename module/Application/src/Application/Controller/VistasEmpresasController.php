@@ -24,7 +24,7 @@ class VistasEmpresasController extends BaseController {
         $sidx = $request->getPost('sidx', 'id');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasEmpresas')->findAll();
@@ -117,14 +117,15 @@ class VistasEmpresasController extends BaseController {
             $i = 0;
 
             foreach ($row as $r) {
-                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesE u WHERE u.id = ?1');
+                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion, u.tipoDeCampo FROM Application\Entity\N7PropiedadesE u WHERE u.id = ?1');
                 $query0->setParameter(1, $r->getPropiedadId());
-                $descripcion = $query0->getSingleScalarResult();
+                $row1 = $query0->getResult();
 
                 $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
-                    utf8_encode($descripcion),
+                    utf8_encode($row1[0]->getDescripcion()),
+                    utf8_encode($row1[0]->getTipoDeCampo()),
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()
@@ -150,7 +151,7 @@ class VistasEmpresasController extends BaseController {
                             $n7VistasEmpresas = new N7VistasEmpresas ();
                             $n7VistasEmpresas = $this->getEntityManager()->find('Application\Entity\N7VistasEmpresas', $data['id']);
                             if ($n7VistasEmpresas) {
-                                $n7VistasEmpresas->setDescripcion($data['descripcion']);
+                                $n7VistasEmpresas->setDescripcion(utf8_decode($data['descripcion']));
                                 $n7VistasEmpresas->setExtranetPermitido($data['extranet_permitido']);
                                 $this->getEntityManager()->persist($n7VistasEmpresas);
                                 $this->getEntityManager()->flush();
@@ -185,7 +186,7 @@ class VistasEmpresasController extends BaseController {
                         } else {
                             //Add
                             $n7VistasEmpresas = new N7VistasEmpresas ();
-                            $n7VistasEmpresas->setDescripcion($data['descripcion']);
+                            $n7VistasEmpresas->setDescripcion(utf8_decode($data['descripcion']));
                             $n7VistasEmpresas->setExtranetPermitido($data['extranet_permitido']);
                             $this->getEntityManager()->persist($n7VistasEmpresas);
                             $this->getEntityManager()->flush();

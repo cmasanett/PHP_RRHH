@@ -24,7 +24,7 @@ class VistasFamiliaresController extends BaseController {
         $sidx = $request->getPost('sidx', 'id');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasFamiliares')->findAll();
@@ -119,14 +119,15 @@ class VistasFamiliaresController extends BaseController {
             $i = 0;
 
             foreach ($row as $r) {
-                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesF u WHERE u.id = ?1');
+                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion, u.tipoDeCampo FROM Application\Entity\N7PropiedadesF u WHERE u.id = ?1');
                 $query0->setParameter(1, $r->getPropiedadId());
-                $descripcion = $query0->getSingleScalarResult();
+                $row1 = $query0->getResult();
 
                 $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
-                    utf8_encode($descripcion),
+                    utf8_encode($row1[0]->getDescripcion()),
+                    utf8_encode($row1[0]->getTipoDeCampo()),
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()
@@ -152,7 +153,7 @@ class VistasFamiliaresController extends BaseController {
                             $n7VistasFamiliares = new N7VistasFamiliares ();
                             $n7VistasFamiliares = $this->getEntityManager()->find('Application\Entity\N7VistasFamiliares', $data['id']);
                             if ($n7VistasFamiliares) {
-                                $n7VistasFamiliares->setDescripcion($data['descripcion']);
+                                $n7VistasFamiliares->setDescripcion(utf8_decode($data['descripcion']));
                                 $n7VistasFamiliares->setExtranetPermitido($data['extranet_permitido']);
                                 $this->getEntityManager()->persist($n7VistasFamiliares);
                                 $this->getEntityManager()->flush();
@@ -187,7 +188,7 @@ class VistasFamiliaresController extends BaseController {
                         } else {
                             //Add
                             $n7VistasFamiliares = new N7VistasFamiliares ();
-                            $n7VistasFamiliares->setDescripcion($data['descripcion']);
+                            $n7VistasFamiliares->setDescripcion(utf8_decode($data['descripcion']));
                             $n7VistasFamiliares->setExtranetPermitido($data['extranet_permitido']);
                             $this->getEntityManager()->persist($n7VistasFamiliares);
                             $this->getEntityManager()->flush();

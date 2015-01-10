@@ -24,7 +24,7 @@ class DatosFamiliaresController extends BaseController {
         $sidx = $request->getPost('sidx', 'id');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesF')->findAll();
@@ -76,7 +76,7 @@ class DatosFamiliaresController extends BaseController {
         $sidx = $request->getPost('sidx', 'propiedad');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesFamiliares')->findBy(array('propiedad' => $id));
@@ -132,7 +132,7 @@ class DatosFamiliaresController extends BaseController {
                             $n7PropiedadesF = new N7PropiedadesF();
                             $n7PropiedadesF = $this->getEntityManager()->find('Application\Entity\N7PropiedadesF', $data['id']);
                             if ($n7PropiedadesF) {
-                                $n7PropiedadesF->setDescripcion($data['descripcion']);
+                                $n7PropiedadesF->setDescripcion(utf8_decode($data['descripcion']));
                                 $n7PropiedadesF->setTipoDeCampo($data['tipo_de_campo']);
                                 $this->getEntityManager()->persist($n7PropiedadesF);
                                 $this->getEntityManager()->flush();
@@ -145,7 +145,7 @@ class DatosFamiliaresController extends BaseController {
                         } else {
                             //Add
                             $n7PropiedadesF = new N7PropiedadesF ();
-                            $n7PropiedadesF->setDescripcion($data['descripcion']);
+                            $n7PropiedadesF->setDescripcion(utf8_decode($data['descripcion']));
                             $n7PropiedadesF->setTipoDeCampo($data['tipo_de_campo']);
                             $this->getEntityManager()->persist($n7PropiedadesF);
                             $this->getEntityManager()->flush();
@@ -207,8 +207,8 @@ class DatosFamiliaresController extends BaseController {
                             if ($n7PropiedadesF) {
                                 $n7ValoresPosiblesFamiliares = new N7ValoresPosiblesFamiliares ();
                                 $n7ValoresPosiblesFamiliares->setPropiedad($n7PropiedadesF);
-                                $n7ValoresPosiblesFamiliares->setValorPosible($data['valor_posible']);
-                                $n7ValoresPosiblesFamiliares->setSignificado($data['significado']);
+                                $n7ValoresPosiblesFamiliares->setValorPosible(utf8_decode($data['valor_posible']));
+                                $n7ValoresPosiblesFamiliares->setSignificado(utf8_decode($data['significado']));
                                 $this->getEntityManager()->persist($n7ValoresPosiblesFamiliares);
                                 $this->getEntityManager()->flush();
                             }
@@ -222,8 +222,8 @@ class DatosFamiliaresController extends BaseController {
                                 //Edit
                                 $n7ValoresPosiblesFamiliares = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesFamiliares', $data['id']);
                                 if ($n7ValoresPosiblesFamiliares) {
-                                    $n7ValoresPosiblesFamiliares->setValorPosible($data['valor_posible']);
-                                    $n7ValoresPosiblesFamiliares->setSignificado($data['significado']);
+                                    $n7ValoresPosiblesFamiliares->setValorPosible(utf8_decode($data['valor_posible']));
+                                    $n7ValoresPosiblesFamiliares->setSignificado(utf8_decode($data['significado']));
                                     $this->getEntityManager()->persist($n7ValoresPosiblesFamiliares);
                                     $this->getEntityManager()->flush();
 

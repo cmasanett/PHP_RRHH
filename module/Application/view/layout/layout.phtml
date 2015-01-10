@@ -103,5 +103,18 @@ if ($identity) {
                 //<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
                 ->prependFile($this->basePath() . '/js/ie10-viewport-bug-workaround.js')
         ?>
+        <div class="modal"></div>
     </body>
 </html>
+
+<script type="text/javascript">
+    $body = $("body");
+    $(document).on({
+        ajaxStart: function () {
+            $body.addClass("loading");
+        },
+        ajaxStop: function () {
+            $body.removeClass("loading");
+        }
+    });
+</script>

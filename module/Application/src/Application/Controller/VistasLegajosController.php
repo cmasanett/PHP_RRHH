@@ -24,7 +24,7 @@ class VistasLegajosController extends BaseController {
         $sidx = $request->getPost('sidx', 'id');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findAll();
@@ -116,14 +116,15 @@ class VistasLegajosController extends BaseController {
             $i = 0;
 
             foreach ($row as $r) {
-                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion FROM Application\Entity\N7PropiedadesL u WHERE u.id = ?1');
+                $query0 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesL u WHERE u.id = ?1');
                 $query0->setParameter(1, $r->getPropiedadId());
-                $descripcion = $query0->getSingleScalarResult();
+                $row1 = $query0->getResult();
 
                 $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
-                    utf8_encode($descripcion),
+                    utf8_encode($row1[0]->getDescripcion()),
+                    utf8_encode($row1[0]->getTipoDeCampo()),
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()
@@ -149,7 +150,7 @@ class VistasLegajosController extends BaseController {
                             $n7VistasLegajos = new N7VistasLegajos ();
                             $n7VistasLegajos = $this->getEntityManager()->find('Application\Entity\N7VistasLegajos', $data['id']);
                             if ($n7VistasLegajos) {
-                                $n7VistasLegajos->setDescripcion($data['descripcion']);
+                                $n7VistasLegajos->setDescripcion(utf8_decode($data['descripcion']));
                                 $n7VistasLegajos->setExtranetPermitido($data['extranet_permitido']);
                                 $this->getEntityManager()->persist($n7VistasLegajos);
                                 $this->getEntityManager()->flush();
@@ -184,7 +185,7 @@ class VistasLegajosController extends BaseController {
                         } else {
                             //Add
                             $n7VistasLegajos = new N7VistasLegajos ();
-                            $n7VistasLegajos->setDescripcion($data['descripcion']);
+                            $n7VistasLegajos->setDescripcion(utf8_decode($data['descripcion']));
                             $n7VistasLegajos->setExtranetPermitido($data['extranet_permitido']);
                             $this->getEntityManager()->persist($n7VistasLegajos);
                             $this->getEntityManager()->flush();

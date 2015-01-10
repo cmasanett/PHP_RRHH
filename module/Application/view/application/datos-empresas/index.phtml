@@ -60,6 +60,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             width: 100,
             height: 230,
             autowidth: true,
+            rowNum: 1000,
             rownumbers: true,
             url: "<?php echo $this->url('datosempresas', array('action' => 'loadDataGrid')); ?>",
             datatype: 'json',
@@ -131,6 +132,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             shrinkToFit: true,
             forceFit: false,
             autowidth: false,
+            rowNum: 1000,
             rownumbers: true,
             url: "<?php echo $this->url('datosempresas', array('action' => 'loadDataGridVal')); ?>",
             datatype: "json",
@@ -622,7 +624,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
      }*/
 
     function gridReload(gridName) {
-        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
+        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 1000})*/.trigger('reloadGrid');
     }
 
     function loadGridDatosEmpresaVal(id) {

@@ -44,13 +44,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 <script type="text/javascript">
     var oEdit = false;
     var lastSel;
-    
+
     $(document).ready(function () {
         //Grids
         $("#gridVistasLegajo").jqGrid({
             width: 100,
             height: 230,
             autowidth: true,
+            rowNum: 1000,
             rownumbers: true,
             url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadViewGrid')); ?>",
             datatype: 'json',
@@ -167,16 +168,16 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         });
         $("#gridPropiedadesLegajo").navGrid("#pagerPropiedadesLegajo",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-//        $("#gridPropiedadesLegajo").navButtonAdd("#pagerPropiedadesLegajo", {
-//            caption: "Borrar filtros",
-//            title: "Borrar filtros",
-//            buttonicon: 'ui-icon-refresh',
-//            onClickButton: function () {
-//                jQuery("#gridPropiedadesLegajo")[0].clearToolbar();
-//                //loadGrid('gridPropiedadesLegajo');
-//                //gridReload('gridPropiedadesLegajo');
-//            }
-//        });
+        $("#gridPropiedadesLegajo").navButtonAdd("#pagerPropiedadesLegajo", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridPropiedadesLegajo")[0].clearToolbar();
+                //loadGrid('gridPropiedadesLegajo');
+                //gridReload('gridPropiedadesLegajo');
+            }
+        });
         $('#gridPropiedadesLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
 
         $("#gridDatosVistasLegajo").jqGrid({
@@ -270,16 +271,16 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         });
         $("#gridDatosVistasLegajo").navGrid("#pagerDatosVistasLegajo",
                 {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-//        $("#gridDatosVistasLegajo").navButtonAdd("#pagerDatosVistasLegajo", {
-//            caption: "Borrar filtros",
-//            title: "Borrar filtros",
-//            buttonicon: 'ui-icon-refresh',
-//            onClickButton: function () {
-//                jQuery("#gridDatosVistasLegajo")[0].clearToolbar();
-//                //loadGrid('gridDatosVistasLegajo');
-//                //gridReload('gridDatosVistasLegajo');
-//            }
-//        });
+        $("#gridDatosVistasLegajo").navButtonAdd("#pagerDatosVistasLegajo", {
+            caption: "Borrar filtros",
+            title: "Borrar filtros",
+            buttonicon: 'ui-icon-refresh',
+            onClickButton: function () {
+                jQuery("#gridDatosVistasLegajo")[0].clearToolbar();
+                //loadGrid('gridDatosVistasLegajo');
+                //gridReload('gridDatosVistasLegajo');
+            }
+        });
         $('#gridDatosVistasLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
         jQuery("#gridDatosVistasLegajo").jqGrid('sortableRows', {
             update: function (e, ui) {
@@ -330,6 +331,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     ids = ids.split(",");
 
                     var data = {
+                        "id": 0,
                         "propiedadId": dataGrid[i]['id'],
                         "propiedad": dataGrid[i]['descripcion'],
                         "tipo": dataGrid[i]['tipo'],
@@ -357,6 +359,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 ids = ids.split(",");
 
                 var data = {
+                    "id": 0,
                     "propiedadId": dataRow['id'],
                     "propiedad": dataRow['descripcion'],
                     "tipo": dataRow['tipo'],
@@ -458,8 +461,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 if (ids != "") {
                                     for (var i = 0; i < ids.length; i++) {
                                         var data = $("#gridVistasLegajo").jqGrid('getRowData', ids[i]);
-                                        if (data['descripcion'].toLowerCase() == $("#descripcion-add-VistasLegajo").val().toLowerCase() && data['id'] != rowid) {
-                                            e++;
+                                        if (data['id'] != rowid) {
+                                            if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
+                                                e++;
+                                            }
                                         }
                                     }
                                 }
@@ -518,7 +523,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 deleteGrid('gridDatosVistasLegajo');
             }
         });
-        
+
         //AlertManager
         $('#diagAlert').on('closed.bs.alert', function () {
             $('.dataAlert').html("");
@@ -534,13 +539,13 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     });
 
     function gridReload(gridName) {
-        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 10})*/.trigger('reloadGrid');
+        $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 1000})*/.trigger('reloadGrid');
     }
 
     function openDiagVistasLegajo(diagName, op, grid, id) {
         clearDataVistasLegajo();
         if (op == "edit") {
-            rowdata = jQuery("#" + grid).getRowData(id);
+            var rowdata = jQuery("#" + grid).getRowData(id);
             $('#descripcion-add-VistasLegajo').val(rowdata['descripcion']);
             $('#extranet-add-VistasLegajo').val(rowdata['extranet_permitido']);
             $('#' + diagName).dialog("option", "title", "Editar registro");
@@ -627,9 +632,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                         "id": result.data[i][0],
                                         "propiedadId": result.data[i][1],
                                         "propiedad": result.data[i][2],
-                                        "formularioId": result.data[i][3],
-                                        "orden": result.data[i][4],
-                                        "solo_lectura": result.data[i][5]
+                                        "tipo": result.data[i][3],
+                                        "formularioId": result.data[i][4],
+                                        "orden": result.data[i][5],
+                                        "solo_lectura": result.data[i][6]
                                     };
                                     var ids = jQuery("#gridDatosVistasLegajo").jqGrid('getDataIDs');
                                     ids = ids.toString();

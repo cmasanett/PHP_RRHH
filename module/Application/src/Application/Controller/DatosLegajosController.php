@@ -24,7 +24,7 @@ class DatosLegajosController extends BaseController {
         $sidx = $request->getPost('sidx', 'id');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7PropiedadesL')->findAll();
@@ -76,7 +76,7 @@ class DatosLegajosController extends BaseController {
         $sidx = $request->getPost('sidx', 'propiedad');
         $sord = $request->getPost('sord', 'ASC');
         $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 10);
+        $limit = $request->getPost('rows', 1000);
 
         try {
             $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(array('propiedad' => $id));
@@ -132,7 +132,7 @@ class DatosLegajosController extends BaseController {
                             $n7PropiedadesL = new N7PropiedadesL();
                             $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $data['id']);
                             if ($n7PropiedadesL) {
-                                $n7PropiedadesL->setDescripcion($data['descripcion']);
+                                $n7PropiedadesL->setDescripcion(utf8_decode($data['descripcion']));
                                 $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
                                 $this->getEntityManager()->persist($n7PropiedadesL);
                                 $this->getEntityManager()->flush();
@@ -145,7 +145,7 @@ class DatosLegajosController extends BaseController {
                         } else {
                             //Add
                             $n7PropiedadesL = new N7PropiedadesL ();
-                            $n7PropiedadesL->setDescripcion($data['descripcion']);
+                            $n7PropiedadesL->setDescripcion(utf8_decode($data['descripcion']));
                             $n7PropiedadesL->setTipoDeCampo($data['tipo_de_campo']);
                             $this->getEntityManager()->persist($n7PropiedadesL);
                             $this->getEntityManager()->flush();
@@ -207,8 +207,8 @@ class DatosLegajosController extends BaseController {
                             if ($n7PropiedadesL) {
                                 $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
                                 $n7ValoresPosiblesLegajos->setPropiedad($n7PropiedadesL);
-                                $n7ValoresPosiblesLegajos->setValorPosible($data['valor_posible']);
-                                $n7ValoresPosiblesLegajos->setSignificado($data['significado']);
+                                $n7ValoresPosiblesLegajos->setValorPosible(utf8_decode($data['valor_posible']));
+                                $n7ValoresPosiblesLegajos->setSignificado(utf8_decode($data['significado']));
                                 $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);
                                 $this->getEntityManager()->flush();
                             }
@@ -221,8 +221,8 @@ class DatosLegajosController extends BaseController {
                                 //Edit
                                 $n7ValoresPosiblesLegajos = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesLegajos', $data['id']);
                                 if ($n7ValoresPosiblesLegajos) {
-                                    $n7ValoresPosiblesLegajos->setValorPosible($data['valor_posible']);
-                                    $n7ValoresPosiblesLegajos->setSignificado($data['significado']);
+                                    $n7ValoresPosiblesLegajos->setValorPosible(utf8_decode($data['valor_posible']));
+                                    $n7ValoresPosiblesLegajos->setSignificado(utf8_decode($data['significado']));
                                     $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);
                                     $this->getEntityManager()->flush();
 
