@@ -15,7 +15,10 @@ class DatosLegajosController extends BaseController {
     }
 
     public function indexAction() {
-        return new ViewModel(array());
+        if (!$this->getAuthService()->hasIdentity()) {
+            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
+        }
+        return new ViewModel();
     }
 
     public function loadDataGridAction() {

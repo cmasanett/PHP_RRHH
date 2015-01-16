@@ -15,7 +15,10 @@ class VistasFamiliaresController extends BaseController {
     }
 
     public function indexAction() {
-        return new ViewModel(array());
+        if (!$this->getAuthService()->hasIdentity()) {
+            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
+        }
+        return new ViewModel();
     }
 
     public function loadViewGridAction() {
@@ -126,8 +129,8 @@ class VistasFamiliaresController extends BaseController {
                 $response['rows'][$i] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
-                    utf8_encode($row1[0]->getDescripcion()),
-                    utf8_encode($row1[0]->getTipoDeCampo()),
+                    utf8_encode($row1[0]['descripcion']),
+                    utf8_encode($row1[0]['tipoDeCampo']),
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()

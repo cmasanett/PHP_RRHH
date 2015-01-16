@@ -1,21 +1,18 @@
-<?php echo $this->doctype(); ?>
-
 <?php
+echo $this->doctype();
+
 date_default_timezone_set('America/Mendoza');
 setlocale(LC_TIME, 'spanish');
 $fecha = strftime("%d/%m/%y");
-$usuario = "-";
-$empresa = "-";
+$usuario = "";
+$empresa = "";
 $identity = $this->identity();
 
 if ($identity) {
-    if (!is_string($identity->usuarioActual) || !is_string($identity->empresaCorriente)) {
-        $usuario = $identity->userInfo->usuario;
-        $empresa = $identity->empresaCorriente;
+    if (!is_string($this->identity()['userInfo']) || !is_string($this->identity()['empresaCorriente'])) {
+        $usuario = $this->identity()['userInfo']->getUsuario();
+        $empresa = $this->identity()['empresaCorriente'];
     }
-} else {
-    $usuario = "No esta logueado.";
-    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
 }
 ?>
 
@@ -47,16 +44,19 @@ if ($identity) {
         ?>
 
         <!-- Scripts -->
-        <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
         <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
 
         <?php
         echo $this->headScript()
-                //->prependFile ( $this->basePath () . '/js/jquery-1.11.0.min.js' )
-                //->prependFile($this->basePath() . '/js/jquery.min.js')
+//                ->prependFile($this->basePath() . '/js/jquery-1.11.2.min.js')
+//                ->prependFile($this->basePath() . '/js/jquery-migrate-1.2.1.min.js')
                 ->prependFile($this->basePath() . '/js/jqGrid/js/i18n/grid.locale-es.js')
                 ->prependFile($this->basePath() . '/js/jqGrid/js/minified/jquery.jqGrid.min.js')
                 ->prependFile($this->basePath() . '/js/jqueryUI/jquery-ui.min.js')
+//                ->prependFile($this->basePath() . '/js/jqueryValidation/dist/jquery.validate.min.js')
+//                ->prependFile($this->basePath() . '/js/jqueryValidation/dist/additional-methods.min.js')
+//                ->prependFile($this->basePath() . '/js/jqueryValidation/dist/localization/messages_es_AR.min.js')
         ?>
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -76,14 +76,22 @@ if ($identity) {
                 </div>
                 <div class="navbar-header pull-right">
                     <a class="navbar-brand pull-right"  href="#">Usuario: <?php echo $usuario ?> - Empresa Activa: <?php echo $empresa ?></a><br>
-                    <!-- <a class="navbar-brand pull-right"  href="#">Empresa Activa: <?php echo $empresa ?></a> -->
-                    <a class="navbar-brand pull-right"  href="<?= $this->basePath("/usuarios/cerrar") ?>">Cerrar sesion</a>
+                    <a class="navbar-brand pull-right"  href="<?= $this->basePath("/usuarios/cerrar") ?>">Cerrar sesión</a>
+                    <!--                    <div class="row">
+                                            <a class="navbar-brand pull-right"  href="#">Usuario: <?php echo $usuario ?></a>
+                                        </div>
+                                        <div class="row">
+                                            <a class="navbar-brand pull-right"  href="#">Empresa Activa: <?php echo $empresa ?></a>
+                                        </div>
+                                        <div class="row">
+                                            <a class="navbar-brand pull-right"  href="<?= $this->basePath("/usuarios/cerrar") ?>">Cerrar sesión</a>
+                                        </div>-->
                 </div>
             </div>
         </nav>
         <div style="padding-top: 10px;" class="container-fluid">
             <div class="row">
-                <div style="padding-top: 50px;" class="col-sm-2 col-md-3 sidebar2">
+                <div style="padding-top: 50px;" class="col-sm-2 col-md-2 sidebar2">
                     <?php echo $this->menuWidget(); ?>
                 </div>
                 <div class="col-sm-10 col-md-offset-2 main">

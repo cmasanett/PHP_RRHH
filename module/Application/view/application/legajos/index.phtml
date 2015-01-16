@@ -18,9 +18,13 @@ echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warnin
 echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
 ?>
 
-<div class="alert alert-warning" id="diagAlert">
+<script type="text/javascript" src="../js/jqueryValidation/dist/jquery.validate.min.js"></script>    
+<script type="text/javascript" src="../js/jqueryValidation/dist/additional-methods.min.js"></script>  
+<script type="text/javascript" src="../js/jqueryValidation/dist/localization/messages_es_AR.min.js"></script>  
+
+<div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertMain">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong><span class="dataAlert"></span></strong>
+    <strong><span class="dataAlertMain"></span></strong>
 </div>
 
 <br>
@@ -52,7 +56,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             <div class="col-xs-6 col-sm-6">
                                 <div class="row">
                                     <div class="form-group form-group-sm">
-                                        <label class="control-label small" for="input-vista-tab-legajos">Vista seleccionada:</label>
+                                        <label class="control-label small" for="vista-tab-legajos">Vista seleccionada:</label>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -94,7 +98,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             <div class="col-xs-6 col-sm-5">
                                 <div class="row">
                                     <div class="form-group form-group-sm">
-                                        <label class="control-label small" for="input-vista-tab-legajos">Valores posibles:</label>
+                                        <label class="control-label small" for="vista-tab-legajos">Valores posibles:</label>
                                     </div>
                                 </div>
                                 <div class="row"></div>
@@ -107,7 +111,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             </div>
                         </div>
                         <br>
-                        <div class="alert alert-warning" id="diagAlertTab">
+                        <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertTab">
                             <a href="#" class="close" data-dismiss="alert">&times;</a>
                             <strong><span class="dataAlertTab"></span></strong>
                         </div>
@@ -452,7 +456,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     data: "id=" + rowid,
                     dataType: "json",
                     async: false,
-                    success: function (msg) {
+                    success: function (result) {
                         gridReload('gridLegajos');
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
@@ -461,7 +465,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 });
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnEditLegajos").click(function () {
@@ -470,7 +474,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 openDiagLegajos("form-add-edit-Legajos", "edit", "gridLegajos", rowid);
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnRefreshVistasLegajos").click(function () {
@@ -545,14 +549,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             data: "data=" + JSON.stringify(dataGridDatosPpdLegajo),
                             dataType: "json",
                             async: false,
-                            success: function (msg) {
-//                            for (var i = 0; i < msg.data.length; i++) {
-//                                    var data = $("#gridLegajos").jqGrid('getRowData', ids[i]);
-//                                    if (data['legajo'].toLowerCase() == legajo.toLowerCase()) {
-//                                        e++;
-//                                        $('#gridDatosPpdLegajo').setCell(rowidPpdLegajo, 'contenido', dataRowLegajosVal['valor_posible']);
-//                                    }
-//                                }
+                            success: function (result) {
                                 var rowidLegajos = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
                                 if (rowidLegajos != null) {
                                     loadGrid('gridDatosPpdLegajo', rowidLegajos);
@@ -591,7 +588,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             }
         });
 
-        //Dialog addLegajos
+        //Dialog addEditLegajos
         $("#form-add-edit-Legajos").dialog({
             autoOpen: false,
             resizable: true,
@@ -601,8 +598,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             width: 'auto', //1000, 
             height: 'auto', //500,
             maxWidth: 1200,
-            //position: ['center',110] , //{ my: "center", at: "center", of: window }
-            //fluid: true, //new option
             open: function (event, ui) {
                 $(event.target).parent().css('position', 'fixed');
                 $(event.target).parent().css('top', '110px');
@@ -610,10 +605,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             },
             buttons: {
                 'Aceptar': function () {
-                    var legajo = $("#legajo-add-Legajos").val();
-                    var apellidoYNombre = $("#apellidoYNombre-add-Legajos").val();
+                    if ($("#valid-form-add-edit-Legajos").valid()) {
+                        var legajo = $("#legajoAddEditLegajos").val();
+                        var apellidoYNombre = $("#apellidoNombreAddEditLegajos").val();
 
-                    if (legajo != '' && apellidoYNombre != '') {
                         var ids = $("#gridLegajos").jqGrid('getDataIDs');
                         ids = ids.toString();
                         ids = ids.split(",");
@@ -635,7 +630,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     }
                                 }
                             } else {
-                                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
                             }
                         } else {
                             if (ids != "") {
@@ -660,7 +655,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
                                 async: false,
-                                success: function (msg) {
+                                success: function (result) {
                                     gridReload('gridLegajos');
                                     $("#form-add-edit-Legajos").dialog('close');
                                 },
@@ -671,23 +666,31 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         } else {
                             msgAlert("diagAlertModal", "dataAlertModal", "Ya existe un registro con esa combinacion.");
                         }
-                    } else {
-                        msgAlert("diagAlertModal", "dataAlertModal", "Ingrese valores a los campos.");
                     }
                 },
                 'Cancelar': function () {
                     clearDataLegajos();
+                    validFormAddEditLegajos.resetForm();
                     $(this).dialog('close');
                 }
             },
             close: function () {
                 clearDataLegajos();
+                validFormAddEditLegajos.resetForm();
+            }
+        });
+
+        //Validation
+        var validFormAddEditLegajos = $("#valid-form-add-edit-Legajos").validate({
+            rules: {
+                legajoAddEditLegajos: {required: true},
+                apellidoNombreAddEditLegajos: {required: true}
             }
         });
 
         //AlertManager
-        $('#diagAlert').on('closed.bs.alert', function () {
-            $('.dataAlert').html("");
+        $('#diagAlertMain').on('closed.bs.alert', function () {
+            $('.dataAlertMain').html("");
         });
         $('#diagAlertModal').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
@@ -724,8 +727,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         clearDataLegajos();
         if (op == "edit") {
             var rowdata = $("#" + grid).getRowData(id);
-            $('#legajo-add-Legajos').val(rowdata['legajo']);
-            $('#apellidoYNombre-add-Legajos').val(rowdata['apellido_y_nombre']);
+            $('#legajoAddEditLegajos').val(rowdata['legajo']);
+            $('#apellidoNombreAddEditLegajos').val(rowdata['apellido_y_nombre']);
             $('#' + diagName).dialog("option", "title", "Editar registro");
             $('#' + diagName).dialog('open');
             $('#' + diagName).dialog('moveToTop');
@@ -739,10 +742,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     }
 
     function clearDataLegajos() {
-        $('#legajo-add-Legajos').val("");
-        $('#legajo-edit-Legajos').val("");
-        $('#apellidoYNombre-add-Legajos').val("");
-        $('#apellidoYNombre-edit-Legajos').val("");
+        $('#legajoAddEditLegajos').val("");
+        $('#apellidoNombreAddEditLegajos').val("");
     }
 
     function msgAlert(diagName, selectorName, msg) {
@@ -1029,21 +1030,21 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
 <!-- Dialogo form-add-edit-Legajos -->
 <div id="form-add-edit-Legajos" class="container-fluid" title="" >
-    <form class="form-horizontal" role="form">
+    <form class="form-horizontal" id="valid-form-add-edit-Legajos" role="form">
         <div class="form-group">
-            <label for="input-legajo-add-Legajos" class="col-sm-4 control-label">Legajo Nº:</label>
+            <label for="legajoAddEditLegajos" class="col-sm-4 control-label">Legajo Nº:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="legajo-add-Legajos" placeholder="">
+                <input type="text" class="form-control" id="legajoAddEditLegajos" name="legajoAddEditLegajos" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-apellidoYNombre-add-Legajos" class="col-sm-4 control-label">Apellido y nombre:</label>
+            <label for="apellidoNombreAddEditLegajos" class="col-sm-4 control-label">Apellido y nombre:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="apellidoYNombre-add-Legajos" placeholder="">
+                <input type="text" class="form-control" id="apellidoNombreAddEditLegajos" name="apellidoNombreAddEditLegajos" placeholder="">
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModal">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertModal">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
         <strong><span class="dataAlertModal"></span></strong>
     </div>

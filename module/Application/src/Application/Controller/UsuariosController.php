@@ -3,149 +3,128 @@
 namespace Application\Controller;
 
 use Zend\View\Model\ViewModel;
-use Zend\Authentication\Adapter\DbTable as AuthAdapter;
 // Forms
 use Application\Form\LoginForm;
 use Application\Form\EmpresaForm;
 
 class UsuariosController extends BaseController {
 
-//    private $dbAdapter;
-//    private $auth;
-
-//    private $authService;
-
     public function __construct() {
-        $this->auth = $this->getAuthenticationService();
-//        $this->auth = new AuthenticationService();
-//        $this->authService = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
+        
     }
 
     public function loginAction() {
         $this->layout('layout/layout_login');
-//        $auth = $this->getAuthenticationService();
-//        $auth = $this->auth;
-//        $authService = $this->authService;
-        $identi = $this->auth->getStorage()->read();
-        if ($identi != false && $identi != null) {
-            //return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/index');
+
+        if ($this->getAuthService()->getIdentity()) {
+            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/index');
         }
 
-        $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
-//        $db = $this->dbAdapter;
-
         $form = new LoginForm("form");
+        $redirect = 'login';
+        $request = $this->getRequest();
 
-        if ($this->getRequest()->isPost()) {
-            $authAdapter = new AuthAdapter($this->dbAdapter, 'n7_usuarios', 'usuario', 'clave', 'MD5(?)');
-            $authAdapter->setIdentity($this->getRequest()->getPost("usuario"))
-                    ->setCredential($this->getRequest()->getPost("clave"));
+        if ($request->isPost()) {
 
-            $this->auth->setAdapter($authAdapter);
-            $authResult = $this->auth->authenticate();
+            $this->getAuthService()->getAdapter()
+                    ->setIdentityValue($request->getPost('usuario'))
+                    ->setCredentialValue($request->getPost('clave'));
 
-//            if ($authAdapter->getResultRowObject() == false) {
+            $authResult = $this->getAuthService()->authenticate();
+//            foreach ($authResult->getMessages() as $message) {
+//                $this->flashmessenger()->addMessage($message);
+//            }
+
             if ($authResult->isValid()) {
+                $redirect = 'index';
                 $qb0 = $this->getEntityManager()->createQueryBuilder();
                 $qb0->select('l.id', 'l.nombre')
                         ->from('Application\Entity\N7EmpresaUsuario', 'p')
                         ->innerJoin('Application\Entity\N7Empresas', 'l', 'WITH', 'p.empresa = l.id')
                         ->where('p.usuario = ?1');
-                $qb0->setParameter(1, $authAdapter->getResultRowObject('id')->id);
+                $qb0->setParameter(1, $authResult->getIdentity()->getId());
                 $query0 = $qb0->getQuery();
                 $result = $query0->getArrayResult();
                 $cantEmpresasAsociadas = count($result);
 
                 if ($cantEmpresasAsociadas == 0) {
                     $this->flashMessenger()->addMessage("Usted no tiene una empresa asociada para acceder al sistema.");
-                    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
+                    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/' . $redirect);
                 } elseif ($cantEmpresasAsociadas == 1) {
-                    $session = new \stdClass();
-                    $session->userInfo = $authAdapter->getResultRowObject(null, 'clave');
-                    $session->usuarioActual = $authAdapter->getResultRowObject('id')->id;
-                    $session->empresaCorrienteId = $result[0]["id"];
-                    $session->empresaCorriente = $result[0]['nombre'];
-                    $this->auth->getStorage()->write($session);
-                    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/index');
+                    $this->getAuthService()->getStorage()->write(
+                            array('userInfo' => $authResult->getIdentity(),
+                                'empresaCorrienteId' => $result[0]["id"],
+                                'empresaCorriente' => $result[0]["nombre"])
+                    );
+                    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/' . $redirect);
                 } elseif ($cantEmpresasAsociadas > 1) {
-                    $session = new \stdClass();
-                    $session->userInfo = $authAdapter->getResultRowObject(null, 'clave');
-                    $session->usuarioActual = $authAdapter->getResultRowObject('id')->id;
-                    $this->auth->getStorage()->write($session);
-                    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/empresa');
+                    $redirect = 'empresa';
+                    $this->getAuthService()->getStorage()->write(
+                            array('userInfo' => $authResult->getIdentity())
+                    );
+                    return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/' . $redirect);
                 }
             } else {
                 $this->flashMessenger()->addMessage("Credenciales incorrectas, intente de nuevo.");
-                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
+                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/' . $redirect);
             }
         }
 
         return new ViewModel(array(
-//            'error' => 'Credenciales incorrectas, intente de nuevo',
             'form' => $form,
-//            'messages' => $messages,
-        ));
+            'messages' => $this->flashmessenger()->getMessages())
+        );
     }
 
     public function indexAction() {
+        $loggedUser = $this->getAuthService()->getIdentity();
+
+        if (!$loggedUser) {
+            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
+        }
+
         if ($this->request->getPost("submit")) {
             $empresa_seleccionada = $this->request->getPost();
             if ($empresa_seleccionada) {
-                $identi = $this->auth->getStorage()->read();
-                if ($identi != false && $identi != null) {
-                    $session = new \stdClass();
-                    $session->userInfo = $identi->userInfo;
-                    $session->usuarioActual = $identi->userInfo->id;
-                    $session->empresaCorrienteId = $empresa_seleccionada->empresa;
+                if ($loggedUser != false && $loggedUser != null) {
                     $result = $this->getEntityManager()->find('Application\Entity\N7Empresas', $empresa_seleccionada->empresa);
-//                    $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
-//                    $empresa = new EmpresaModel($this->dbAdapter);
-//                    $result = $empresa->getEmpresaById($empresa_seleccionada->empresa);
-                    $session->empresaCorriente = $result->getNombre(); //$result['nombre'];
-                    $this->auth->getStorage()->write($session);
-                    return new ViewModel(
-                            array("titulo" => "Bienvenido usuario " . $identi->userInfo->usuario
-                    ));
+                    $this->getAuthService()->getStorage()->write(
+                            array('userInfo' => $loggedUser['userInfo'],
+                                'empresaCorrienteId' => $empresa_seleccionada->empresa,
+                                'empresaCorriente' => $result->getNombre())
+                    );
                 }
             }
-        } else {
-            $identi = $this->auth->getStorage()->read();
-            if ($identi != false && $identi != null) {
-                return new ViewModel(
-                        array("titulo" => "Bienvenido usuario " . $identi->userInfo->usuario
-                ));
-            } else {
-                $this->auth->clearIdentity();
-                return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
-            }
         }
+
+        return new ViewModel(
+                array("titulo" => "Bienvenido usuario " . $loggedUser['userInfo']->getUsuario()
+        ));
     }
 
     public function empresaAction() {
         $this->layout('layout/layout_login');
-        $identi = $this->auth->getStorage()->read();
-        if ($identi != false && $identi != null) {
-//            $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
-//            $form = new EmpresaForm($this->dbAdapter, intval($identi->userInfo->id));
-            $form = new EmpresaForm($this->getEntityManager(), intval($identi->userInfo->id));
+        $loggedUser = $this->getAuthService()->getIdentity();
+
+        if ($loggedUser != false && $loggedUser != null) {
+
+            $form = new EmpresaForm($this->getEntityManager(), intval($loggedUser['userInfo']->getId()));
 
             return new ViewModel(array(
                 "form" => $form,
-                "datos" => $identi,
+                "datos" => $loggedUser,
                 'url' => $this->getRequest()->getBaseUrl())
             );
         } else {
-            $this->auth->clearIdentity();
+            $this->authService->clearIdentity();
             return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
         }
     }
 
     public function cerrarAction() {
-        $this->auth->clearIdentity();
-        $sessionManager = new \Zend\Session\SessionManager();
-        $sessionManager->forgetMe();
+        $this->getAuthService()->clearIdentity();
+        $this->flashmessenger()->addMessage("Usted ha cerrado la sesión.");
         return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
-        //return $this->redirect()->toRoute('application/default', array('controller' => 'usuarios', 'action' => 'login'));
     }
 
 }

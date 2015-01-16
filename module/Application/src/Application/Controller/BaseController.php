@@ -3,7 +3,8 @@
 namespace Application\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Authentication\AuthenticationService;
+
+//use Zend\Authentication\AuthenticationService;
 
 class BaseController extends AbstractActionController {
 
@@ -11,7 +12,9 @@ class BaseController extends AbstractActionController {
      * @var Doctrine\ORM\EntityManager
      */
     protected $em;
-    protected $au;
+//    protected $auStandar;
+//    protected $auDoc;
+    protected $auServ;
 
     /**
      * for managing entities via Doctrine
@@ -24,11 +27,34 @@ class BaseController extends AbstractActionController {
         return $this->em;
     }
 
-    public function getAuthenticationService() {
-        if (null === $this->au) {
-            $this->au = new AuthenticationService();
+//    public function getAuthenticationService() {
+//        if (null === $this->auStandar) {
+//            $this->auStandar = new AuthenticationService();
+//        }
+//        return $this->auStandar;
+//    }
+//    public function getAuthServiceDoc() {
+//        if (null === $this->auDoc) {
+//            $this->auDoc = $this->getServiceLocator()->get('Zend\Authentication\AuthenticationService');
+//        }
+//
+//        return $this->auDoc;
+//    }
+
+    public function getAuthService() {
+        if (null === $this->auServ) {
+            $this->auServ = $this->getServiceLocator()->get('authService');
         }
-        return $this->au;
+
+        return $this->auServ;
+    }
+
+    public function getSessionStorage() {
+        if (null === $this->storage) {
+            $this->storage = $this->getServiceLocator()->get('Application\Model\AuthStorage');
+        }
+
+        return $this->storage;
     }
 
 }

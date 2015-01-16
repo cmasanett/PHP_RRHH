@@ -184,7 +184,7 @@ ul li:hover>ul{
     display:block;
 }
 
-#diagAlert{
+#diagAlertMain{
     display: none;
     width: 90%;
 }
@@ -194,22 +194,22 @@ ul li:hover>ul{
     width: 100%;
 }
 
-#diagAlertModalAddE{
+#diagAlertModalAddP{
     display: none;
     width: 100%;
 }
 
-#diagAlertModalEditE{
+#diagAlertModalEditP{
     display: none;
     width: 100%;
 }
 
-#diagAlertModalAddEV{
+#diagAlertModalAddPV{
     display: none;
     width: 100%;
 }
 
-#diagAlertModalEditEV{
+#diagAlertModalEditPV{
     display: none;
     width: 100%;
 }
@@ -252,4 +252,26 @@ body.loading {
    modal element will be visible */
 body.loading .modal {
     display: block;
+}
+
+label.error {
+    font-size: 11px;
+    background: #e14f1c url("../js/jqueryUI/images/ui-bg_gloss-wave_45_e14f1c_500x100.png") 50% top repeat-x;
+    color: #FFFFFF;
+    padding: 3px;
+    margin-left: 1px;
+    margin-top: 5px;
+    /*    border-radius: 5px;
+        border: 2px solid #e3a1a1;
+        -moz-border-radius: 5px;
+        -moz-border: 2px solid #e3a1a1;
+        -webkit-border-radius: 5px;
+        -webkit-border: 2px solid #e3a1a1;*/
+}
+
+.error {
+    border-color: #e3a1a1;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 5px;
 }

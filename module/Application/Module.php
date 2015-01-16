@@ -41,18 +41,28 @@ class Module {
     public function getServiceConfig() {
         return array(
             'factories' => array(
-//                'Zend\Authentication\AuthenticationService' => function($serviceManager) {
-//                    return $serviceManager->get('doctrine.authenticationservice.orm_default');
-//                },
+                'Zend\Authentication\AuthenticationService' => function($serviceManager) {
+                    return $serviceManager->get('doctrine.authenticationservice.orm_default');
+                },
+                'Application\Model\AuthStorage' => function() {
+                    return new \Application\Model\AuthStorage('authdata');
+                },
+                'authService' => function($serviceManager) {
+                    $authService = $serviceManager->get('Zend\Authentication\AuthenticationService');
+                    $authService->setStorage($serviceManager->get('Application\Model\AuthStorage'));
+
+                    return $authService;
+                },
                 'menuService' => 'Application\Service\MenuService',
                 'menuService' => function ($serviceManager) {
-                    $entityManager = $serviceManager->get('doctrine.entitymanager.orm_default');
+                    $entityManager = $serviceManager->get('Doctrine\ORM\EntityManager');
                     $vhManager = $serviceManager->get('ViewHelperManager');
                     $plugin = $vhManager->get('basePath');
                     $menuService = new Service\MenuService();
                     $menuService->setEntityManager($entityManager);
                     //$menuService->setViewHelperManager($vhManager);
                     $menuService->setPlugin($plugin);
+
                     return $menuService;
                 },
             ),
