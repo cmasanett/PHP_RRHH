@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 13-12-2014 a las 05:50:22
+-- Tiempo de generación: 14-01-2015 a las 03:03:44
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -23,54 +23,93 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `empresas`
+-- Estructura de tabla para la tabla `n7_empresas`
 --
 
-CREATE TABLE IF NOT EXISTS `empresas` (
-`id` int(11) NOT NULL,
+CREATE TABLE IF NOT EXISTS `n7_empresas` (
+`id` int(11) unsigned NOT NULL,
   `codigo` char(4) COLLATE utf8_spanish_ci NOT NULL,
-  `nombre` char(120) COLLATE utf8_spanish_ci NOT NULL
+  `nombre` char(120) COLLATE utf8_spanish_ci NOT NULL,
+  `domicilio` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
+  `localidad` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
+  `codigo_postal` varchar(10) COLLATE utf8_spanish_ci NOT NULL,
+  `provincia` varchar(30) COLLATE utf8_spanish_ci NOT NULL,
+  `email_administrador` varchar(200) COLLATE utf8_spanish_ci NOT NULL,
+  `inactiva` char(1) COLLATE utf8_spanish_ci NOT NULL DEFAULT '',
+  `v1` decimal(12,4) NOT NULL,
+  `v2` decimal(12,4) NOT NULL,
+  `v3` decimal(12,4) NOT NULL,
+  `v4` decimal(12,4) NOT NULL,
+  `v5` decimal(12,4) NOT NULL,
+  `v6` decimal(12,4) NOT NULL,
+  `v7` decimal(12,4) NOT NULL,
+  `v8` decimal(12,4) NOT NULL,
+  `v9` decimal(12,4) NOT NULL,
+  `v10` decimal(12,4) NOT NULL,
+  `v11` decimal(12,4) NOT NULL,
+  `v12` decimal(12,4) NOT NULL,
+  `v13` decimal(12,4) NOT NULL,
+  `v14` decimal(12,4) NOT NULL,
+  `v15` decimal(12,4) NOT NULL,
+  `v16` decimal(12,4) NOT NULL,
+  `v17` decimal(12,4) NOT NULL,
+  `v18` decimal(12,4) NOT NULL,
+  `v19` decimal(12,4) NOT NULL,
+  `v20` decimal(12,4) NOT NULL,
+  `dato_legajo_baja` int(11) unsigned NOT NULL,
+  `comparacion` varchar(10) COLLATE utf8_spanish_ci NOT NULL,
+  `valor_dato_baja` varchar(120) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=4 ;
 
 --
--- Truncar tablas antes de insertar `empresas`
+-- Volcado de datos para la tabla `n7_empresas`
 --
 
-TRUNCATE TABLE `empresas`;
---
--- Volcado de datos para la tabla `empresas`
---
-
-INSERT INTO `empresas` (`id`, `codigo`, `nombre`) VALUES
-(1, 'A001', 'Empresa 1'),
-(2, 'A002', 'Empresa 2'),
-(3, 'A003', 'Empresa 3');
+INSERT INTO `n7_empresas` (`id`, `codigo`, `nombre`, `domicilio`, `localidad`, `codigo_postal`, `provincia`, `email_administrador`, `inactiva`, `v1`, `v2`, `v3`, `v4`, `v5`, `v6`, `v7`, `v8`, `v9`, `v10`, `v11`, `v12`, `v13`, `v14`, `v15`, `v16`, `v17`, `v18`, `v19`, `v20`, `dato_legajo_baja`, `comparacion`, `valor_dato_baja`) VALUES
+(1, 'PRUE', 'PARA PRUEBAS', 'MORAN 1111', 'CABA', '1111', 'CABA', 'admin@nominasrh.com', 'N', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', 3, 'en', '2,3,4,5,6,8,9'),
+(3, 'YCRT', 'INTERVENCION YCRT (DTO. 1034/02)', 'CABILDO 65', 'CAPITAL FEDERAL', '', '', '', '', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', '0.0000', 3, 'en', '2,3,4,5,6,8,9');
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `empresa_usuario`
+-- Estructura de tabla para la tabla `n7_empresa_usuario`
 --
 
-CREATE TABLE IF NOT EXISTS `empresa_usuario` (
-`id` int(11) NOT NULL,
-  `usuario_id` int(11) DEFAULT NULL,
-  `empresa_id` int(11) DEFAULT NULL
+CREATE TABLE IF NOT EXISTS `n7_empresa_usuario` (
+`id` int(11) unsigned NOT NULL,
+  `usuario_id` int(11) unsigned DEFAULT NULL,
+  `empresa_id` int(11) unsigned DEFAULT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=4 ;
 
 --
--- Truncar tablas antes de insertar `empresa_usuario`
+-- Volcado de datos para la tabla `n7_empresa_usuario`
 --
 
-TRUNCATE TABLE `empresa_usuario`;
---
--- Volcado de datos para la tabla `empresa_usuario`
---
-
-INSERT INTO `empresa_usuario` (`id`, `usuario_id`, `empresa_id`) VALUES
+INSERT INTO `n7_empresa_usuario` (`id`, `usuario_id`, `empresa_id`) VALUES
 (1, 1, 1),
 (2, 2, 1),
 (3, 2, 2);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `n7_legajos`
+--
+
+CREATE TABLE IF NOT EXISTS `n7_legajos` (
+`id` int(11) unsigned NOT NULL,
+  `empresa_id` int(11) unsigned NOT NULL,
+  `legajo` decimal(15,0) NOT NULL,
+  `apellido_y_nombre` varchar(80) COLLATE utf8_spanish_ci NOT NULL,
+  `foto` varchar(240) COLLATE utf8_spanish_ci NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=12 ;
+
+--
+-- Volcado de datos para la tabla `n7_legajos`
+--
+
+INSERT INTO `n7_legajos` (`id`, `empresa_id`, `legajo`, `apellido_y_nombre`, `foto`) VALUES
+(1, 1, '140', 'PEREZ JUAN', '');
 
 -- --------------------------------------------------------
 
@@ -87,18 +126,13 @@ CREATE TABLE IF NOT EXISTS `n7_menu_general` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=22 ;
 
 --
--- Truncar tablas antes de insertar `n7_menu_general`
---
-
-TRUNCATE TABLE `n7_menu_general`;
---
 -- Volcado de datos para la tabla `n7_menu_general`
 --
 
 INSERT INTO `n7_menu_general` (`id`, `descripcion`, `id_padre`, `nivel`, `url`) VALUES
 (1, 'Entidades', 0, 0, ''),
 (2, 'empresas', 1, 1, ''),
-(3, 'legajo', 1, 1, ''),
+(3, 'legajos', 1, 1, 'legajos/index'),
 (4, 'Definiciones', 0, 0, ''),
 (5, 'Datos', 4, 1, ''),
 (6, 'de empresa', 5, 2, 'datosempresas/index'),
@@ -121,6 +155,35 @@ INSERT INTO `n7_menu_general` (`id`, `descripcion`, `id_padre`, `nivel`, `url`) 
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `n7_ppd_l`
+--
+
+CREATE TABLE IF NOT EXISTS `n7_ppd_l` (
+`id` int(11) unsigned NOT NULL,
+  `objeto_id` int(11) unsigned NOT NULL,
+  `propiedad_id` int(11) unsigned NOT NULL,
+  `valor` varchar(120) COLLATE utf8_spanish_ci NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=12 ;
+
+--
+-- Volcado de datos para la tabla `n7_ppd_l`
+--
+
+INSERT INTO `n7_ppd_l` (`id`, `objeto_id`, `propiedad_id`, `valor`) VALUES
+(1, 1, 3, '4'),
+(2, 2, 4, '1'),
+(3, 1, 120, '01/01/2015'),
+(4, 1, 52, ''),
+(5, 1, 46, ''),
+(6, 1, 68, ''),
+(7, 1, 37, ''),
+(8, 1, 72, ''),
+(9, 1, 88, ''),
+(11, 1, 1, '1');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `n7_propiedades_e`
 --
 
@@ -130,11 +193,6 @@ CREATE TABLE IF NOT EXISTS `n7_propiedades_e` (
   `tipo_de_campo` char(1) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=112 ;
 
---
--- Truncar tablas antes de insertar `n7_propiedades_e`
---
-
-TRUNCATE TABLE `n7_propiedades_e`;
 --
 -- Volcado de datos para la tabla `n7_propiedades_e`
 --
@@ -265,11 +323,6 @@ CREATE TABLE IF NOT EXISTS `n7_propiedades_f` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=24 ;
 
 --
--- Truncar tablas antes de insertar `n7_propiedades_f`
---
-
-TRUNCATE TABLE `n7_propiedades_f`;
---
 -- Volcado de datos para la tabla `n7_propiedades_f`
 --
 
@@ -310,11 +363,6 @@ CREATE TABLE IF NOT EXISTS `n7_propiedades_l` (
   `tipo_de_campo` char(1) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=256 ;
 
---
--- Truncar tablas antes de insertar `n7_propiedades_l`
---
-
-TRUNCATE TABLE `n7_propiedades_l`;
 --
 -- Volcado de datos para la tabla `n7_propiedades_l`
 --
@@ -579,6 +627,26 @@ INSERT INTO `n7_propiedades_l` (`id`, `descripcion`, `tipo_de_campo`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `n7_usuarios`
+--
+
+CREATE TABLE IF NOT EXISTS `n7_usuarios` (
+`id` int(11) unsigned NOT NULL,
+  `usuario` char(20) COLLATE utf8_spanish_ci NOT NULL,
+  `clave` char(32) COLLATE utf8_spanish_ci NOT NULL
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=3 ;
+
+--
+-- Volcado de datos para la tabla `n7_usuarios`
+--
+
+INSERT INTO `n7_usuarios` (`id`, `usuario`, `clave`) VALUES
+(1, 'test', 'e10adc3949ba59abbe56e057f20f883e'),
+(2, 'test2', 'e10adc3949ba59abbe56e057f20f883e');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `n7_valores_posibles_empresas`
 --
 
@@ -587,13 +655,8 @@ CREATE TABLE IF NOT EXISTS `n7_valores_posibles_empresas` (
   `propiedad_id` int(11) unsigned NOT NULL,
   `valor_posible` varchar(120) COLLATE utf8_spanish_ci NOT NULL,
   `significado` varchar(120) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=3 ;
 
---
--- Truncar tablas antes de insertar `n7_valores_posibles_empresas`
---
-
-TRUNCATE TABLE `n7_valores_posibles_empresas`;
 -- --------------------------------------------------------
 
 --
@@ -607,11 +670,6 @@ CREATE TABLE IF NOT EXISTS `n7_valores_posibles_familiares` (
   `significado` varchar(120) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
 
---
--- Truncar tablas antes de insertar `n7_valores_posibles_familiares`
---
-
-TRUNCATE TABLE `n7_valores_posibles_familiares`;
 -- --------------------------------------------------------
 
 --
@@ -623,13 +681,22 @@ CREATE TABLE IF NOT EXISTS `n7_valores_posibles_legajos` (
   `propiedad_id` int(11) unsigned NOT NULL,
   `valor_posible` varchar(120) COLLATE utf8_spanish_ci NOT NULL,
   `significado` varchar(120) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=10 ;
 
 --
--- Truncar tablas antes de insertar `n7_valores_posibles_legajos`
+-- Volcado de datos para la tabla `n7_valores_posibles_legajos`
 --
 
-TRUNCATE TABLE `n7_valores_posibles_legajos`;
+INSERT INTO `n7_valores_posibles_legajos` (`id`, `propiedad_id`, `valor_posible`, `significado`) VALUES
+(1, 3, '1', 'ALTA'),
+(2, 3, '2', 'NO LIQUIDA MES'),
+(4, 3, '3', 'SUSPENSION DE PAGO'),
+(5, 3, '4', 'PREAVISO'),
+(6, 120, '01/01/2015', '-'),
+(7, 177, '31/12/2099', '-'),
+(8, 1, '1', 'DESPIDO'),
+(9, 120, '31/12/2099', '-');
+
 -- --------------------------------------------------------
 
 --
@@ -640,13 +707,15 @@ CREATE TABLE IF NOT EXISTS `n7_vistas_empresas` (
 `id` int(11) unsigned NOT NULL,
   `descripcion` varchar(80) COLLATE utf8_spanish_ci NOT NULL,
   `extranet_permitido` char(1) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=2 ;
 
 --
--- Truncar tablas antes de insertar `n7_vistas_empresas`
+-- Volcado de datos para la tabla `n7_vistas_empresas`
 --
 
-TRUNCATE TABLE `n7_vistas_empresas`;
+INSERT INTO `n7_vistas_empresas` (`id`, `descripcion`, `extranet_permitido`) VALUES
+(1, 'LIQUIDACIÓN', 'S');
+
 -- --------------------------------------------------------
 
 --
@@ -658,18 +727,6 @@ CREATE TABLE IF NOT EXISTS `n7_vistas_familiares` (
   `descripcion` varchar(60) COLLATE utf8_spanish_ci NOT NULL,
   `extranet_permitido` char(1) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=2 ;
-
---
--- Truncar tablas antes de insertar `n7_vistas_familiares`
---
-
-TRUNCATE TABLE `n7_vistas_familiares`;
---
--- Volcado de datos para la tabla `n7_vistas_familiares`
---
-
-INSERT INTO `n7_vistas_familiares` (`id`, `descripcion`, `extranet_permitido`) VALUES
-(1, 'Test', 'S');
 
 -- --------------------------------------------------------
 
@@ -683,11 +740,6 @@ CREATE TABLE IF NOT EXISTS `n7_vistas_legajos` (
   `extranet_permitido` char(1) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=5 ;
 
---
--- Truncar tablas antes de insertar `n7_vistas_legajos`
---
-
-TRUNCATE TABLE `n7_vistas_legajos`;
 --
 -- Volcado de datos para la tabla `n7_vistas_legajos`
 --
@@ -710,13 +762,15 @@ CREATE TABLE IF NOT EXISTS `n7_vistas_propiedades_e` (
   `formulario_id` int(11) unsigned NOT NULL,
   `orden` smallint(5) unsigned NOT NULL,
   `solo_lectura` char(1) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=18 ;
 
 --
--- Truncar tablas antes de insertar `n7_vistas_propiedades_e`
+-- Volcado de datos para la tabla `n7_vistas_propiedades_e`
 --
 
-TRUNCATE TABLE `n7_vistas_propiedades_e`;
+INSERT INTO `n7_vistas_propiedades_e` (`id`, `propiedad_id`, `formulario_id`, `orden`, `solo_lectura`) VALUES
+(17, 1, 1, 1, 'N');
+
 -- --------------------------------------------------------
 
 --
@@ -731,11 +785,6 @@ CREATE TABLE IF NOT EXISTS `n7_vistas_propiedades_f` (
   `solo_lectura` char(1) COLLATE utf8_spanish_ci NOT NULL
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=24 ;
 
---
--- Truncar tablas antes de insertar `n7_vistas_propiedades_f`
---
-
-TRUNCATE TABLE `n7_vistas_propiedades_f`;
 --
 -- Volcado de datos para la tabla `n7_vistas_propiedades_f`
 --
@@ -777,13 +826,8 @@ CREATE TABLE IF NOT EXISTS `n7_vistas_propiedades_l` (
   `formulario_id` int(11) unsigned NOT NULL,
   `orden` smallint(5) unsigned NOT NULL,
   `solo_lectura` char(1) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=76 ;
 
---
--- Truncar tablas antes de insertar `n7_vistas_propiedades_l`
---
-
-TRUNCATE TABLE `n7_vistas_propiedades_l`;
 --
 -- Volcado de datos para la tabla `n7_vistas_propiedades_l`
 --
@@ -793,54 +837,49 @@ INSERT INTO `n7_vistas_propiedades_l` (`id`, `propiedad_id`, `formulario_id`, `o
 (2, 174, 3, 20, 'N'),
 (3, 169, 1, 10, 'N'),
 (4, 174, 1, 20, 'N'),
-(6, 174, 4, 10, 'N');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `usuarios`
---
-
-CREATE TABLE IF NOT EXISTS `usuarios` (
-`id` int(11) NOT NULL,
-  `usuario` char(20) COLLATE utf8_spanish_ci NOT NULL,
-  `clave` char(32) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=3 ;
-
---
--- Truncar tablas antes de insertar `usuarios`
---
-
-TRUNCATE TABLE `usuarios`;
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `usuario`, `clave`) VALUES
-(1, 'test', 'e10adc3949ba59abbe56e057f20f883e'),
-(2, 'test2', 'e10adc3949ba59abbe56e057f20f883e');
+(67, 1, 4, 1, 'N'),
+(68, 3, 4, 2, 'N'),
+(69, 120, 4, 3, 'N'),
+(70, 52, 4, 4, 'S'),
+(71, 46, 4, 5, 'N'),
+(72, 68, 4, 6, 'N'),
+(73, 37, 4, 7, 'N'),
+(74, 72, 4, 8, 'N'),
+(75, 88, 4, 9, 'N');
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `empresas`
+-- Indices de la tabla `n7_empresas`
 --
-ALTER TABLE `empresas`
+ALTER TABLE `n7_empresas`
  ADD PRIMARY KEY (`id`);
 
 --
--- Indices de la tabla `empresa_usuario`
+-- Indices de la tabla `n7_empresa_usuario`
 --
-ALTER TABLE `empresa_usuario`
+ALTER TABLE `n7_empresa_usuario`
  ADD PRIMARY KEY (`id`), ADD KEY `usuario_id` (`usuario_id`), ADD KEY `empresa_id` (`empresa_id`);
+
+--
+-- Indices de la tabla `n7_legajos`
+--
+ALTER TABLE `n7_legajos`
+ ADD PRIMARY KEY (`id`), ADD KEY `Index_1` (`empresa_id`);
 
 --
 -- Indices de la tabla `n7_menu_general`
 --
 ALTER TABLE `n7_menu_general`
  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `n7_ppd_l`
+--
+ALTER TABLE `n7_ppd_l`
+ ADD PRIMARY KEY (`id`), ADD KEY `Index_3` (`propiedad_id`), ADD KEY `Index_2` (`objeto_id`) USING BTREE, ADD KEY `Index_4` (`objeto_id`,`propiedad_id`) USING BTREE;
 
 --
 -- Indices de la tabla `n7_propiedades_e`
@@ -859,6 +898,12 @@ ALTER TABLE `n7_propiedades_f`
 --
 ALTER TABLE `n7_propiedades_l`
  ADD PRIMARY KEY (`id`), ADD KEY `Index_2` (`descripcion`);
+
+--
+-- Indices de la tabla `n7_usuarios`
+--
+ALTER TABLE `n7_usuarios`
+ ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `n7_valores_posibles_empresas`
@@ -915,30 +960,34 @@ ALTER TABLE `n7_vistas_propiedades_l`
  ADD PRIMARY KEY (`id`), ADD KEY `Index_2` (`propiedad_id`), ADD KEY `Index_3` (`formulario_id`);
 
 --
--- Indices de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
- ADD PRIMARY KEY (`id`);
-
---
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT de la tabla `empresas`
+-- AUTO_INCREMENT de la tabla `n7_empresas`
 --
-ALTER TABLE `empresas`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+ALTER TABLE `n7_empresas`
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
--- AUTO_INCREMENT de la tabla `empresa_usuario`
+-- AUTO_INCREMENT de la tabla `n7_empresa_usuario`
 --
-ALTER TABLE `empresa_usuario`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+ALTER TABLE `n7_empresa_usuario`
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+--
+-- AUTO_INCREMENT de la tabla `n7_legajos`
+--
+ALTER TABLE `n7_legajos`
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT de la tabla `n7_menu_general`
 --
 ALTER TABLE `n7_menu_general`
 MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
+--
+-- AUTO_INCREMENT de la tabla `n7_ppd_l`
+--
+ALTER TABLE `n7_ppd_l`
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT de la tabla `n7_propiedades_e`
 --
@@ -955,10 +1004,15 @@ MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
 ALTER TABLE `n7_propiedades_l`
 MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=256;
 --
+-- AUTO_INCREMENT de la tabla `n7_usuarios`
+--
+ALTER TABLE `n7_usuarios`
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+--
 -- AUTO_INCREMENT de la tabla `n7_valores_posibles_empresas`
 --
 ALTER TABLE `n7_valores_posibles_empresas`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `n7_valores_posibles_familiares`
 --
@@ -968,12 +1022,12 @@ MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `n7_valores_posibles_legajos`
 --
 ALTER TABLE `n7_valores_posibles_legajos`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT de la tabla `n7_vistas_empresas`
 --
 ALTER TABLE `n7_vistas_empresas`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=2;
 --
 -- AUTO_INCREMENT de la tabla `n7_vistas_familiares`
 --
@@ -988,7 +1042,7 @@ MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
 -- AUTO_INCREMENT de la tabla `n7_vistas_propiedades_e`
 --
 ALTER TABLE `n7_vistas_propiedades_e`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=18;
 --
 -- AUTO_INCREMENT de la tabla `n7_vistas_propiedades_f`
 --
@@ -998,22 +1052,17 @@ MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=24;
 -- AUTO_INCREMENT de la tabla `n7_vistas_propiedades_l`
 --
 ALTER TABLE `n7_vistas_propiedades_l`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=7;
---
--- AUTO_INCREMENT de la tabla `usuarios`
---
-ALTER TABLE `usuarios`
-MODIFY `id` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=76;
 --
 -- Restricciones para tablas volcadas
 --
 
 --
--- Filtros para la tabla `empresa_usuario`
+-- Filtros para la tabla `n7_empresa_usuario`
 --
-ALTER TABLE `empresa_usuario`
-ADD CONSTRAINT `empresa_usuario_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE,
-ADD CONSTRAINT `empresa_usuario_ibfk_2` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE CASCADE;
+ALTER TABLE `n7_empresa_usuario`
+ADD CONSTRAINT `n7_empresa_usuario_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `n7_usuarios` (`id`) ON DELETE CASCADE,
+ADD CONSTRAINT `n7_empresa_usuario_ibfk_2` FOREIGN KEY (`empresa_id`) REFERENCES `n7_empresas` (`id`) ON DELETE CASCADE;
 
 --
 -- Filtros para la tabla `n7_valores_posibles_empresas`
