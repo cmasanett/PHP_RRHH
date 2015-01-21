@@ -275,3 +275,11 @@ label.error {
     border-width: 2px;
     border-radius: 5px;
 }
+
+.wait {
+    cursor: wait
+}
+
+.default {
+    cursor: default
+}

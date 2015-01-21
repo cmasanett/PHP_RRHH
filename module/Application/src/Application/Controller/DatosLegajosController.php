@@ -56,8 +56,8 @@ class DatosLegajosController extends BaseController {
             $i = 0;
 
             foreach ($row as $r) {
-                $response ['rows'] [$i] ['id'] = $r->getId(); // id
-                $response ['rows'] [$i] ['cell'] = array(
+                $response ['rows'][$i]['id'] = $r->getId(); // id
+                $response ['rows'][$i]['cell'] = array(
                     $r->getId(),
                     utf8_encode($r->getDescripcion()),
                     $r->getTipoDeCampo()
@@ -215,6 +215,7 @@ class DatosLegajosController extends BaseController {
                                 $this->getEntityManager()->persist($n7ValoresPosiblesLegajos);
                                 $this->getEntityManager()->flush();
                             }
+
                             return $this->response->setContent(Json::encode(array(
                                                 'type' => 'addVal',
                                                 'success' => true

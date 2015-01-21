@@ -178,8 +178,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridPropiedadesLegajo")[0].clearToolbar();
-                //loadGrid('gridPropiedadesLegajo');
-                //gridReload('gridPropiedadesLegajo');
             }
         });
         $('#gridPropiedadesLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
@@ -281,8 +279,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridDatosVistasLegajo")[0].clearToolbar();
-                //loadGrid('gridDatosVistasLegajo');
-                //gridReload('gridDatosVistasLegajo');
             }
         });
         $('#gridDatosVistasLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});

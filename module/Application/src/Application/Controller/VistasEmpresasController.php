@@ -88,7 +88,6 @@ class VistasEmpresasController extends BaseController {
             $i = 0;
 
             foreach ($row as $r) {
-
                 $response['rows'][$i] = array(
                     $r->getId(),
                     utf8_encode($r->getDescripcion()),

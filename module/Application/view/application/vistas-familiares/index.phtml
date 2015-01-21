@@ -178,8 +178,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridPropiedadesFamiliares")[0].clearToolbar();
-                //loadGrid('gridPropiedadesFamiliares');
-                //gridReload('gridPropiedadesFamiliares');
             }
         });
         $('#gridPropiedadesFamiliares').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
@@ -281,8 +279,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridDatosVistasFamiliares")[0].clearToolbar();
-                //loadGrid('gridDatosVistasFamiliares');
-                //gridReload('gridDatosVistasFamiliares');
             }
         });
         $('#gridDatosVistasFamiliares').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});

@@ -178,8 +178,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridPropiedadesEmpresa")[0].clearToolbar();
-                //loadGrid('gridPropiedadesEmpresa');
-                //gridReload('gridPropiedadesEmpresa');
             }
         });
         $('#gridPropiedadesEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
@@ -281,8 +279,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridDatosVistasEmpresa")[0].clearToolbar();
-                //loadGrid('gridDatosVistasEmpresa');
-                //gridReload('gridDatosVistasEmpresa');
             }
         });
         $('#gridDatosVistasEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});

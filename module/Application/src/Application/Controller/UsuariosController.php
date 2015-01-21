@@ -25,7 +25,6 @@ class UsuariosController extends BaseController {
         $request = $this->getRequest();
 
         if ($request->isPost()) {
-
             $this->getAuthService()->getAdapter()
                     ->setIdentityValue($request->getPost('usuario'))
                     ->setCredentialValue($request->getPost('clave'));

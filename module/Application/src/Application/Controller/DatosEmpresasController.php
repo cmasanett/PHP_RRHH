@@ -56,7 +56,7 @@ class DatosEmpresasController extends BaseController {
 
             foreach ($row as $r) {
                 $response ['rows'][$i]['id'] = $r->getId(); // id
-                $response['rows'][$i]['cell'] = array(
+                $response ['rows'][$i]['cell'] = array(
                     $r->getId(),
                     utf8_encode($r->getDescripcion()),
                     $r->getTipoDeCampo()
@@ -106,10 +106,9 @@ class DatosEmpresasController extends BaseController {
             $i = 0;
 
             foreach ($row as $r) {
-                $response['rows'] [$i] ['id'] = $r->getId(); // id
+                $response ['rows'] [$i] ['id'] = $r->getId(); // id
                 $response ['rows'] [$i] ['cell'] = array(
-                            $r->
-                            getId(),
+                    $r->getId(),
                     $r->getPropiedad()->getId(),
                     utf8_encode($r->getValorPosible()),
                     utf8_encode($r->getSignificado())
