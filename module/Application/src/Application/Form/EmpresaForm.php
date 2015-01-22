@@ -4,18 +4,12 @@ namespace Application\Form;
 
 use Zend\Form\Form;
 
-//use Zend\Db\Sql\Sql;
-//use Zend\Db\Adapter\AdapterInterface;
-
 class EmpresaForm extends Form {
 
     protected $entityManager;
-//    protected $dbAdapter;
     protected $userId;
 
-//    public function __construct(AdapterInterface $dbAdapter, $userId) {
     public function __construct(\Doctrine\ORM\EntityManager $entityManager, $userId) {
-//        $this->setDbAdapter($dbAdapter);
         $this->setEntityManager($entityManager);
         $this->setUserId($userId);
 
@@ -35,7 +29,7 @@ class EmpresaForm extends Form {
             ),
             'options' => array(
                 'label' => 'Empresa: ',
-                'value_options' => $this->getOptionsForSelectEmpresa()
+                'value_options' => $this->getEmpresasByUsuario()
             )
         ));
 
@@ -48,15 +42,6 @@ class EmpresaForm extends Form {
                 'class' => 'btn btn-lg btn-primary btn-block'
             )
         ));
-    }
-
-    public function setDbAdapter(AdapterInterface $dbAdapter) {
-        $this->dbAdapter = $dbAdapter;
-        return $this;
-    }
-
-    public function getDbAdapter() {
-        return $this->dbAdapter;
     }
 
     public function setEntityManager(\Doctrine\ORM\EntityManager $entityManager) {
@@ -80,7 +65,7 @@ class EmpresaForm extends Form {
         return $this->userId;
     }
 
-    public function getOptionsForSelectEmpresa() {
+    public function getEmpresasByUsuario() {
         $entityManager = $this->getEntityManager();
         $qb0 = $entityManager->createQueryBuilder();
         $qb0->select('l.id', 'l.nombre')
@@ -90,24 +75,6 @@ class EmpresaForm extends Form {
         $qb0->setParameter(1, $this->getUserId());
         $query0 = $qb0->getQuery();
         $result = $query0->getArrayResult();
-
-//        $dbAdapter = $this->getDbAdapter();
-//        $sql = new Sql($dbAdapter);
-//        $select = $sql->select();
-//        $select->from(array(
-//            'p' => 'empresa_usuario'
-//                ), array(
-//            '*'
-//        ))->join(array(
-//            'l' => 'empresas'
-//                ), 'p.empresa_id = l.id', array(
-//            '*'
-//        ))->where(array(
-//            'usuario_id' => $this->getUserId()
-//        ));
-//        $selectString = $sql->getSqlStringForSqlObject($select);
-//        $execute = $dbAdapter->query($selectString, $dbAdapter::QUERY_MODE_EXECUTE);
-//        $result = $execute->toArray();
 
         $selectData = array();
 

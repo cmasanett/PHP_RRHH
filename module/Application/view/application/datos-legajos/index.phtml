@@ -18,9 +18,13 @@ echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warnin
 echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
 ?>
 
-<div class="alert alert-warning" id="diagAlert">
+<script type="text/javascript" src="../js/jqueryValidation/dist/jquery.validate.min.js"></script>    
+<script type="text/javascript" src="../js/jqueryValidation/dist/additional-methods.min.js"></script>  
+<script type="text/javascript" src="../js/jqueryValidation/dist/localization/messages_es_AR.min.js"></script>  
+
+<div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertMain">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong><span class="dataAlert"></span></strong>
+    <strong><span class="dataAlertMain"></span></strong>
 </div>
 
 <br>
@@ -207,7 +211,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
         //Buttons
         $("#btnAddDatosLegajos").click(function () {
-            openDiagDatosLegajos("form-add-DatosLegajos", "add", "", "");
+            openDiagDatosLegajos("form-add-datosLegajos", "add", "", "");
         });
         $("#btnDelDatosLegajos").click(function () {
             var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
@@ -234,36 +238,39 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         data: "id=" + rowid,
                         dataType: "json",
                         async: false,
-                        success: function (msg) {
+                        success: function (result) {
                             gridReload('gridDatosLegajos');
                             gridReload('gridDatosLegajosVal');
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            alert(xhr.status + " " + thrownError);
                         }
                     });
                 } else {
-                    msgAlert("diagAlert", "dataAlert", "No se puede eliminar la propiedad porque tiene valores asociados.");
+                    msgAlert("diagAlertMain", "dataAlertMain", "No se puede eliminar la propiedad porque tiene valores asociados.");
                 }
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnEditDatosLegajos").click(function () {
             var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagDatosLegajos("form-edit-DatosLegajos", "edit", "gridDatosLegajos", rowid);
+                openDiagDatosLegajos("form-edit-datosLegajos", "edit", "gridDatosLegajos", rowid);
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnAddDatosLegajosVal").click(function () {
             var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
             var rowidVal = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagDatosLegajosVal("form-add-DatosLegajosVal", "add", "gridDatosLegajosVal", rowidVal);
+                openDiagDatosLegajosVal("form-add-datosLegajosVal", "add", "gridDatosLegajosVal", rowidVal);
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnDelDatosLegajosVal").click(function () {
@@ -278,25 +285,28 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     async: false,
                     success: function () {
                         gridReload('gridDatosLegajosVal');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status + " " + thrownError);
                     }
                 });
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnEditDatosLegajosVal").click(function () {
             var rowid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagDatosLegajosVal("form-edit-DatosLegajosVal", "edit", "gridDatosLegajosVal", rowid);
+                openDiagDatosLegajosVal("form-edit-datosLegajosVal", "edit", "gridDatosLegajosVal", rowid);
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
 
         //Dialog addDatosLegajos
-        $("#form-add-DatosLegajos").dialog({
+        $("#form-add-datosLegajos").dialog({
             autoOpen: false,
             resizable: true,
             closeOnEscape: true,
@@ -306,10 +316,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             maxWidth: 600,
             buttons: {
                 'Aceptar': function () {
-                    var descripcion = $("#descripcion-add-DatosLegajos").val();
-                    var tipo = $("#tipo-add-DatosLegajos").val();
+                    if ($("#valid-form-edit-datosLegajos").valid()) {
+                        var descripcion = $("#descripcionAddDatosLegajos").val();
+                        var tipo = $("#tipoAddDatosLegajos").val();
 
-                    if (descripcion != '') {
                         var ids = $("#gridDatosLegajos").jqGrid('getDataIDs');
                         ids = ids.toString();
                         ids = ids.split(",");
@@ -336,26 +346,30 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
                                 async: false,
-                                success: function (msg) {
+                                success: function (result) {
                                     gridReload('gridDatosLegajos');
-                                    $("#form-add-DatosLegajos").dialog('close');
+                                    $("#form-add-datosLegajos").dialog('close');
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    alert(xhr.status + " " + thrownError);
                                 }
                             });
                         } else {
-                            msgAlert("diagAlertModalAddE", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                            msgAlert("diagAlertModalAddP", "dataAlertModalAddP", "Ya existe un registro con esa combinacion.");
                         }
                     }
                 },
                 'Cancelar': function () {
+                    validFormAddDatosLegajos.resetForm();
                     $(this).dialog('close');
                 }
             },
             close: function () {
-                //nada por ahora
+                validFormAddDatosLegajos.resetForm();
             }
         });
         //Dialog editDatosLegajos
-        $("#form-edit-DatosLegajos").dialog({
+        $("#form-edit-datosLegajos").dialog({
             autoOpen: false,
             resizable: true,
             closeOnEscape: true,
@@ -365,56 +379,62 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             maxWidth: 600,
             buttons: {
                 'Aceptar': function () {
-                    var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
-                    if (rowid != null) {
-                        var ids = $("#gridDatosLegajos").jqGrid('getDataIDs');
-                        ids = ids.toString();
-                        ids = ids.split(",");
-                        var e = 0;
+                    if ($("#valid-form-edit-datosLegajos").valid()) {
+                        var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
+                        if (rowid != null) {
+                            var ids = $("#gridDatosLegajos").jqGrid('getDataIDs');
+                            ids = ids.toString();
+                            ids = ids.split(",");
+                            var e = 0;
 
-                        if (ids != "") {
-                            for (var i = 0; i < ids.length; i++) {
-                                var data = $("#gridDatosLegajos").jqGrid('getRowData', ids[i]);
-                                if (data['descripcion'].toLowerCase() == $("#descripcion-edit-DatosLegajos").val().toLowerCase() && data['id'] != rowid) {
-                                    e++;
+                            if (ids != "") {
+                                for (var i = 0; i < ids.length; i++) {
+                                    var data = $("#gridDatosLegajos").jqGrid('getRowData', ids[i]);
+                                    if (data['descripcion'].toLowerCase() == $("#descripcionEditDatosLegajos").val().toLowerCase() && data['id'] != rowid) {
+                                        e++;
+                                    }
                                 }
                             }
-                        }
 
-                        if (e == 0)
-                        {
-                            var data = {
-                                "id": rowid,
-                                "descripcion": $("#descripcion-edit-DatosLegajos").val(),
-                                "tipo_de_campo": $("#tipo-edit-DatosLegajos").val()
-                            };
-                            $.ajax({
-                                url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItem')); ?>",
-                                global: false,
-                                type: "POST",
-                                data: "data=" + JSON.stringify(data),
-                                dataType: "json",
-                                async: false,
-                                success: function (msg) {
-                                    gridReload('gridDatosLegajos');
-                                    $("#form-edit-DatosLegajos").dialog('close');
-                                }
-                            });
-                        } else {
-                            msgAlert("diagAlertModalEditE", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                            if (e == 0)
+                            {
+                                var data = {
+                                    "id": rowid,
+                                    "descripcion": $("#descripcionEditDatosLegajos").val(),
+                                    "tipo_de_campo": $("#tipoEditDatosLegajos").val()
+                                };
+                                $.ajax({
+                                    url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItem')); ?>",
+                                    global: false,
+                                    type: "POST",
+                                    data: "data=" + JSON.stringify(data),
+                                    dataType: "json",
+                                    async: false,
+                                    success: function (result) {
+                                        gridReload('gridDatosLegajos');
+                                        $("#form-edit-datosLegajos").dialog('close');
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        alert(xhr.status + " " + thrownError);
+                                    }
+                                });
+                            } else {
+                                msgAlert("diagAlertModalEditP", "dataAlertModalEditP", "Ya existe un registro con esa combinacion.");
+                            }
                         }
                     }
                 },
                 'Cancelar': function () {
+                    validFormEditDatosLegajos.resetForm();
                     $(this).dialog('close');
                 }
             },
             close: function () {
-                //nada por ahora
+                validFormEditDatosLegajos.resetForm();
             }
         });
         //Dialog addDatosLegajosVal
-        $("#form-add-DatosLegajosVal").dialog({
+        $("#form-add-datosLegajosVal").dialog({
             autoOpen: false,
             resizable: true,
             closeOnEscape: true,
@@ -424,66 +444,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             maxWidth: 600,
             buttons: {
                 'Aceptar': function () {
-                    var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
-                    var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
-                    ids = ids.toString();
-                    ids = ids.split(",");
-                    var e = 0;
-
-                    if (ids != "") {
-                        for (var i = 0; i < ids.length; i++) {
-                            var data = $("#gridDatosLegajosVal").jqGrid('getRowData', ids[i]);
-                            if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valor-posible-add-DatosLegajosVal").val().toLowerCase()) {
-                                e++;
-                            }
-                        }
-                    }
-
-                    if (e == 0)
-                    {
-                        var data = {
-                            "propiedad": rowid,
-                            "valor_posible": $("#valor-posible-add-DatosLegajosVal").val(),
-                            "significado": $("#significado-add-DatosLegajosVal").val()
-                        };
-                        $.ajax({
-                            url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItemVal')); ?>",
-                            global: false,
-                            type: "POST",
-                            data: "data=" + JSON.stringify(data),
-                            dataType: "json",
-                            async: false,
-                            success: function () {
-                                loadGridDatosLegajosVal(rowid);
-                                $("#form-add-DatosLegajosVal").dialog('close');
-                            }
-                        });
-                    } else {
-                        msgAlert("diagAlertModalAddEV", "dataAlertModal", "Ya existe un registro con esa combinacion.");
-                    }
-                },
-                Cancel: function () {
-                    $(this).dialog('close');
-                }
-            },
-            close: function () {
-                //nada por ahora
-            }
-        });
-        //Dialog editDatosLegajosVal
-        $("#form-edit-DatosLegajosVal").dialog({
-            autoOpen: false,
-            resizable: true,
-            closeOnEscape: true,
-            modal: true,
-            width: 'auto', // overcomes width:'auto' and maxWidth bug
-            height: 'auto',
-            maxWidth: 600,
-            buttons: {
-                'Aceptar': function () {
-                    var rowid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
-                    if (rowid != null) {
-                        var dataGrid = $("#gridDatosLegajosVal").jqGrid('getRowData', rowid);
+                    if ($("#valid-form-add-datosLegajosVal").valid()) {
+                        var rowid = jQuery("#gridDatosLegajos").jqGrid('getGridParam', 'selrow');
                         var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
                         ids = ids.toString();
                         ids = ids.split(",");
@@ -492,7 +454,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         if (ids != "") {
                             for (var i = 0; i < ids.length; i++) {
                                 var data = $("#gridDatosLegajosVal").jqGrid('getRowData', ids[i]);
-                                if (data['valor_posible'].toLowerCase() == $("#valor-posible-edit-DatosLegajosVal").val().toLowerCase() && data['id'] != rowid) {
+                                if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valorPosibleAddDatosLegajosVal").val().toLowerCase()) {
                                     e++;
                                 }
                             }
@@ -501,9 +463,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         if (e == 0)
                         {
                             var data = {
-                                "id": rowid,
-                                "valor_posible": $("#valor-posible-edit-DatosLegajosVal").val(),
-                                "significado": $("#significado-edit-DatosLegajosVal").val()
+                                "propiedad": rowid,
+                                "valor_posible": $("#valorPosibleAddDatosLegajosVal").val(),
+                                "significado": $("#significadoAddDatosLegajosVal").val()
                             };
                             $.ajax({
                                 url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItemVal')); ?>",
@@ -512,49 +474,134 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
                                 async: false,
-                                success: function (msg) {
-                                    loadGridDatosLegajosVal(dataGrid.propiedad);
-                                    $("#form-edit-DatosLegajosVal").dialog('close');
+                                success: function () {
+                                    loadGridDatosLegajosVal(rowid);
+                                    $("#form-add-datosLegajosVal").dialog('close');
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    alert(xhr.status + " " + thrownError);
                                 }
                             });
                         } else {
-                            msgAlert("diagAlertModalEditEV", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                            msgAlert("diagAlertModalAddPV", "dataAlertModalAddPV", "Ya existe un registro con esa combinacion.");
                         }
                     }
                 },
                 Cancel: function () {
+                    validFormAddDatosLegajosVal.resetForm();
                     $(this).dialog('close');
                 }
             },
             close: function () {
-                //nada por ahora
+                validFormAddDatosLegajosVal.resetForm();
+            }
+        });
+        //Dialog editDatosLegajosVal
+        $("#form-edit-datosLegajosVal").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    if ($("#valid-form-edit-datosLegajos").valid()) {
+                        var rowid = jQuery("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
+                        if (rowid != null) {
+                            var dataGrid = $("#gridDatosLegajosVal").jqGrid('getRowData', rowid);
+                            var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
+                            ids = ids.toString();
+                            ids = ids.split(",");
+                            var e = 0;
+
+                            if (ids != "") {
+                                for (var i = 0; i < ids.length; i++) {
+                                    var data = $("#gridDatosLegajosVal").jqGrid('getRowData', ids[i]);
+                                    if (data['valor_posible'].toLowerCase() == $("#valorPosibleEditDatosLegajosVal").val().toLowerCase() && data['id'] != rowid) {
+                                        e++;
+                                    }
+                                }
+                            }
+
+                            if (e == 0)
+                            {
+                                var data = {
+                                    "id": rowid,
+                                    "valor_posible": $("#valorPosibleEditDatosLegajosVal").val(),
+                                    "significado": $("#significadoEditDatosLegajosVal").val()
+                                };
+                                $.ajax({
+                                    url: "<?php echo $this->url('datoslegajos', array('action' => 'editGridItemVal')); ?>",
+                                    global: false,
+                                    type: "POST",
+                                    data: "data=" + JSON.stringify(data),
+                                    dataType: "json",
+                                    async: false,
+                                    success: function (result) {
+                                        loadGridDatosLegajosVal(dataGrid.propiedad);
+                                        $("#form-edit-datosLegajosVal").dialog('close');
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        alert(xhr.status + " " + thrownError);
+                                    }
+                                });
+                            } else {
+                                msgAlert("diagAlertModalEditPV", "dataAlertModalEditPV", "Ya existe un registro con esa combinacion.");
+                            }
+                        }
+                    }
+                },
+                Cancel: function () {
+                    validFormEditDatosLegajosVal.resetForm();
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                validFormEditDatosLegajosVal.resetForm();
             }
         });
 
-        /*$('input').bind('keypress', function (event) {
-         var regex = new RegExp("^[a-zA-Z0-9_ \,._-]+$");
-         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-         if (!regex.test(key)) {
-         event.preventDefault();
-         return false;
-         }
-         });*/
+        //Validation
+        var validFormAddDatosLegajos = $("#valid-form-add-datosLegajos").validate({
+            rules: {
+                descripcionAddDatosLegajos: {required: true}
+            }
+        });
+        var validFormEditDatosLegajos = $("#valid-form-edit-datosLegajos").validate({
+            rules: {
+                descripcionEditDatosLegajos: {required: true}
+            }
+        });
+        var validFormAddDatosLegajosVal = $("#valid-form-add-datosLegajosVal").validate({
+            rules: {
+                valorPosibleAddDatosLegajosVal: {required: true},
+                significadoAddDatosLegajosVal: {required: true}
+            }
+        });
+        var validFormEditDatosLegajosVal = $("#valid-form-edit-datosLegajosVal").validate({
+            rules: {
+                valorPosibleEditDatosLegajosVal: {required: true},
+                significadoEditDatosLegajosVal: {required: true}
+            }
+        });
 
         //AlertManager
-        $('#diagAlert').on('closed.bs.alert', function () {
-            $('.dataAlert').html("");
+        $('#diagAlertMain').on('closed.bs.alert', function () {
+            $('.dataAlertMain').html("");
         });
-        $('#diagAlertModalAddE').on('closed.bs.alert', function () {
-            $('.dataAlertModal').html("");
+        $('#diagAlertModalAddP').on('closed.bs.alert', function () {
+            $('.dataAlertModalAddP').html("");
         });
-        $('#diagAlertModalEditE').on('closed.bs.alert', function () {
-            $('.dataAlertModal').html("");
+        $('#diagAlertModalEditP').on('closed.bs.alert', function () {
+            $('.dataAlertModalEditP').html("");
         });
-        $('#diagAlertModalAddEV').on('closed.bs.alert', function () {
-            $('.dataAlertModal').html("");
+        $('#diagAlertModalAddPV').on('closed.bs.alert', function () {
+            $('.dataAlertModalAddPV').html("");
         });
-        $('#diagAlertModalEditEV').on('closed.bs.alert', function () {
-            $('.dataAlertModal').html("");
+        $('#diagAlertModalEditPV').on('closed.bs.alert', function () {
+            $('.dataAlertModalEditPV').html("");
         });
     });
 
@@ -573,7 +620,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             $("#gridDatosLegajosVal").setGridParam({datatype: 'json', url: sUrl}).trigger('reloadGrid');
         }
         else {
-            msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
         }
     }
 
@@ -581,12 +628,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         clearDataDatosLegajos();
         if (op == "edit") {
             rowdata = jQuery("#" + grid).getRowData(id);
-            $('#descripcion-edit-DatosLegajos').val(rowdata['descripcion']);
-            $('#tipo-edit-DatosLegajos').val(rowdata['tipo_de_campo']);
+            $('#descripcionEditDatosLegajos').val(rowdata['descripcion']);
+            $('#tipoEditDatosLegajos').val(rowdata['tipo_de_campo']);
             $('#' + diagName).dialog('open');
         } else {
             $('#' + diagName).dialog('open');
-            $('#tipo-add-DatosLegajos option:contains("C")').prop('selected', true);
+            $('#tipoAddDatosLegajos option:contains("C")').prop('selected', true);
         }
     }
 
@@ -594,8 +641,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         clearDataDatosLegajosVal();
         if (op == "edit") {
             rowdata = jQuery("#" + grid).getRowData(id);
-            $('#valor-posible-edit-DatosLegajosVal').val(rowdata['valor_posible']);
-            $('#significado-edit-DatosLegajosVal').val(rowdata['significado']);
+            $('#valorPosibleEditDatosLegajosVal').val(rowdata['valor_posible']);
+            $('#significadoEditDatosLegajosVal').val(rowdata['significado']);
             $('#' + diagName).dialog('open');
         } else {
             $('#' + diagName).dialog('open');
@@ -603,15 +650,15 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     }
 
     function clearDataDatosLegajos() {
-        $('#descripcion-add-DatosLegajos').val("");
-        $('#descripcion-edit-DatosLegajos').val("");
+        $('#descripcionAddDatosLegajos').val("");
+        $('#descripcionEditDatosLegajos').val("");
     }
 
     function clearDataDatosLegajosVal() {
-        $('#valor-posible-add-DatosLegajosVal').val("");
-        $('#significado-add-DatosLegajosVal').val("");
-        $('#valor-posible-edit-DatosLegajosVal').val("");
-        $('#significado-edit-DatosLegajosVal').val("");
+        $('#valorPosibleAddDatosLegajosVal').val("");
+        $('#significadoAddDatosLegajosVal').val("");
+        $('#valorPosibleEditDatosLegajosVal').val("");
+        $('#significadoEditDatosLegajosVal').val("");
     }
 
     function msgAlert(diagName, selectorName, msg) {
@@ -626,19 +673,19 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
 </script>
 
-<!-- Dialogo form-add-DatosLegajos -->
-<div id="form-add-DatosLegajos"  title="Agregar registro">
-    <form class="form-horizontal" id="valid-form-add-DatosLegajos" role="form">
+<!-- Dialogo form-add-datosLegajos -->
+<div id="form-add-datosLegajos"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-datosLegajos" role="form">
         <div class="form-group">
-            <label for="input-descripcion-add-DatosLegajos" class="col-sm-4 control-label">Nombre de campo:</label>
+            <label for="descripcionAddDatosLegajos" class="col-sm-4 control-label">Nombre de campo:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="descripcion-add-DatosLegajos" placeholder="">
+                <input type="text" class="form-control" id="descripcionAddDatosLegajos" name="descripcionAddDatosLegajos" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-tipo-add-DatosLegajos" class="col-sm-4 control-label">Tipo:</label>
+            <label for="tipoAddDatosLegajos" class="col-sm-4 control-label">Tipo:</label>
             <div class="col-sm-8">
-                <select class="form-control" id="tipo-add-DatosLegajos">
+                <select class="form-control" id="tipoAddDatosLegajos" name="tipoAddDatosLegajos">
                     <option value="C">Caracter</option>
                     <option value="N">Numero</option>
                     <option value="F">Fecha</option>
@@ -646,25 +693,25 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModalAddE">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertModalAddP">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong><span class="dataAlertModal"></span></strong>
+        <strong><span class="dataAlertModalAddP"></span></strong>
     </div>
 </div>
 
-<!-- Dialogo form-edit-DatosLegajos -->
-<div id="form-edit-DatosLegajos"  title="Editar registro">
-    <form class="form-horizontal" id="valid-form-edit-DatosLegajos" role="form">
+<!-- Dialogo form-edit-datosLegajos -->
+<div id="form-edit-datosLegajos"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-datosLegajos" role="form">
         <div class="form-group">
-            <label for="input-descripcion-edit-DatosLegajos" class="col-sm-4 control-label">Nombre de campo:</label>
+            <label for="descripcionEditDatosLegajos" class="col-sm-4 control-label">Nombre de campo:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="descripcion-edit-DatosLegajos" placeholder="">
+                <input type="text" class="form-control" id="descripcionEditDatosLegajos" name="descripcionEditDatosLegajos" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-tipo-edit-DatosLegajos" class="col-sm-4 control-label">Tipo:</label>
+            <label for="tipoEditDatosLegajos" class="col-sm-4 control-label">Tipo:</label>
             <div class="col-sm-8">
-                <select class="form-control" id="tipo-edit-DatosLegajos">
+                <select class="form-control" id="tipoEditDatosLegajos" name="tipoEditDatosLegajos">
                     <option value="C">Caracter</option>
                     <option value="N">Numero</option>
                     <option value="F">Fecha</option>
@@ -672,52 +719,52 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModalEditE">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertModalEditP">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong><span class="dataAlertModal"></span></strong>
+        <strong><span class="dataAlertModalEditP"></span></strong>
     </div>
 </div>
 
-<!-- Dialogo form-add-DatosLegajosVal -->
-<div id="form-add-DatosLegajosVal"  title="Agregar registro">
-    <form class="form-horizontal" id="valid-form-add-DatosLegajosVal" role="form">
+<!-- Dialogo form-add-datosLegajosVal -->
+<div id="form-add-datosLegajosVal"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-datosLegajosVal" role="form">
         <div class="form-group">
-            <label for="input-valor-posible-add-DatosLegajosVal" class="col-sm-4 control-label">Valor:</label>
+            <label for="valorPosibleAddDatosLegajosVal" class="col-sm-4 control-label">Valor:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="valor-posible-add-DatosLegajosVal" placeholder="">
+                <input type="text" class="form-control" id="valorPosibleAddDatosLegajosVal" name="valorPosibleAddDatosLegajosVal" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-significado-add-DatosLegajosVal" class="col-sm-4 control-label">Significado:</label>
+            <label for="significadoAddDatosLegajosVal" class="col-sm-4 control-label">Significado:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="significado-add-DatosLegajosVal" placeholder="">
+                <input type="text" class="form-control" id="significadoAddDatosLegajosVal" name="significadoAddDatosLegajosVal" placeholder="">
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModalAddEV">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertModalAddPV">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong><span class="dataAlertModal"></span></strong>
+        <strong><span class="dataAlertModalAddPV"></span></strong>
     </div>
 </div>
 
-<!-- Dialogo form-add-DatosLegajosVal -->
-<div id="form-edit-DatosLegajosVal"  title="Editar registro">
-    <form class="form-horizontal" id="valid-form-edit-DatosLegajosVal" role="form">
+<!-- Dialogo form-edit-datosLegajosVal -->
+<div id="form-edit-datosLegajosVal"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-datosLegajosVal" role="form">
         <div class="form-group">
-            <label for="input-valor-posible-edit-DatosLegajosVal" class="col-sm-4 control-label">Valor:</label>
+            <label for="valorPosibleEditDatosLegajosVal" class="col-sm-4 control-label">Valor:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="valor-posible-edit-DatosLegajosVal" placeholder="">
+                <input type="text" class="form-control" id="valorPosibleEditDatosLegajosVal" name="valorPosibleEditDatosLegajosVal" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-significado-edit-DatosLegajosVal" class="col-sm-4 control-label">Significado:</label>
+            <label for="significadoEditDatosLegajosVal" class="col-sm-4 control-label">Significado:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="significado-edit-DatosLegajosVal" placeholder="">
+                <input type="text" class="form-control" id="significadoEditDatosLegajosVal" name="significadoEditDatosLegajosVal" placeholder="">
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModalEditE">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertModalEditPV">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong><span class="dataAlertModal"></span></strong>
+        <strong><span class="dataAlertModalEditPV"></span></strong>
     </div>
 </div>

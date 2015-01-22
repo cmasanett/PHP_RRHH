@@ -9,24 +9,24 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                     ]
                 ]
             ],
-            'application' => ['type' => 'Literal',
-                'options' => ['route' => '/application',
-                    'defaults' => ['__NAMESPACE__' => 'Application\Controller',
-                        'controller' => 'Index',
-                        'action' => 'index'
-                    ]
-                ],
-                'may_terminate' => true,
-                'child_routes' => ['default' => ['type' => 'Segment',
-                        'options' => ['route' => '/[:controller[/:action]]',
-                            'constraints' => ['controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
-                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
-                            ],
-                            'defaults' => array()
-                        ]
-                    ]
-                ]
-            ],
+//            'application' => ['type' => 'Literal',
+//                'options' => ['route' => '/application',
+//                    'defaults' => ['__NAMESPACE__' => 'Application\Controller',
+//                        'controller' => 'Index',
+//                        'action' => 'index'
+//                    ]
+//                ],
+//                'may_terminate' => true,
+//                'child_routes' => ['default' => ['type' => 'Segment',
+//                        'options' => ['route' => '/[:controller[/:action]]',
+//                            'constraints' => ['controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
+//                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+//                            ],
+//                            'defaults' => array()
+//                        ]
+//                    ]
+//                ]
+//            ],
             'usuarios' => ['type' => 'Literal',
                 'options' => ['route' => '/usuarios',
                     'defaults' => ['__NAMESPACE__' => 'Application\Controller',
@@ -173,7 +173,7 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                 'identity_property' => 'usuario',
                 'credential_property' => 'clave',
                 'credentialCallable' => function ($userObj, $password) {
-                    return ($userObj->getPassword() === md5($password));
+                    return ($userObj->getClave() === \md5($password));
                 },
             ),
         ),

@@ -1,8 +1,19 @@
-<hr>
-<h1 class="page-header"><?php echo $this->titulo ?></h1>
-<hr/>
-
+<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($this->titulo); ?></h1>
 <?php
+$flash = $this->flashMessenger();
+$flash->setMessageOpenFormat('<div%s>
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">
+            &times;
+            </button>
+        <ul><li>')
+        ->setMessageSeparatorString('</li><li>')
+        ->setMessageCloseString('</li></ul></div>');
+
+echo $flash->render('error', array('alert', 'alert-dismissable', 'alert-danger', 'flashAlert'));
+echo $flash->render('info', array('alert', 'alert-dismissable', 'alert-info', 'flashAlert'));
+echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning', 'flashAlert'));
+echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
+
 if ($this->identity()) {
     $iden = $this->identity();
 // 		if(!is_string($this->datos) || !is_string($this->empresa))
@@ -13,7 +24,7 @@ if ($this->identity()) {
     ?>
     <br></br>
     <p>
-        <a class="btn btn-lg btn-primary" href="<?= $this->basePath("usuarios/cerrar") ?>">Cerrar sesion</a>
+        <a class="btn btn-lg btn-primary" href="<?= $this->basePath("usuarios/cerrar") ?>">Cerrar sesión</a>
     </p>  
     <?php
 } else {

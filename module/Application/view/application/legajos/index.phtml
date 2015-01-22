@@ -18,9 +18,13 @@ echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warnin
 echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
 ?>
 
-<div class="alert alert-warning" id="diagAlert">
+<script type="text/javascript" src="../js/jqueryValidation/dist/jquery.validate.min.js"></script>    
+<script type="text/javascript" src="../js/jqueryValidation/dist/additional-methods.min.js"></script>  
+<script type="text/javascript" src="../js/jqueryValidation/dist/localization/messages_es_AR.min.js"></script>  
+
+<div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertMain">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong><span class="dataAlert"></span></strong>
+    <strong><span class="dataAlertMain"></span></strong>
 </div>
 
 <br>
@@ -49,39 +53,34 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 <div id="tabsLegajoDesc">
                     <div id="tab-add-edit-Legajos" class="container-fluid">
                         <div class="row">
-                            <div class="col-xs-6 col-sm-6">
+                            <div class="col-xs-6 col-sm-10">
                                 <div class="row">
                                     <div class="form-group form-group-sm">
-                                        <label class="control-label small" for="input-vista-tab-legajos">Vista seleccionada:</label>
+                                        <label class="control-label small" for="vista-tab-legajos">Vista seleccionada:</label>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <form class="form-inline" role="form">
                                         <div class="form-group form-group-sm">
-                                            <select class="form-control" id="select-vista-tab-legajos">
-                                                <option value="">Seleccione un legajo</option>
-                                            </select>
+                                            <select class="form-control" id="select-vista-tab-legajos"></select>
                                             <button type="button" class="btn btn-default btn-xs" id="btnRefreshVistasLegajos">
                                                 <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
                                             </button>
                                         </div>
                                     </form>
                                 </div>
-                                <div class="row">
+                                <div class="row">                                    
                                     <div id="jqGridDatosPpdLegajo" style="padding-top:10px;">
                                         <table id="gridDatosPpdLegajo"></table>
                                         <div id="pagerDatosPpdLegajo"></div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xs-6 col-sm-1">
+                            <div class="col-xs-6 col-sm-2">
                                 <div class="row"></div>
                                 <div class="row"></div>
                                 <div class="row">
-                                    <div class="btn-group-vertical" role="group" style="padding-top: 150px; padding-left: 35px;">
-                                        <button type="button" class="btn btn-info btn-xs" id="btnAddValProp">
-                                            <span class="glyphicon glyphicon-circle-arrow-left" aria-hidden="true"></span>
-                                        </button>
+                                    <div class="btn-group-vertical" role="group" style="padding-top: 150px; padding-left: 70px;">
                                         <button type="button" class="btn btn-success btn-xs" id="btnSaveData">
                                             <span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span>
                                         </button>
@@ -91,23 +90,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-xs-6 col-sm-5">
-                                <div class="row">
-                                    <div class="form-group form-group-sm">
-                                        <label class="control-label small" for="input-vista-tab-legajos">Valores posibles:</label>
-                                    </div>
-                                </div>
-                                <div class="row"></div>
-                                <div class="row">
-                                    <div id="jqGridDatosLegajosVal" style="padding-top:10px;">
-                                        <table id="gridDatosLegajosVal"></table>
-                                        <div id="pagerDatosLegajosVal"></div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <br>
-                        <div class="alert alert-warning" id="diagAlertTab">
+                        <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertTab">
                             <a href="#" class="close" data-dismiss="alert">&times;</a>
                             <strong><span class="dataAlertTab"></span></strong>
                         </div>
@@ -129,8 +114,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
 <script type="text/javascript">
     var oEdit = false;
-    var lastSel;
-
+    var lastsel;
     $(document).ready(function () {
         //Grids
         $("#gridLegajos").jqGrid({
@@ -141,7 +125,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             rownumbers: true,
             url: "<?php echo $this->url('legajos', array('action' => 'loadLegajosGrid')); ?>",
             datatype: 'json',
-            mtype: 'POST',
+            mtype: 'GET',
             colNames: ["Id", "EmpresaId", "Legajo", "Apellido y Nombre", "Foto", "Inactivo"],
             colModel: [
                 {name: 'id', index: 'id',
@@ -211,7 +195,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 var ids = $("#gridLegajos").jqGrid('getDataIDs');
                 ids = ids.toString();
                 ids = ids.split(",");
-
                 for (var i = 0; i < ids.length; i++) {
                     var cl = ids[i];
                     var data = $("#gridLegajos").jqGrid('getRowData', ids[i]);
@@ -221,10 +204,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 }
             },
             onSelectRow: function (id) {
-                //$("#select-vista-tab-legajos").val("");
                 deleteGrid("gridDatosPpdLegajo");
                 deleteGrid("gridDatosLegajosVal");
-                loadSelectView();
+                loadGrid('gridDatosPpdLegajo', id);
             }
         });
         $("#gridLegajos").navGrid("#pagerLegajos",
@@ -249,13 +231,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             //rowNum: 1000,
             rownumbers: true,
             datatype: "local",
-            colNames: ["Id", "SL", "Dato", "Valor", "Contant", "PPId", "Tipo"],
+            colNames: ["Id", "SL", "Dato", "Valor", "Contant", "PPId", "Tipo", "ListaValorPosible"],
             colModel: [
                 {name: 'id', index: 'id',
                     width: 10,
                     align: "center",
                     sortable: false,
                     sorttype: 'int',
+                    editable: false,
                     hidden: true
                 },
                 {name: 'solo_lectura', index: 'solo_lectura',
@@ -265,7 +248,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     sorttype: 'text',
                     search: true,
                     stype: 'select',
-                    searchoptions: {value: ":;S:Si;N:o"}
+                    searchoptions: {value: ":;S:Si;N:o"},
+                    editable: false
                 },
                 {name: 'descripcion', index: 'descripcion',
                     width: 30,
@@ -274,16 +258,22 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     sorttype: 'text',
                     search: true,
                     stype: 'text',
-                    searchoptions: {clearSearch: true}
+                    searchoptions: {clearSearch: true},
+                    editable: false
                 },
                 {name: 'contenido', index: 'contenido',
                     width: 15,
                     align: "center",
-                    sortable: true,
+                    sortable: false,
                     sorttype: 'text',
-                    search: true,
+                    search: false,
                     stype: 'text',
-                    searchoptions: {clearSearch: true}
+                    searchoptions: {clearSearch: true},
+                    editable: true,
+                    editrules: {
+                        custom: true,
+                        custom_func: typeCheck
+                    }
                 },
                 {name: 'contant', index: 'contant',
                     width: 30,
@@ -293,6 +283,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     search: true,
                     stype: 'text',
                     searchoptions: {clearSearch: true},
+                    editable: false,
                     hidden: true
                 },
                 {name: 'pp_id', index: 'pp_id',
@@ -300,6 +291,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     align: "center",
                     sortable: false,
                     sorttype: 'int',
+                    editable: false,
                     hidden: true
                 },
                 {name: 'tipo', index: 'tipo',
@@ -310,6 +302,15 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     search: true,
                     stype: 'select',
                     searchoptions: {value: ":;C:Caracter;N:Numero;F:Fecha"},
+                    editable: false,
+                    hidden: true
+                },
+                {name: 'lista_valorposible', index: 'lista_valorposible',
+                    width: 10,
+                    align: "center",
+                    sortable: false,
+                    search: false,
+                    editable: false,
                     hidden: true
                 }
             ],
@@ -326,12 +327,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             pgtext: false,
             pginput: false,
             loadonce: true,
-            //caption: ""
+            editurl: "clientArray",
+//            caption: ""
             gridComplete: function () {
                 var ids = $("#gridDatosPpdLegajo").jqGrid('getDataIDs');
                 ids = ids.toString();
                 ids = ids.split(",");
-
                 for (var i = 0; i < ids.length; i++) {
                     var cl = ids[i];
                     var data = $("#gridDatosPpdLegajo").jqGrid('getRowData', ids[i]);
@@ -340,10 +341,32 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     }
                 }
             },
-            onSelectRow: function (rowid) {
-                var dataPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
-                loadGrid('gridDatosLegajosVal', dataPpdLegajo['id']);
-                setSelectionGrid('gridDatosLegajosVal', dataPpdLegajo);
+            onCellSelect: function (rowid, iCol, cellcontent, e) {
+                if (iCol == 4) {
+                    var dataPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
+                    if (dataPpdLegajo['solo_lectura'] != "S") {
+                        var listaValorposible = JSON.parse(dataPpdLegajo['lista_valorposible']);
+                        if (listaValorposible != "") {
+                            $('#' + "dataAddEditValorPosible").html("");
+                            $.each(listaValorposible, function (i, d) {
+                                $('#' + "dataAddEditValorPosible").append('<option value="' + d.value + '">' + d.desc + '</option>');
+                            });
+                            openDiagValorPosible("form-add-edit-valorPosible", "gridDatosPpdLegajo", rowid);
+                            $('#' + "dataAddEditValorPosible").val(dataPpdLegajo['contenido']);
+                        } else {
+                            if (rowid && rowid !== lastsel) {
+                                jQuery(this).jqGrid('restoreRow', lastsel);
+                                lastsel = rowid;
+                            }
+                            jQuery(this).jqGrid('editRow', rowid, {
+                                keys: true
+                            });
+                        }
+                    }
+//                    else {
+//                        msgAlert("diagAlertTab", "dataAlertTab", "Campo de solo lectura.");
+//                    }
+                }
             }
         });
         $("#gridDatosPpdLegajo").navGrid("#pagerDatosPpdLegajo",
@@ -354,84 +377,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 $("#gridDatosPpdLegajo")[0].clearToolbar();
-                //loadGrid('gridDatosPpdLegajo');
-                //gridReload('gridDatosPpdLegajo');
             }
         });
         $('#gridDatosPpdLegajo').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
-
-        $("#gridDatosLegajosVal").jqGrid({
-            width: 400,
-            height: 205,
-            shrinkToFit: true,
-            forceFit: false,
-            autowidth: true,
-            //rowNum: 1000,
-            rownumbers: true,
-            datatype: 'local',
-            colNames: ["Id", "PropiedadId", "Valor", "Significado"],
-            colModel: [
-                {name: 'id', index: 'id',
-                    width: 10,
-                    align: "center",
-                    sortable: false,
-                    sorttype: 'int',
-                    hidden: true
-                },
-                {name: 'propiedadId', index: 'propiedadId',
-                    width: 10,
-                    align: "center",
-                    sortable: true,
-                    sorttype: 'int',
-                    hidden: true
-                },
-                {name: 'valor_posible', index: 'valor_posible',
-                    width: 10,
-                    align: "center",
-                    sortable: false,
-                    sorttype: 'text',
-                    search: true,
-                    stype: 'text',
-                    searchoptions: {clearSearch: true}
-                },
-                {name: 'significado', index: 'significado',
-                    width: 30,
-                    align: "center",
-                    sortable: false,
-                    sorttype: 'text',
-                    search: true,
-                    stype: 'text',
-                    searchoptions: {clearSearch: true}
-                }
-            ],
-            pager: "#pagerDatosLegajosVal",
-            sortname: "id",
-            sortorder: "ASC",
-            viewrecords: true,
-            viewsortcols: [true, 'horizontal', true],
-            gridview: true,
-            hidegrid: false,
-            ignoreCase: true,
-            autoencode: true,
-            pgbuttons: false,
-            pgtext: false,
-            pginput: false,
-            loadonce: true
-                    //caption: ""
-        });
-        $("#gridDatosLegajosVal").navGrid("#pagerDatosLegajosVal",
-                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
-        $("#gridDatosLegajosVal").navButtonAdd("#pagerDatosLegajosVal", {
-            caption: "Borrar filtros",
-            title: "Borrar filtros",
-            buttonicon: 'ui-icon-refresh',
-            onClickButton: function () {
-                $("#gridDatosLegajosVal")[0].clearToolbar();
-                //loadGrid('gridDatosLegajosVal');
-                //gridReload('gridDatosLegajosVal');
-            }
-        });
-        $('#gridDatosLegajosVal').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
 
         //Tabs
         $("#tabsLegajos").tabs({
@@ -448,11 +396,11 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('legajos', array('action' => 'deleteGridItem')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "id=" + rowid,
                     dataType: "json",
-                    async: false,
-                    success: function (msg) {
+                    async: true,
+                    success: function (result) {
                         gridReload('gridLegajos');
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
@@ -461,7 +409,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 });
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnEditLegajos").click(function () {
@@ -470,107 +418,45 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 openDiagLegajos("form-add-edit-Legajos", "edit", "gridLegajos", rowid);
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnRefreshVistasLegajos").click(function () {
-            loadSelectView();
+            loadSelectVistas();
         });
-
-        //btnAddValProp
-        $("#btnAddValProp").click(function () {
-            var rowidLegajosVal = $("#gridDatosLegajosVal").jqGrid('getGridParam', 'selrow');
-            if (rowidLegajosVal != null) {
-                var rowidPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getGridParam', 'selrow');
-                var dataRowPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowidPpdLegajo);
-                if (dataRowPpdLegajo['solo_lectura'] != "S") {
-                    var dataRowLegajosVal = $("#gridDatosLegajosVal").jqGrid('getRowData', rowidLegajosVal);
-                    $('#gridDatosPpdLegajo').setCell(rowidPpdLegajo, 'contenido', dataRowLegajosVal['valor_posible']);
-                }
-                else {
-                    msgAlert("diagAlertTab", "dataAlertTab", "Campo de solo lectura.");
-                }
-            }
-            else {
-                msgAlert("diagAlertTab", "dataAlertTab", "Por favor seleccione una fila.");
-            }
-        });
-        //btnSaveData
         $("#btnSaveData").click(function () {
             var rowidLegajos = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
             if (rowidLegajos != null) {
-                var dataGridDatosPpdLegajo = new Array();// = $("#gridDatosPpdLegajo").jqGrid('getGridParam', 'data');
-//            var dataGridDatosLegajosVal;// = $("#gridDatosLegajosVal").jqGrid('getGridParam', 'data');
-                var ids = $("#gridDatosPpdLegajo").jqGrid('getDataIDs');
-                ids = ids.toString();
-                ids = ids.split(",");
-
-                for (var i = 0; i < ids.length; i++) {
-                    var data = $("#gridDatosPpdLegajo").jqGrid('getRowData', ids[i]);
-                    data['objetoId'] = rowidLegajos;
-                    $.ajax({
-                        url: "<?php echo $this->url('legajos', array('action' => 'loadDataGrid')); ?>",
-                        global: true,
-                        type: "POST",
-                        data: "id=" + data['id'],
-                        dataType: "json",
-                        async: false,
-                        success: function (result) {
-                            if (result.data.length > 0) {
-                                var dataGridDatosLegajosVal = new Array();
-                                for (var j = 0; j < result.data.length; j++) {
-                                    var dataDatosLegajosVal = {
-                                        "id": result.data[j][0],
-                                        "propiedadId": result.data[j][1],
-                                        "valor_posible": result.data[j][2],
-                                        "significado": result.data[j][3]
-                                    };
-                                    dataGridDatosLegajosVal[j] = dataDatosLegajosVal;
-                                }
-                                data['dataGridDatosLegajosVal'] = dataGridDatosLegajosVal;
-                            }
-                        },
-                        error: function (xhr, ajaxOptions, thrownError) {
-                            alert(xhr.status + " " + thrownError);
-                        }
-                    });
-                    dataGridDatosPpdLegajo[i] = data;
-                }
+                hideOrShow(0);
+                //$("#btnSaveData")
+                var dataGridDatosPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getGridParam', 'data');
                 if (dataGridDatosPpdLegajo.length > 0) {
                     if (checkConsistency(dataGridDatosPpdLegajo)) {
                         $.ajax({
                             url: "<?php echo $this->url('legajos', array('action' => 'editGridItemVal')); ?>",
                             global: false,
-                            type: "POST",
+                            type: "GET",
                             data: "data=" + JSON.stringify(dataGridDatosPpdLegajo),
                             dataType: "json",
-                            async: false,
-                            success: function (msg) {
-//                            for (var i = 0; i < msg.data.length; i++) {
-//                                    var data = $("#gridLegajos").jqGrid('getRowData', ids[i]);
-//                                    if (data['legajo'].toLowerCase() == legajo.toLowerCase()) {
-//                                        e++;
-//                                        $('#gridDatosPpdLegajo').setCell(rowidPpdLegajo, 'contenido', dataRowLegajosVal['valor_posible']);
-//                                    }
-//                                }
+                            async: true,
+                            success: function (result) {
                                 var rowidLegajos = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
                                 if (rowidLegajos != null) {
                                     loadGrid('gridDatosPpdLegajo', rowidLegajos);
                                     deleteGrid('gridDatosLegajosVal');
+                                    hideOrShow(1);
                                     msgAlert("diagAlertTab", "dataAlertTab", "Datos guardados correctamente.");
                                 }
                             },
                             error: function (xhr, ajaxOptions, thrownError) {
+                                hideOrShow(1);
                                 alert(xhr.status + " " + thrownError);
                             }
                         });
-                    } else {
-                        //msgAlert("diagAlertTab", "dataAlertTab", "Por favor seleccione una fila.");
                     }
                 }
             }
         });
-        //btnRestoreData
         $("#btnRestoreData").click(function () {
             var rowidLegajos = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
             if (rowidLegajos != null) {
@@ -591,7 +477,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             }
         });
 
-        //Dialog addLegajos
+        //Dialog addEditLegajos
         $("#form-add-edit-Legajos").dialog({
             autoOpen: false,
             resizable: true,
@@ -601,8 +487,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             width: 'auto', //1000, 
             height: 'auto', //500,
             maxWidth: 1200,
-            //position: ['center',110] , //{ my: "center", at: "center", of: window }
-            //fluid: true, //new option
             open: function (event, ui) {
                 $(event.target).parent().css('position', 'fixed');
                 $(event.target).parent().css('top', '110px');
@@ -610,17 +494,14 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             },
             buttons: {
                 'Aceptar': function () {
-                    var legajo = $("#legajo-add-Legajos").val();
-                    var apellidoYNombre = $("#apellidoYNombre-add-Legajos").val();
-
-                    if (legajo != '' && apellidoYNombre != '') {
+                    if ($("#valid-form-add-edit-Legajos").valid()) {
+                        var legajo = $("#legajoAddEditLegajos").val();
+                        var apellidoYNombre = $("#apellidoNombreAddEditLegajos").val();
                         var ids = $("#gridLegajos").jqGrid('getDataIDs');
                         ids = ids.toString();
                         ids = ids.split(",");
-
                         var e = 0;
                         var rowid = "";
-
                         if (oEdit) {
                             rowid = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
                             if (rowid != null) {
@@ -635,7 +516,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     }
                                 }
                             } else {
-                                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
                             }
                         } else {
                             if (ids != "") {
@@ -656,11 +537,11 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             $.ajax({
                                 url: "<?php echo $this->url('legajos', array('action' => 'editGridItem')); ?>",
                                 global: false,
-                                type: "POST",
+                                type: "GET",
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
-                                async: false,
-                                success: function (msg) {
+                                async: true,
+                                success: function (result) {
                                     gridReload('gridLegajos');
                                     $("#form-add-edit-Legajos").dialog('close');
                                 },
@@ -669,25 +550,73 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 }
                             });
                         } else {
-                            msgAlert("diagAlertModal", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                            msgAlert("diagAlertModal", "dataAlertModal", "Ya existe un registro con ese número de legajo.");
                         }
-                    } else {
-                        msgAlert("diagAlertModal", "dataAlertModal", "Ingrese valores a los campos.");
                     }
                 },
                 'Cancelar': function () {
                     clearDataLegajos();
+                    validFormAddEditLegajos.resetForm();
                     $(this).dialog('close');
                 }
             },
             close: function () {
                 clearDataLegajos();
+                validFormAddEditLegajos.resetForm();
+            }
+        });
+        //Dialog addEditValorPosible
+        $("#form-add-edit-valorPosible").dialog({
+            autoOpen: false,
+            resizable: true,
+            draggable: true,
+            closeOnEscape: false,
+            modal: true,
+            width: 'auto', //1000, 
+            height: 'auto', //500,
+            maxWidth: 1200,
+            open: function (event, ui) {
+                $(event.target).parent().css('position', 'fixed');
+                $(event.target).parent().css('top', '110px');
+                $(event.target).parent().css('left', '275px');
+            },
+            buttons: {
+                'Aceptar': function () {
+                    if ($("#valid-form-add-edit-valorPosible").valid()) {
+                        var valorPosible = $("#dataAddEditValorPosible").val();
+                        var rowid = $("#gridDatosPpdLegajo").jqGrid('getGridParam', 'selrow');
+                        $('#gridDatosPpdLegajo').setCell(rowid, 'contenido', valorPosible);
+                        $(this).dialog('close');
+                    }
+                },
+                'Cancelar': function () {
+                    $("#dataAddEditValorPosible").val("");
+                    validFormAddEditValorPosible.resetForm();
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                $("#dataAddEditValorPosible").val("");
+                validFormAddEditValorPosible.resetForm();
+            }
+        });
+
+        //Validation
+        var validFormAddEditLegajos = $("#valid-form-add-edit-Legajos").validate({
+            rules: {
+                legajoAddEditLegajos: {required: true},
+                apellidoNombreAddEditLegajos: {required: true}
+            }
+        });
+        var validFormAddEditValorPosible = $("#valid-form-add-edit-valorPosible").validate({
+            rules: {
+                dataAddEditValorPosible: {required: true}
             }
         });
 
         //AlertManager
-        $('#diagAlert').on('closed.bs.alert', function () {
-            $('.dataAlert').html("");
+        $('#diagAlertMain').on('closed.bs.alert', function () {
+            $('.dataAlertMain').html("");
         });
         $('#diagAlertModal').on('closed.bs.alert', function () {
             $('.dataAlertModal').html("");
@@ -696,7 +625,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             $('.dataAlertTab').html("");
         });
 
-        //loadSelectView();
+        loadSelectVistas();
         $("#select-vista-tab-legajos").change(function () {
             //alert($(this).val());
             var rowid = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
@@ -706,7 +635,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 loadGrid('gridDatosPpdLegajo', rowid);
             }
             else {
-                msgAlert("diagAlertModal", "dataAlertModal", "Seleccione un legajo.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Seleccione un legajo.");
             }
         });
     });
@@ -716,6 +645,36 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $(window).off("resize.responsive");
     });
 
+    function typeCheck(value, colname) {
+        var rowid = $("#gridDatosPpdLegajo").jqGrid('getGridParam', 'selrow');
+        var dataPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
+        switch (dataPpdLegajo['tipo'].toUpperCase()) {
+            case "F":
+                if (!validaFechaDDMMAAAA(value)) {
+                    return [false, " - Formato de fecha erróneo."];
+                } else {
+                    return [true, ""];
+                }
+                break;
+            case "N":
+                var patt = /^[0-9]+$/;
+                if (!patt.test(value)) {
+                    return [false, " - Valor incorrecto para el tipo de campo."];
+                } else {
+                    return [true, ""];
+                }
+                break;
+            case "C":
+                var patt = /^[0-9A-Za-z\s\-]+$/;
+                if (!patt.test(value)) {
+                    return [false, " - Valor incorrecto para el tipo de campo."];
+                } else {
+                    return [true, ""];
+                }
+                break;
+        }
+    }
+
     function gridReload(gridName) {
         $("#" + gridName).setGridParam({datatype: 'json'})/*.setGridParam({rowNum: 1000})*/.trigger('reloadGrid');
     }
@@ -724,8 +683,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         clearDataLegajos();
         if (op == "edit") {
             var rowdata = $("#" + grid).getRowData(id);
-            $('#legajo-add-Legajos').val(rowdata['legajo']);
-            $('#apellidoYNombre-add-Legajos').val(rowdata['apellido_y_nombre']);
+            $('#legajoAddEditLegajos').val(rowdata['legajo']);
+            $('#apellidoNombreAddEditLegajos').val(rowdata['apellido_y_nombre']);
             $('#' + diagName).dialog("option", "title", "Editar registro");
             $('#' + diagName).dialog('open');
             $('#' + diagName).dialog('moveToTop');
@@ -738,20 +697,40 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         }
     }
 
+    function openDiagValorPosible(diagName, grid, id) {
+        $('#dataAddEditValorPosible').val("");
+        var rowdata = $("#" + grid).getRowData(id);
+        $('#dataAddEditValorPosible').val(rowdata['legajo']);
+        $('#' + diagName).dialog("option", "title", "Editar registro");
+        $('#' + diagName).dialog('open');
+        $('#' + diagName).dialog('moveToTop');
+    }
+
     function clearDataLegajos() {
-        $('#legajo-add-Legajos').val("");
-        $('#legajo-edit-Legajos').val("");
-        $('#apellidoYNombre-add-Legajos').val("");
-        $('#apellidoYNombre-edit-Legajos').val("");
+        $('#legajoAddEditLegajos').val("");
+        $('#apellidoNombreAddEditLegajos').val("");
     }
 
     function msgAlert(diagName, selectorName, msg) {
         $('#' + diagName).show();
-        $('.' + selectorName).html(msg);
+
+        var deli = "<ul>";
+        if (typeof msg == "object") {
+            for (var j = 0; j < msg.length; j++) {
+                deli += "<li>" + msg[j] + "</li>";
+            }
+            deli += "</ul>";
+            $('.' + selectorName).html(deli);
+        }
+        else {
+            $('.' + selectorName).html(msg);
+        }
+
         setTimeout(function () {
             $('#' + diagName).hide("drop", {direction: "up"}, "slow");
             $('.' + selectorName).html("");
         }, 3000);
+
         return;
     }
 
@@ -765,10 +744,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('legajos', array('action' => 'loadPpdLegajoGrid')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "data=" + JSON.stringify(data),
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function (result) {
                         deleteGrid('gridDatosPpdLegajo');
                         if (result.data.length > 0) {
@@ -780,11 +759,11 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     "contant": result.data[i][3],
                                     "pp_id": result.data[i][4],
                                     "solo_lectura": result.data[i][5],
-                                    "tipo": result.data[i][6]
+                                    "tipo": result.data[i][6],
+                                    "lista_valorposible": JSON.stringify(result.data[i][7])
                                 };
                                 var ids = $("#gridDatosPpdLegajo").jqGrid('getDataIDs');
                                 ids = ids.toString();
-
                                 ids = ids.split(",");
                                 if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
                                     $("#gridDatosPpdLegajo").jqGrid('addRowData', ids.length + 1, dataLocal);
@@ -803,10 +782,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('legajos', array('action' => 'loadDataGrid')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "id=" + rowid,
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function (result) {
                         deleteGrid('gridDatosLegajosVal');
                         if (result.data.length > 0) {
@@ -819,7 +798,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 };
                                 var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
                                 ids = ids.toString();
-
                                 ids = ids.split(",");
                                 if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
                                     $("#gridDatosLegajosVal").jqGrid('addRowData', ids.length + 1, dataLocal);
@@ -840,7 +818,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     function deleteGrid(gridName) {
         var $table;
         $table = $('#' + gridName);
-
         var ids = $table.jqGrid('getDataIDs');
         ids = ids.toString();
         ids = ids.split(",");
@@ -852,43 +829,33 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $table.clearGridData(true).trigger("reloadGrid");
     }
 
-    function loadSelectView() {
-        var rowid = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
-
-        if (rowid != null) {
-            var list_target_id = 'select-vista-tab-legajos';
-            $("#" + list_target_id).val("");
-            $('#' + list_target_id).html('<option value="">Cargando vistas</option>');
-
-            $.ajax({
-                url: "<?php echo $this->url('legajos', array('action' => 'loadSelectView')); ?>",
-                global: false,
-                type: "POST",
-                dataType: "json",
-                async: false,
-                success: function (result) {
-                    $('#' + list_target_id).html("");
-                    $.each(result.data, function (i, d) {
-                        $('#' + list_target_id).append('<option value="' + i + '">' + d + '</option>');
-                    });
-                    $("#" + list_target_id).change();
-                    //$('#' + list_target_id + " option:eq(0)").prop('selected', true);
-                },
-                error: function (xhr, ajaxOptions, thrownError) {
-                    alert(xhr.status + " " + thrownError);
-                }
-            });
-        }
-        else {
-            msgAlert("diagAlertTab", "dataAlertTab", "Seleccione un legajo.");
-        }
+    function loadSelectVistas() {
+        var listSelect = 'select-vista-tab-legajos';
+        $("#" + listSelect).val("");
+        $('#' + listSelect).html('<option value="">Cargando vistas</option>');
+        $.ajax({
+            url: "<?php echo $this->url('legajos', array('action' => 'loadSelectVistas')); ?>",
+            global: false,
+            type: "GET",
+            dataType: "json",
+            async: true,
+            success: function (result) {
+                $('#' + listSelect).html("");
+                $.each(result.data, function (i, d) {
+                    $('#' + listSelect).append('<option value="' + d.id + '">' + d.value + '</option>');
+                });
+                $('#' + listSelect).change();
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.status + " " + thrownError);
+            }
+        });
     }
 
     function setSelectionGrid(gridName, data) {
         var ids = $("#" + gridName).jqGrid('getDataIDs');
         ids = ids.toString();
         ids = ids.split(",");
-
         for (var i = 0; i < ids.length; i++) {
             var dataDatosLegajosVal = $("#" + gridName).jqGrid('getRowData', ids[i]);
             if (dataDatosLegajosVal['valor_posible'] == data['contenido']) {
@@ -980,6 +947,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
     function checkConsistency(dataGrid1) {
         var status = false;
+        var cantErrores = 0;
+        var listaErrores = new Array();
 
         for (var i = 0; i < dataGrid1.length; i++) {
             if (dataGrid1[i]['solo_lectura'].toUpperCase() == "S") {
@@ -989,61 +958,98 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     if (dataGrid1[i]['contenido'] != "") {
                         if (dataGrid1[i]['tipo'].toUpperCase() == "F") {
                             if (!validaFechaDDMMAAAA(dataGrid1[i]['contenido'])) {
-                                msgAlert("diagAlertTab", "dataAlertTab", "Formato de fecha erróneo.");
-                            } else {
-                                status = true;
+                                listaErrores[cantErrores] = "Fila Nº: " + (i + 1) + " - Formato de fecha erróneo.";
+                                cantErrores++;
                             }
                         }
-                        if (dataGrid1[i]['tipo'].toUpperCase() == "N" && dataGrid1[i]['dataGridDatosLegajosVal'].length > 0) {
+
+                        var listaValorposible = JSON.parse(dataGrid1[i]['lista_valorposible']);
+
+                        if (dataGrid1[i]['tipo'].toUpperCase() == "N" && listaValorposible.length > 0) {
                             var valorEncontrado = 0;
-                            for (var j = 0; j < dataGrid1[i]['dataGridDatosLegajosVal'].length; j++) {
-                                if (dataGrid1[i]['contenido'].trim().toUpperCase() == dataGrid1[i]['dataGridDatosLegajosVal'][j]['valor_posible'].trim().toUpperCase()) {
+                            for (var j = 0; j < listaValorposible.length; j++) {
+                                if (parseFloat(dataGrid1[i]['contenido'].trim()) == parseFloat(listaValorposible[j]['value'].trim())) {
                                     valorEncontrado++;
-                                    status = true;
                                 }
                             }
                             if (valorEncontrado == 0) {
-                                msgAlert("diagAlertTab", "dataAlertTab", "No existe el valor posible.");
+                                listaErrores[cantErrores] = "Fila Nº: " + (i + 1) + " - No existe el valor posible.";
+                                cantErrores++;
                             }
                         }
-                        if (dataGrid1[i]['tipo'].toUpperCase() == "C" && dataGrid1[i]['dataGridDatosLegajosVal'].length > 0) {
+                        if (dataGrid1[i]['tipo'].toUpperCase() == "C" && listaValorposible.length > 0) {
                             var valorEncontrado = 0;
-                            for (var j = 0; j < dataGrid1[i]['dataGridDatosLegajosVal'].length; j++) {
-                                if (dataGrid1[i]['contenido'].trim().toUpperCase() == dataGrid1[i]['dataGridDatosLegajosVal'][j]['valor_posible'].trim().toUpperCase()) {
+                            for (var j = 0; j < listaValorposible.length; j++) {
+                                if (dataGrid1[i]['contenido'].trim().toUpperCase() == listaValorposible[j]['value'].trim().toUpperCase()) {
                                     valorEncontrado++;
-                                    status = true;
                                 }
                             }
                             if (valorEncontrado == 0) {
-                                msgAlert("diagAlertTab", "dataAlertTab", "No existe el valor posible.");
+                                listaErrores[cantErrores] = "Fila Nº: " + (i + 1) + " - No existe el valor posible.";
+                                cantErrores++;
                             }
                         }
                     }
                 }
             }
         }
+
+        if (cantErrores > 0) {
+            msgAlert("diagAlertTab", "dataAlertTab", listaErrores);
+        } else {
+            status = true;
+        }
+
         return status;
+    }
+
+    function hideOrShow(op) {
+        if (op == 0) {
+            $("#btnSaveData").attr('disabled', 'disabled');
+            $("body").addClass("wait");
+        } else {
+            $("#btnSaveData").removeAttr('disabled');
+            $("body").removeClass("wait");
+        }
     }
 
 </script>
 
 <!-- Dialogo form-add-edit-Legajos -->
 <div id="form-add-edit-Legajos" class="container-fluid" title="" >
-    <form class="form-horizontal" role="form">
+    <form class="form-horizontal" id="valid-form-add-edit-Legajos" role="form">
         <div class="form-group">
-            <label for="input-legajo-add-Legajos" class="col-sm-4 control-label">Legajo Nº:</label>
+            <label for="legajoAddEditLegajos" class="col-sm-4 control-label">Legajo Nº:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="legajo-add-Legajos" placeholder="">
+                <input type="text" class="form-control" id="legajoAddEditLegajos" name="legajoAddEditLegajos" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-apellidoYNombre-add-Legajos" class="col-sm-4 control-label">Apellido y nombre:</label>
+            <label for="apellidoNombreAddEditLegajos" class="col-sm-4 control-label">Apellido y nombre:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="apellidoYNombre-add-Legajos" placeholder="">
+                <input type="text" class="form-control" id="apellidoNombreAddEditLegajos" name="apellidoNombreAddEditLegajos" placeholder="">
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModal">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertModal">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong><span class="dataAlertModal"></span></strong>
+    </div>
+</div>
+
+<!-- Dialogo form-add-edit-ValorPosible -->
+<div id="form-add-edit-valorPosible" class="container-fluid" title="" >
+    <form class="form-horizontal" id="valid-form-add-edit-valorPosible" role="form">
+        <div class="form-group">
+            <label for="dataAddEditValorPosible" class="col-sm-3 control-label">Valor posible: </label>
+            <div class="col-sm-8">
+                <select class="form-control" id="dataAddEditValorPosible" name="dataAddEditValorPosible">
+                    <!-- <option value="">Ingrese un valor.</option>-->
+                </select>
+            </div>
+        </div>
+    </form>
+    <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertModal">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
         <strong><span class="dataAlertModal"></span></strong>
     </div>

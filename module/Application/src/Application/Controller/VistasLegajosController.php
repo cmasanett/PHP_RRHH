@@ -15,7 +15,10 @@ class VistasLegajosController extends BaseController {
     }
 
     public function indexAction() {
-        return new ViewModel(array());
+        if (!$this->getAuthService()->hasIdentity()) {
+            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
+        }
+        return new ViewModel();
     }
 
     public function loadViewGridAction() {
@@ -53,9 +56,9 @@ class VistasLegajosController extends BaseController {
 
             foreach ($row as $r) {
                 $response ['rows'][$i]['id'] = $r->getId(); //id
-                $response['rows'][$i]['cell'] = array(
+                $response ['rows'][$i]['cell'] = array(
                     $r->getId(),
-                    $r->getDescripcion(),
+                    utf8_encode($r->getDescripcion()),
                     $r->getExtranetPermitido()
                 );
                 $i ++;
@@ -81,11 +84,11 @@ class VistasLegajosController extends BaseController {
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
 
-            $response['rows'] = array();
+            $response ['rows'] = array();
             $i = 0;
 
             foreach ($row as $r) {
-                $response['rows'][$i] = array(
+                $response ['rows'][$i] = array(
                     $r->getId(),
                     utf8_encode($r->getDescripcion()),
                     $r->getTipoDeCampo()
@@ -112,19 +115,19 @@ class VistasLegajosController extends BaseController {
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
 
-            $response['rows'] = array();
+            $response ['rows'] = array();
             $i = 0;
 
             foreach ($row as $r) {
-                $query0 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesL u WHERE u.id = ?1');
+                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion, u.tipoDeCampo FROM Application\Entity\N7PropiedadesL u WHERE u.id = ?1');
                 $query0->setParameter(1, $r->getPropiedadId());
                 $row1 = $query0->getResult();
 
-                $response['rows'][$i] = array(
+                $response ['rows'] [$i] = array(
                     $r->getId(),
                     $r->getPropiedadId(),
-                    utf8_encode($row1[0]->getDescripcion()),
-                    utf8_encode($row1[0]->getTipoDeCampo()),
+                    utf8_encode($row1[0]['descripcion']),
+                    utf8_encode($row1[0]['tipoDeCampo']),
                     $r->getFormularioId(),
                     $r->getOrden(),
                     $r->getSoloLectura()
@@ -170,11 +173,11 @@ class VistasLegajosController extends BaseController {
                                     $this->getEntityManager()->persist($n7VistasPropiedadesL);
                                     if (($i % $batchSize) === 0) {
                                         $this->getEntityManager()->flush();
-                                        $this->getEntityManager()->clear();
+                                        $this->getEntityManager()->clear(); // Detaches all objects from Doctrine!
                                     }
                                     $i++;
                                 }
-                                $this->getEntityManager()->flush();
+                                $this->getEntityManager()->flush(); //Persist objects that did not make up an entire batch
                                 $this->getEntityManager()->clear();
 
                                 return $this->response->setContent(Json::encode(array(
@@ -201,11 +204,11 @@ class VistasLegajosController extends BaseController {
                                 $this->getEntityManager()->persist($n7VistasPropiedadesL);
                                 if (($i % $batchSize) === 0) {
                                     $this->getEntityManager()->flush();
-                                    $this->getEntityManager()->clear();
+                                    $this->getEntityManager()->clear(); // Detaches all objects from Doctrine!
                                 }
                                 $i++;
                             }
-                            $this->getEntityManager()->flush();
+                            $this->getEntityManager()->flush(); //Persist objects that did not make up an entire batch
                             $this->getEntityManager()->clear();
 
                             return $this->response->setContent(Json::encode(array(

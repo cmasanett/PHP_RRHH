@@ -18,9 +18,13 @@ echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warnin
 echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
 ?>
 
-<div class="alert alert-warning" id="diagAlert">
+<script type="text/javascript" src="../js/jqueryValidation/dist/jquery.validate.min.js"></script>    
+<script type="text/javascript" src="../js/jqueryValidation/dist/additional-methods.min.js"></script>  
+<script type="text/javascript" src="../js/jqueryValidation/dist/localization/messages_es_AR.min.js"></script>  
+
+<div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertMain">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
-    <strong><span class="dataAlert"></span></strong>
+    <strong><span class="dataAlertMain"></span></strong>
 </div>
 
 <br>
@@ -207,7 +211,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
         //Buttons
         $("#btnAddDatosFamiliares").click(function () {
-            openDiagDatosFamiliares("form-add-DatosFamiliares", "add", "", "");
+            openDiagDatosFamiliares("form-add-datosFamiliares", "add", "", "");
         });
         $("#btnDelDatosFamiliares").click(function () {
             var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
@@ -216,8 +220,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 ids = ids.toString();
                 ids = ids.split(",");
                 var e = 0;
-                
-                if( ids != ""){
+
+                if (ids != "") {
                     for (var i = 0; i < ids.length; i++) {
                         var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
                         if (data['propiedad'] == rowid) {
@@ -234,36 +238,39 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         data: "id=" + rowid,
                         dataType: "json",
                         async: false,
-                        success: function (msg) {
+                        success: function (result) {
                             gridReload('gridDatosFamiliares');
                             gridReload('gridDatosFamiliaresVal');
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                            alert(xhr.status + " " + thrownError);
                         }
                     });
                 } else {
-                    msgAlert("diagAlert", "dataAlert", "No se puede eliminar la propiedad porque tiene valores asociados.");
+                    msgAlert("diagAlertMain", "dataAlertMain", "No se puede eliminar la propiedad porque tiene valores asociados.");
                 }
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnEditDatosFamiliares").click(function () {
             var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagDatosFamiliares("form-edit-DatosFamiliares", "edit", "gridDatosFamiliares", rowid);
+                openDiagDatosFamiliares("form-edit-datosFamiliares", "edit", "gridDatosFamiliares", rowid);
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnAddDatosFamiliaresVal").click(function () {
             var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
             var rowidVal = jQuery("#gridDatosFamiliaresVal").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagDatosFamiliaresVal("form-add-DatosFamiliaresVal", "add", "gridDatosFamiliaresVal", rowidVal);
+                openDiagDatosFamiliaresVal("form-add-datosFamiliaresVal", "add", "gridDatosFamiliaresVal", rowidVal);
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnDelDatosFamiliaresVal").click(function () {
@@ -278,25 +285,28 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     async: false,
                     success: function () {
                         gridReload('gridDatosFamiliaresVal');
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        alert(xhr.status + " " + thrownError);
                     }
                 });
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
         $("#btnEditDatosFamiliaresVal").click(function () {
             var rowid = jQuery("#gridDatosFamiliaresVal").jqGrid('getGridParam', 'selrow');
             if (rowid != null) {
-                openDiagDatosFamiliaresVal("form-edit-DatosFamiliaresVal", "edit", "gridDatosFamiliaresVal", rowid);
+                openDiagDatosFamiliaresVal("form-edit-datosFamiliaresVal", "edit", "gridDatosFamiliaresVal", rowid);
             }
             else {
-                msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+                msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
             }
         });
 
         //Dialog addDatosFamiliares
-        $("#form-add-DatosFamiliares").dialog({
+        $("#form-add-datosFamiliares").dialog({
             autoOpen: false,
             resizable: true,
             closeOnEscape: true,
@@ -306,16 +316,16 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             maxWidth: 600,
             buttons: {
                 'Aceptar': function () {
-                    var descripcion = $("#descripcion-add-DatosFamiliares").val();
-                    var tipo = $("#tipo-add-DatosFamiliares").val();
+                    if ($("#valid-form-add-datosFamiliares").valid()) {
+                        var descripcion = $("#descripcionAddDatosFamiliares").val();
+                        var tipo = $("#tipoAddDatosFamiliares").val();
 
-                    if (descripcion != '') {
                         var ids = $("#gridDatosFamiliares").jqGrid('getDataIDs');
                         ids = ids.toString();
                         ids = ids.split(",");
                         var e = 0;
-                        
-                        if( ids != ""){
+
+                        if (ids != "") {
                             for (var i = 0; i < ids.length; i++) {
                                 var data = $("#gridDatosFamiliares").jqGrid('getRowData', ids[i]);
                                 if (data['descripcion'].toLowerCase() == descripcion.toLowerCase()) {
@@ -336,26 +346,30 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
                                 async: false,
-                                success: function (msg) {
+                                success: function (result) {
                                     gridReload('gridDatosFamiliares');
-                                    $("#form-add-DatosFamiliares").dialog('close');
+                                    $("#form-add-datosFamiliares").dialog('close');
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    alert(xhr.status + " " + thrownError);
                                 }
                             });
                         } else {
-                           msgAlert("diagAlertModalAddE", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                            msgAlert("diagAlertModalAddP", "dataAlertModalAddP", "Ya existe un registro con esa combinacion.");
                         }
                     }
                 },
                 'Cancelar': function () {
+                    validFormAddDatosFamiliares.resetForm();
                     $(this).dialog('close');
                 }
             },
             close: function () {
-                //nada por ahora
+                validFormAddDatosFamiliares.resetForm();
             }
         });
         //Dialog editDatosFamiliares
-        $("#form-edit-DatosFamiliares").dialog({
+        $("#form-edit-datosFamiliares").dialog({
             autoOpen: false,
             resizable: true,
             closeOnEscape: true,
@@ -365,56 +379,62 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             maxWidth: 600,
             buttons: {
                 'Aceptar': function () {
-                    var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
-                    if (rowid != null) {
-                        var ids = $("#gridDatosFamiliares").jqGrid('getDataIDs');
-                        ids = ids.toString();
-                        ids = ids.split(",");
-                        var e = 0;
-                        
-                        if( ids != ""){
-                            for (var i = 0; i < ids.length; i++) {
-                                var data = $("#gridDatosFamiliares").jqGrid('getRowData', ids[i]);
-                                if (data['descripcion'].toLowerCase() == $("#descripcion-edit-DatosFamiliares").val().toLowerCase() && data['id'] != rowid) {
-                                    e++;
+                    if ($("#valid-form-add-datosFamiliares").valid()) {
+                        var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
+                        if (rowid != null) {
+                            var ids = $("#gridDatosFamiliares").jqGrid('getDataIDs');
+                            ids = ids.toString();
+                            ids = ids.split(",");
+                            var e = 0;
+
+                            if (ids != "") {
+                                for (var i = 0; i < ids.length; i++) {
+                                    var data = $("#gridDatosFamiliares").jqGrid('getRowData', ids[i]);
+                                    if (data['descripcion'].toLowerCase() == $("#descripcionEditDatosFamiliares").val().toLowerCase() && data['id'] != rowid) {
+                                        e++;
+                                    }
                                 }
                             }
-                        }
 
-                        if (e == 0)
-                        {
-                            var data = {
-                                "id": rowid,
-                                "descripcion": $("#descripcion-edit-DatosFamiliares").val(),
-                                "tipo_de_campo": $("#tipo-edit-DatosFamiliares").val()
-                            };
-                            $.ajax({
-                                url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItem')); ?>",
-                                global: false,
-                                type: "POST",
-                                data: "data=" + JSON.stringify(data),
-                                dataType: "json",
-                                async: false,
-                                success: function (msg) {
-                                    gridReload('gridDatosFamiliares');
-                                    $("#form-edit-DatosFamiliares").dialog('close');
-                                }
-                            });
-                        } else {
-                            msgAlert("diagAlertModalEditE", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                            if (e == 0)
+                            {
+                                var data = {
+                                    "id": rowid,
+                                    "descripcion": $("#descripcionEditDatosFamiliares").val(),
+                                    "tipo_de_campo": $("#tipoEditDatosFamiliares").val()
+                                };
+                                $.ajax({
+                                    url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItem')); ?>",
+                                    global: false,
+                                    type: "POST",
+                                    data: "data=" + JSON.stringify(data),
+                                    dataType: "json",
+                                    async: false,
+                                    success: function (result) {
+                                        gridReload('gridDatosFamiliares');
+                                        $("#form-edit-datosFamiliares").dialog('close');
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        alert(xhr.status + " " + thrownError);
+                                    }
+                                });
+                            } else {
+                                msgAlert("diagAlertModalEditP", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                            }
                         }
                     }
                 },
                 'Cancelar': function () {
+                    validFormEditDatosFamiliares.resetForm();
                     $(this).dialog('close');
                 }
             },
             close: function () {
-                //nada por ahora
+                validFormEditDatosFamiliares.resetForm();
             }
         });
         //Dialog addDatosFamiliaresVal
-        $("#form-add-DatosFamiliaresVal").dialog({
+        $("#form-add-datosFamiliaresVal").dialog({
             autoOpen: false,
             resizable: true,
             closeOnEscape: true,
@@ -424,75 +444,17 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             maxWidth: 600,
             buttons: {
                 'Aceptar': function () {
-                    var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
-                    var ids = $("#gridDatosFamiliaresVal").jqGrid('getDataIDs');
-                    ids = ids.toString();
-                    ids = ids.split(",");
-                    var e = 0;
-                    
-                    if( ids != ""){
-                        for (var i = 0; i < ids.length; i++) {
-                            var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
-                            if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valor-posible-add-DatosFamiliaresVal").val().toLowerCase()) {
-                                e++;
-                            }
-                        }
-                    }
-
-                    if (e == 0)
-                    {
-                        var data = {
-                            "propiedad": rowid,
-                            "valor_posible": $("#valor-posible-add-DatosFamiliaresVal").val(),
-                            "significado": $("#significado-add-DatosFamiliaresVal").val()
-                        };
-                        $.ajax({
-                            url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItemVal')); ?>",
-                            global: false,
-                            type: "POST",
-                            data: "data=" + JSON.stringify(data),
-                            dataType: "json",
-                            async: false,
-                            success: function () {
-                                loadGridDatosFamiliaresVal(rowid);
-                                $("#form-add-DatosFamiliaresVal").dialog('close');
-                            }
-                        });
-                    } else {
-                        msgAlert("diagAlertModalAddEV", "dataAlertModal", "Ya existe un registro con esa combinacion.");
-                    }
-                },
-                Cancel: function () {
-                    $(this).dialog('close');
-                }
-            },
-            close: function () {
-                //nada por ahora
-            }
-        });
-        //Dialog editDatosFamiliaresVal
-        $("#form-edit-DatosFamiliaresVal").dialog({
-            autoOpen: false,
-            resizable: true,
-            closeOnEscape: true,
-            modal: true,
-            width: 'auto', // overcomes width:'auto' and maxWidth bug
-            height: 'auto',
-            maxWidth: 600,
-            buttons: {
-                'Aceptar': function () {
-                    var rowid = jQuery("#gridDatosFamiliaresVal").jqGrid('getGridParam', 'selrow');
-                    if (rowid != null) {
-                        var dataGrid = $("#gridDatosFamiliaresVal").jqGrid('getRowData', rowid);
+                    if ($("#valid-form-add-datosFamiliares").valid()) {
+                        var rowid = jQuery("#gridDatosFamiliares").jqGrid('getGridParam', 'selrow');
                         var ids = $("#gridDatosFamiliaresVal").jqGrid('getDataIDs');
                         ids = ids.toString();
                         ids = ids.split(",");
                         var e = 0;
-                        
-                        if( ids != ""){
+
+                        if (ids != "") {
                             for (var i = 0; i < ids.length; i++) {
                                 var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
-                                if (data['valor_posible'].toLowerCase() == $("#valor-posible-edit-DatosFamiliaresVal").val().toLowerCase() && data['id'] != rowid) {
+                                if (data['propiedad'] == rowid && data['valor_posible'].toLowerCase() == $("#valorPosibleAddDatosFamiliaresVal").val().toLowerCase()) {
                                     e++;
                                 }
                             }
@@ -501,9 +463,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         if (e == 0)
                         {
                             var data = {
-                                "id": rowid,
-                                "valor_posible": $("#valor-posible-edit-DatosFamiliaresVal").val(),
-                                "significado": $("#significado-edit-DatosFamiliaresVal").val()
+                                "propiedad": rowid,
+                                "valor_posible": $("#valorPosibleAddDatosFamiliaresVal").val(),
+                                "significado": $("#significadoAddDatosFamiliaresVal").val()
                             };
                             $.ajax({
                                 url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItemVal')); ?>",
@@ -512,49 +474,134 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
                                 async: false,
-                                success: function (msg) {
-                                    loadGridDatosFamiliaresVal(dataGrid.propiedad);
-                                    $("#form-edit-DatosFamiliaresVal").dialog('close');
+                                success: function () {
+                                    loadGridDatosFamiliaresVal(rowid);
+                                    $("#form-add-datosFamiliaresVal").dialog('close');
+                                },
+                                error: function (xhr, ajaxOptions, thrownError) {
+                                    alert(xhr.status + " " + thrownError);
                                 }
                             });
                         } else {
-                            msgAlert("diagAlertModalEditEV", "dataAlertModal", "Ya existe un registro con esa combinacion.");
+                            msgAlert("diagAlertModalAddPV", "dataAlertModal", "Ya existe un registro con esa combinacion.");
                         }
                     }
                 },
                 Cancel: function () {
+                    validFormAddDatosFamiliaresVal.resetForm();
                     $(this).dialog('close');
                 }
             },
             close: function () {
-                //nada por ahora
+                validFormAddDatosFamiliaresVal.resetForm();
+            }
+        });
+        //Dialog editDatosFamiliaresVal
+        $("#form-edit-datosFamiliaresVal").dialog({
+            autoOpen: false,
+            resizable: true,
+            closeOnEscape: true,
+            modal: true,
+            width: 'auto', // overcomes width:'auto' and maxWidth bug
+            height: 'auto',
+            maxWidth: 600,
+            buttons: {
+                'Aceptar': function () {
+                    if ($("#valid-form-add-datosFamiliares").valid()) {
+                        var rowid = jQuery("#gridDatosFamiliaresVal").jqGrid('getGridParam', 'selrow');
+                        if (rowid != null) {
+                            var dataGrid = $("#gridDatosFamiliaresVal").jqGrid('getRowData', rowid);
+                            var ids = $("#gridDatosFamiliaresVal").jqGrid('getDataIDs');
+                            ids = ids.toString();
+                            ids = ids.split(",");
+                            var e = 0;
+
+                            if (ids != "") {
+                                for (var i = 0; i < ids.length; i++) {
+                                    var data = $("#gridDatosFamiliaresVal").jqGrid('getRowData', ids[i]);
+                                    if (data['valor_posible'].toLowerCase() == $("#valorPosibleEditDatosFamiliaresVal").val().toLowerCase() && data['id'] != rowid) {
+                                        e++;
+                                    }
+                                }
+                            }
+
+                            if (e == 0)
+                            {
+                                var data = {
+                                    "id": rowid,
+                                    "valor_posible": $("#valorPosibleEditDatosFamiliaresVal").val(),
+                                    "significado": $("#significadoEditDatosFamiliaresVal").val()
+                                };
+                                $.ajax({
+                                    url: "<?php echo $this->url('datosfamiliares', array('action' => 'editGridItemVal')); ?>",
+                                    global: false,
+                                    type: "POST",
+                                    data: "data=" + JSON.stringify(data),
+                                    dataType: "json",
+                                    async: false,
+                                    success: function (result) {
+                                        loadGridDatosFamiliaresVal(dataGrid.propiedad);
+                                        $("#form-edit-datosFamiliaresVal").dialog('close');
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                        alert(xhr.status + " " + thrownError);
+                                    }
+                                });
+                            } else {
+                                msgAlert("diagAlertModalEditPV", "dataAlertModalEditPV", "Ya existe un registro con esa combinacion.");
+                            }
+                        }
+                    }
+                },
+                Cancel: function () {
+                    validFormEditDatosFamiliaresVal.resetForm();
+                    $(this).dialog('close');
+                }
+            },
+            close: function () {
+                validFormEditDatosFamiliaresVal.resetForm();
             }
         });
 
-        /*$('input').bind('keypress', function (event) {
-         var regex = new RegExp("^[a-zA-Z0-9_ \,._-]+$");
-         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-         if (!regex.test(key)) {
-         event.preventDefault();
-         return false;
-         }
-         });*/
+        //Validation
+        var validFormAddDatosFamiliares = $("#valid-form-add-datosFamiliares").validate({
+            rules: {
+                descripcionAddDatosFamiliares: {required: true}
+            }
+        });
+        var validFormEditDatosFamiliares = $("#valid-form-edit-datosFamiliares").validate({
+            rules: {
+                descripcionEditDatosFamiliares: {required: true}
+            }
+        });
+        var validFormAddDatosFamiliaresVal = $("#valid-form-add-datosFamiliaresVal").validate({
+            rules: {
+                valorPosibleAddDatosFamiliaresVal: {required: true},
+                significadoAddDatosFamiliaresVal: {required: true}
+            }
+        });
+        var validFormEditDatosFamiliaresVal = $("#valid-form-edit-datosFamiliaresVal").validate({
+            rules: {
+                valorPosibleEditDatosFamiliaresVal: {required: true},
+                significadoEditDatosFamiliaresVal: {required: true}
+            }
+        });
 
         //AlertManager
-        $('#diagAlert').on('closed.bs.alert', function () {
-            $('.dataAlert').html("");
+        $('#diagAlertMain').on('closed.bs.alert', function () {
+            $('.dataAlertMain').html("");
         });
-        $('#diagAlertModalAddE').on('closed.bs.alert', function () {
-            $('.dataAlertModal').html("");
+        $('#diagAlertModalAddP').on('closed.bs.alert', function () {
+            $('.dataAlertModalAddP').html("");
         });
-        $('#diagAlertModalEditE').on('closed.bs.alert', function () {
-            $('.dataAlertModal').html("");
+        $('#diagAlertModalEditP').on('closed.bs.alert', function () {
+            $('.dataAlertModalEditP').html("");
         });
-        $('#diagAlertModalAddEV').on('closed.bs.alert', function () {
-            $('.dataAlertModal').html("");
+        $('#diagAlertModalAddPV').on('closed.bs.alert', function () {
+            $('.dataAlertModalAddPV').html("");
         });
-        $('#diagAlertModalEditEV').on('closed.bs.alert', function () {
-            $('.dataAlertModal').html("");
+        $('#diagAlertModalEditPV').on('closed.bs.alert', function () {
+            $('.dataAlertModalEditPV').html("");
         });
     });
 
@@ -573,7 +620,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             $("#gridDatosFamiliaresVal").setGridParam({datatype: 'json', url: sUrl}).trigger('reloadGrid');
         }
         else {
-            msgAlert("diagAlert", "dataAlert", "Por favor seleccione una fila.");
+            msgAlert("diagAlertMain", "dataAlertMain", "Por favor seleccione una fila.");
         }
     }
 
@@ -581,12 +628,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         clearDataDatosFamiliares();
         if (op == "edit") {
             rowdata = jQuery("#" + grid).getRowData(id);
-            $('#descripcion-edit-DatosFamiliares').val(rowdata['descripcion']);
-            $('#tipo-edit-DatosFamiliares').val(rowdata['tipo_de_campo']);
+            $('#descripcionEditDatosFamiliares').val(rowdata['descripcion']);
+            $('#tipoEditDatosFamiliares').val(rowdata['tipo_de_campo']);
             $('#' + diagName).dialog('open');
         } else {
             $('#' + diagName).dialog('open');
-            $('#tipo-add-DatosFamiliares option:contains("C")').prop('selected', true);
+            $('#tipoAddDatosFamiliares option:contains("C")').prop('selected', true);
         }
     }
 
@@ -594,8 +641,8 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         clearDataDatosFamiliaresVal();
         if (op == "edit") {
             rowdata = jQuery("#" + grid).getRowData(id);
-            $('#valor-posible-edit-DatosFamiliaresVal').val(rowdata['valor_posible']);
-            $('#significado-edit-DatosFamiliaresVal').val(rowdata['significado']);
+            $('#valorPosibleEditDatosFamiliaresVal').val(rowdata['valor_posible']);
+            $('#significadoEditDatosFamiliaresVal').val(rowdata['significado']);
             $('#' + diagName).dialog('open');
         } else {
             $('#' + diagName).dialog('open');
@@ -603,15 +650,15 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
     }
 
     function clearDataDatosFamiliares() {
-        $('#descripcion-add-DatosFamiliares').val("");
-        $('#descripcion-edit-DatosFamiliares').val("");
+        $('#descripcionAddDatosFamiliares').val("");
+        $('#descripcionEditDatosFamiliares').val("");
     }
 
     function clearDataDatosFamiliaresVal() {
-        $('#valor-posible-add-DatosFamiliaresVal').val("");
-        $('#significado-add-DatosFamiliaresVal').val("");
-        $('#valor-posible-edit-DatosFamiliaresVal').val("");
-        $('#significado-edit-DatosFamiliaresVal').val("");
+        $('#valorPosibleAddDatosFamiliaresVal').val("");
+        $('#significadoAddDatosFamiliaresVal').val("");
+        $('#valorPosibleEditDatosFamiliaresVal').val("");
+        $('#significadoEditDatosFamiliaresVal').val("");
     }
 
     function msgAlert(diagName, selectorName, msg) {
@@ -626,19 +673,19 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
 
 </script>
 
-<!-- Dialogo form-add-DatosFamiliares -->
-<div id="form-add-DatosFamiliares"  title="Agregar registro">
-    <form class="form-horizontal" id="valid-form-add-DatosFamiliares" role="form">
+<!-- Dialogo form-add-datosFamiliares -->
+<div id="form-add-datosFamiliares"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-datosFamiliares" role="form">
         <div class="form-group">
-            <label for="input-descripcion-add-DatosFamiliares" class="col-sm-4 control-label">Nombre de campo:</label>
+            <label for="descripcionAddDatosFamiliares" class="col-sm-4 control-label">Nombre de campo:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="descripcion-add-DatosFamiliares" placeholder="">
+                <input type="text" class="form-control" id="descripcionAddDatosFamiliares" name="descripcionAddDatosFamiliares" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-tipo-add-DatosFamiliares" class="col-sm-4 control-label">Tipo:</label>
+            <label for="tipoAddDatosFamiliares" class="col-sm-4 control-label">Tipo:</label>
             <div class="col-sm-8">
-                <select class="form-control" id="tipo-add-DatosFamiliares">
+                <select class="form-control" id="tipoAddDatosFamiliares" name="tipoAddDatosFamiliares">
                     <option value="C">Caracter</option>
                     <option value="N">Numero</option>
                     <option value="F">Fecha</option>
@@ -646,25 +693,25 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModalAddE">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all"" id="diagAlertModalAddP">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong><span class="dataAlertModal"></span></strong>
+        <strong><span class="dataAlertModalAddP"></span></strong>
     </div>
 </div>
 
-<!-- Dialogo form-edit-DatosFamiliares -->
-<div id="form-edit-DatosFamiliares"  title="Editar registro">
-    <form class="form-horizontal" id="valid-form-edit-DatosFamiliares" role="form">
+<!-- Dialogo form-edit-datosFamiliares -->
+<div id="form-edit-datosFamiliares"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-datosFamiliares" role="form">
         <div class="form-group">
-            <label for="input-descripcion-edit-DatosFamiliares" class="col-sm-4 control-label">Nombre de campo:</label>
+            <label for="descripcionEditDatosFamiliares" class="col-sm-4 control-label">Nombre de campo:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="descripcion-edit-DatosFamiliares" placeholder="">
+                <input type="text" class="form-control" id="descripcionEditDatosFamiliares" name="descripcionEditDatosFamiliares" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-tipo-edit-DatosFamiliares" class="col-sm-4 control-label">Tipo:</label>
+            <label for="tipoEditDatosFamiliares" class="col-sm-4 control-label">Tipo:</label>
             <div class="col-sm-8">
-                <select class="form-control" id="tipo-edit-DatosFamiliares">
+                <select class="form-control" id="tipoEditDatosFamiliares" name="tipoEditDatosFamiliares">
                     <option value="C">Caracter</option>
                     <option value="N">Numero</option>
                     <option value="F">Fecha</option>
@@ -672,52 +719,52 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModalEditE">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all"" id="diagAlertModalEditP">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong><span class="dataAlertModal"></span></strong>
+        <strong><span class="dataAlertModalEditP"></span></strong>
     </div>
 </div>
 
-<!-- Dialogo form-add-DatosFamiliaresVal -->
-<div id="form-add-DatosFamiliaresVal"  title="Agregar registro">
-    <form class="form-horizontal" id="valid-form-add-DatosFamiliaresVal" role="form">
+<!-- Dialogo form-add-datosFamiliaresVal -->
+<div id="form-add-datosFamiliaresVal"  title="Agregar registro">
+    <form class="form-horizontal" id="valid-form-add-datosFamiliaresVal" role="form">
         <div class="form-group">
-            <label for="input-valor-posible-add-DatosFamiliaresVal" class="col-sm-4 control-label">Valor:</label>
+            <label for="valorPosibleAddDatosFamiliaresVal" class="col-sm-4 control-label">Valor:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="valor-posible-add-DatosFamiliaresVal" placeholder="">
+                <input type="text" class="form-control" id="valorPosibleAddDatosFamiliaresVal" name="valorPosibleAddDatosFamiliaresVal" placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-significado-add-DatosFamiliaresVal" class="col-sm-4 control-label">Significado:</label>
+            <label for="significadoAddDatosFamiliaresVal" class="col-sm-4 control-label">Significado:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="significado-add-DatosFamiliaresVal" placeholder="">
+                <input type="text" class="form-control" id="significadoAddDatosFamiliaresVal" name="significadoAddDatosFamiliaresVal"placeholder="">
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModalAddEV">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all"" id="diagAlertModalAddPV">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong><span class="dataAlertModal"></span></strong>
+        <strong><span class="dataAlertModalAddPV"></span></strong>
     </div>
 </div>
 
-<!-- Dialogo form-add-DatosFamiliaresVal -->
-<div id="form-edit-DatosFamiliaresVal"  title="Editar registro">
-    <form class="form-horizontal" id="valid-form-edit-DatosFamiliaresVal" role="form">
+<!-- Dialogo form-add-datosFamiliaresVal -->
+<div id="form-edit-datosFamiliaresVal"  title="Editar registro">
+    <form class="form-horizontal" id="valid-form-edit-datosFamiliaresVal" role="form">
         <div class="form-group">
-            <label for="input-valor-posible-edit-DatosFamiliaresVal" class="col-sm-4 control-label">Valor:</label>
+            <label for="valorPosibleEditDatosFamiliaresVal" class="col-sm-4 control-label">Valor:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="valor-posible-edit-DatosFamiliaresVal" placeholder="">
+                <input type="text" class="form-control" id="valorPosibleEditDatosFamiliaresVal" name="valorPosibleEditDatosFamiliaresVal"placeholder="">
             </div>
         </div>
         <div class="form-group">
-            <label for="input-significado-edit-DatosFamiliaresVal" class="col-sm-4 control-label">Significado:</label>
+            <label for="significadoEditDatosFamiliaresVal" class="col-sm-4 control-label">Significado:</label>
             <div class="col-sm-8">
-                <input type="text" class="form-control" id="significado-edit-DatosFamiliaresVal" placeholder="">
+                <input type="text" class="form-control" id="significadoEditDatosFamiliaresVal" name="significadoEditDatosFamiliaresVal" placeholder="">
             </div>
         </div>
     </form>
-    <div class="alert alert-warning" id="diagAlertModalEditE">
+    <div class="alert alert-warning ui-state-highlight ui-corner-all"" id="diagAlertModalEditPV">
         <a href="#" class="close" data-dismiss="alert">&times;</a>
-        <strong><span class="dataAlertModal"></span></strong>
+        <strong><span class="dataAlertModalEditPV"></span></strong>
     </div>
 </div>

@@ -15,7 +15,10 @@ class DatosFamiliaresController extends BaseController {
     }
 
     public function indexAction() {
-        return new ViewModel(array());
+        if (!$this->getAuthService()->hasIdentity()) {
+            return $this->redirect()->toUrl($this->getRequest()->getBaseUrl() . '/usuarios/login');
+        }
+        return new ViewModel();
     }
 
     public function loadDataGridAction() {
@@ -53,8 +56,8 @@ class DatosFamiliaresController extends BaseController {
             $i = 0;
 
             foreach ($row as $r) {
-                $response ['rows'] [$i] ['id'] = $r->getId(); // getId()
-                $response ['rows'] [$i] ['cell'] = array(
+                $response ['rows'][$i]['id'] = $r->getId(); // id
+                $response ['rows'][$i]['cell'] = array(
                     $r->getId(),
                     utf8_encode($r->getDescripcion()),
                     $r->getTipoDeCampo()
