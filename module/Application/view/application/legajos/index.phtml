@@ -125,7 +125,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             rownumbers: true,
             url: "<?php echo $this->url('legajos', array('action' => 'loadLegajosGrid')); ?>",
             datatype: 'json',
-            mtype: 'POST',
+            mtype: 'GET',
             colNames: ["Id", "EmpresaId", "Legajo", "Apellido y Nombre", "Foto", "Inactivo"],
             colModel: [
                 {name: 'id', index: 'id',
@@ -396,10 +396,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('legajos', array('action' => 'deleteGridItem')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "id=" + rowid,
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function (result) {
                         gridReload('gridLegajos');
                     },
@@ -435,10 +435,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                         $.ajax({
                             url: "<?php echo $this->url('legajos', array('action' => 'editGridItemVal')); ?>",
                             global: false,
-                            type: "POST",
+                            type: "GET",
                             data: "data=" + JSON.stringify(dataGridDatosPpdLegajo),
                             dataType: "json",
-                            async: false,
+                            async: true,
                             success: function (result) {
                                 var rowidLegajos = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
                                 if (rowidLegajos != null) {
@@ -537,10 +537,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             $.ajax({
                                 url: "<?php echo $this->url('legajos', array('action' => 'editGridItem')); ?>",
                                 global: false,
-                                type: "POST",
+                                type: "GET",
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
-                                async: false,
+                                async: true,
                                 success: function (result) {
                                     gridReload('gridLegajos');
                                     $("#form-add-edit-Legajos").dialog('close');
@@ -744,10 +744,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('legajos', array('action' => 'loadPpdLegajoGrid')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "data=" + JSON.stringify(data),
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function (result) {
                         deleteGrid('gridDatosPpdLegajo');
                         if (result.data.length > 0) {
@@ -782,10 +782,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('legajos', array('action' => 'loadDataGrid')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "id=" + rowid,
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function (result) {
                         deleteGrid('gridDatosLegajosVal');
                         if (result.data.length > 0) {
@@ -836,9 +836,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         $.ajax({
             url: "<?php echo $this->url('legajos', array('action' => 'loadSelectVistas')); ?>",
             global: false,
-            type: "POST",
+            type: "GET",
             dataType: "json",
-            async: false,
+            async: true,
             success: function (result) {
                 $('#' + listSelect).html("");
                 $.each(result.data, function (i, d) {

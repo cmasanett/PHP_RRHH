@@ -119,7 +119,7 @@ class VistasLegajosController extends BaseController {
             $i = 0;
 
             foreach ($row as $r) {
-                $query0 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7PropiedadesL u WHERE u.id = ?1');
+                $query0 = $this->getEntityManager()->createQuery('SELECT u.descripcion, u.tipoDeCampo FROM Application\Entity\N7PropiedadesL u WHERE u.id = ?1');
                 $query0->setParameter(1, $r->getPropiedadId());
                 $row1 = $query0->getResult();
 
