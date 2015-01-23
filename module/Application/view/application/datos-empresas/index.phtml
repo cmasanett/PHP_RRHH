@@ -68,7 +68,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             rownumbers: true,
             url: "<?php echo $this->url('datosempresas', array('action' => 'loadDataGrid')); ?>",
             datatype: 'json',
-            mtype: 'POST',
+            mtype: 'GET',
             colNames: ["Id", "Propiedad", "Tipo"],
             colModel: [
                 {name: 'id', index: 'id',
@@ -140,7 +140,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             rownumbers: true,
             url: "<?php echo $this->url('datosempresas', array('action' => 'loadDataGridVal')); ?>",
             datatype: "json",
-            mtype: 'POST',
+            mtype: 'GET',
             colNames: ["Id", "PropiedadId", "Valor", "Significado"],
             colModel: [
                 {name: 'id', index: 'id',
@@ -234,10 +234,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     $.ajax({
                         url: "<?php echo $this->url('datosempresas', array('action' => 'deleteGridItem')); ?>",
                         global: false,
-                        type: "POST",
+                        type: "GET",
                         data: "id=" + rowid,
                         dataType: "json",
-                        async: false,
+                        async: true,
                         success: function (result) {
                             gridReload('gridDatosEmpresa');
                             gridReload('gridDatosEmpresaVal');
@@ -279,10 +279,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('datosempresas', array('action' => 'deleteGridItemVal')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "id=" + rowid,
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function () {
                         gridReload('gridDatosEmpresaVal');
                     },
@@ -345,7 +345,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 type: "POST",
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
-                                async: false,
+                                async: true,
                                 success: function (result) {
                                     gridReload('gridDatosEmpresa');
                                     $("#form-add-datosEmpresa").dialog('close');
@@ -409,7 +409,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     type: "POST",
                                     data: "data=" + JSON.stringify(data),
                                     dataType: "json",
-                                    async: false,
+                                    async: true,
                                     success: function (result) {
                                         gridReload('gridDatosEmpresa');
                                         $("#form-edit-datosEmpresa").dialog('close');
@@ -473,7 +473,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                 type: "POST",
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
-                                async: false,
+                                async: true,
                                 success: function () {
                                     loadGridDatosEmpresaVal(rowid);
                                     $("#form-add-datosEmpresaVal").dialog('close');
@@ -538,7 +538,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     type: "POST",
                                     data: "data=" + JSON.stringify(data),
                                     dataType: "json",
-                                    async: false,
+                                    async: true,
                                     success: function (result) {
                                         loadGridDatosEmpresaVal(dataGrid.propiedad);
                                         $("#form-edit-datosEmpresaVal").dialog('close');

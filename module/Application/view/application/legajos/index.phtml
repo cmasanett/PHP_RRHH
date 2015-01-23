@@ -18,10 +18,6 @@ echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warnin
 echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success', 'flashAlert'));
 ?>
 
-<script type="text/javascript" src="../js/jqueryValidation/dist/jquery.validate.min.js"></script>    
-<script type="text/javascript" src="../js/jqueryValidation/dist/additional-methods.min.js"></script>  
-<script type="text/javascript" src="../js/jqueryValidation/dist/localization/messages_es_AR.min.js"></script>  
-
 <div class="alert alert-warning ui-state-highlight ui-corner-all" id="diagAlertMain">
     <a href="#" class="close" data-dismiss="alert">&times;</a>
     <strong><span class="dataAlertMain"></span></strong>
@@ -189,8 +185,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             pgtext: false,
             pginput: false,
             loadonce: true,
-            editurl: "<?php echo $this->url('legajos', array('action' => 'editGridItem')); ?>",
-            //caption: "Legajos",
+//            caption: "Legajos",
             gridComplete: function () {
                 var ids = $("#gridLegajos").jqGrid('getDataIDs');
                 ids = ids.toString();
@@ -431,11 +426,12 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 //$("#btnSaveData")
                 var dataGridDatosPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getGridParam', 'data');
                 if (dataGridDatosPpdLegajo.length > 0) {
+                    dataGridDatosPpdLegajo['objetoId'] = rowidLegajos;
                     if (checkConsistency(dataGridDatosPpdLegajo)) {
                         $.ajax({
                             url: "<?php echo $this->url('legajos', array('action' => 'editGridItemVal')); ?>",
                             global: false,
-                            type: "GET",
+                            type: "POST",
                             data: "data=" + JSON.stringify(dataGridDatosPpdLegajo),
                             dataType: "json",
                             async: true,
@@ -537,7 +533,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             $.ajax({
                                 url: "<?php echo $this->url('legajos', array('action' => 'editGridItem')); ?>",
                                 global: false,
-                                type: "GET",
+                                type: "POST",
                                 data: "data=" + JSON.stringify(data),
                                 dataType: "json",
                                 async: true,
@@ -634,9 +630,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 deleteGrid("gridDatosLegajosVal");
                 loadGrid('gridDatosPpdLegajo', rowid);
             }
-            else {
-                msgAlert("diagAlertMain", "dataAlertMain", "Seleccione un legajo.");
-            }
+//            else {
+//                msgAlert("diagAlertMain", "dataAlertMain", "Seleccione un legajo.");
+//            }
         });
     });
 
@@ -778,40 +774,40 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                     }
                 });
                 break;
-            case 'gridDatosLegajosVal':
-                $.ajax({
-                    url: "<?php echo $this->url('legajos', array('action' => 'loadDataGrid')); ?>",
-                    global: false,
-                    type: "GET",
-                    data: "id=" + rowid,
-                    dataType: "json",
-                    async: true,
-                    success: function (result) {
-                        deleteGrid('gridDatosLegajosVal');
-                        if (result.data.length > 0) {
-                            for (var i = 0; i < result.data.length; i++) {
-                                var dataLocal = {
-                                    "id": result.data[i][0],
-                                    "propiedadId": result.data[i][1],
-                                    "valor_posible": result.data[i][2],
-                                    "significado": result.data[i][3]
-                                };
-                                var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
-                                ids = ids.toString();
-                                ids = ids.split(",");
-                                if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
-                                    $("#gridDatosLegajosVal").jqGrid('addRowData', ids.length + 1, dataLocal);
-                                } else {
-                                    $("#gridDatosLegajosVal").jqGrid('addRowData', 1, dataLocal);
-                                }
-                            }
-                        }
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        alert(xhr.status + " " + thrownError);
-                    }
-                });
-                break;
+//            case 'gridDatosLegajosVal':
+//                $.ajax({
+//                    url: "<?php echo $this->url('legajos', array('action' => 'loadDataGrid')); ?>",
+//                    global: false,
+//                    type: "GET",
+//                    data: "id=" + rowid,
+//                    dataType: "json",
+//                    async: true,
+//                    success: function (result) {
+//                        deleteGrid('gridDatosLegajosVal');
+//                        if (result.data.length > 0) {
+//                            for (var i = 0; i < result.data.length; i++) {
+//                                var dataLocal = {
+//                                    "id": result.data[i][0],
+//                                    "propiedadId": result.data[i][1],
+//                                    "valor_posible": result.data[i][2],
+//                                    "significado": result.data[i][3]
+//                                };
+//                                var ids = $("#gridDatosLegajosVal").jqGrid('getDataIDs');
+//                                ids = ids.toString();
+//                                ids = ids.split(",");
+//                                if (ids.length > 0 && ids[0] != 'undefined' && ids[0] != "") {
+//                                    $("#gridDatosLegajosVal").jqGrid('addRowData', ids.length + 1, dataLocal);
+//                                } else {
+//                                    $("#gridDatosLegajosVal").jqGrid('addRowData', 1, dataLocal);
+//                                }
+//                            }
+//                        }
+//                    },
+//                    error: function (xhr, ajaxOptions, thrownError) {
+//                        alert(xhr.status + " " + thrownError);
+//                    }
+//                });
+//                break;
         }
     }
 

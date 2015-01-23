@@ -172,8 +172,8 @@ class DatosFamiliaresController extends BaseController {
         try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $id = (int) $request->getPost('id');
+                if ($request->isGet()) {
+                    $id = (int) $request->getQuery('id');
                     $n7PropiedadesF = new N7PropiedadesF ();
                     $n7PropiedadesF = $this->getEntityManager()->find('Application\Entity\N7PropiedadesF', $id);
                     if ($n7PropiedadesF) {
@@ -251,8 +251,8 @@ class DatosFamiliaresController extends BaseController {
         try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $id = (int) $request->getPost('id');
+                if ($request->isGet()) {
+                    $id = (int) $request->getQuery('id');
                     $n7ValoresPosiblesFamiliares = new N7ValoresPosiblesFamiliares ();
                     $n7ValoresPosiblesFamiliares = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesFamiliares', $id);
                     if ($n7ValoresPosiblesFamiliares) {

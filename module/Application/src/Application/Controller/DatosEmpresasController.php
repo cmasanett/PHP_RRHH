@@ -172,8 +172,8 @@ class DatosEmpresasController extends BaseController {
         try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $id = (int) $request->getPost('id');
+                if ($request->isGet()) {
+                    $id = (int) $request->getQuery('id');
 
                     $n7PropiedadesE = new N7PropiedadesE ();
                     $n7PropiedadesE = $this->getEntityManager()->find(
@@ -254,8 +254,8 @@ class DatosEmpresasController extends BaseController {
         try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $id = (int) $request->getPost('id');
+                if ($request->isGet()) {
+                    $id = (int) $request->getQuery('id');
                     $n7ValoresPosiblesEmpresas = new N7ValoresPosiblesEmpresas ();
                     $n7ValoresPosiblesEmpresas = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesEmpresas', $id);
                     if ($n7ValoresPosiblesEmpresas) {

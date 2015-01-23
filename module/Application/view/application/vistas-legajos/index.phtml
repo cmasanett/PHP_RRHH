@@ -59,7 +59,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             rownumbers: true,
             url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadViewGrid')); ?>",
             datatype: 'json',
-            mtype: 'POST',
+            mtype: 'GET',
             colNames: ["Id", "Vista", "Extranet"],
             colModel: [
                 {name: 'id', index: 'id',
@@ -298,10 +298,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('vistaslegajos', array('action' => 'deleteGridItem')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "id=" + rowid,
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function (result) {
                         gridReload('gridVistasLegajo');
                     },
@@ -497,7 +497,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                                     type: "POST",
                                     data: "data=" + JSON.stringify(data),
                                     dataType: "json",
-                                    async: false,
+                                    async: true,
                                     success: function (result) {
                                         gridReload('gridVistasLegajo');
                                         $("#form-add-edit-vistasLegajo").dialog('close');
@@ -597,10 +597,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadPropGrid')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "id=" + rowid,
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function (result) {
                         deleteGrid('gridPropiedadesLegajo');
                         if (result.data.length > 0) {
@@ -631,10 +631,10 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 $.ajax({
                     url: "<?php echo $this->url('vistaslegajos', array('action' => 'loadDataGrid')); ?>",
                     global: false,
-                    type: "POST",
+                    type: "GET",
                     data: "id=" + rowid,
                     dataType: "json",
-                    async: false,
+                    async: true,
                     success: function (result) {
                         deleteGrid('gridDatosVistasLegajo');
                         if (result.data.length > 0) {

@@ -44,20 +44,19 @@ if ($identity) {
         ?>
 
         <!-- Scripts -->
-        <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
-        <script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
-
+        <!--<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>-->
+        <!--<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>-->
+        <script src="../js/jquery-1.11.2.min.js"></script>
         <?php
         echo $this->headScript()
-//                ->prependFile($this->basePath() . '/js/jquery-1.11.2.min.js')
-//                ->prependFile($this->basePath() . '/js/jquery-migrate-1.2.1.min.js')
+                ->prependFile($this->basePath() . '/js/jquery-migrate-1.2.1.min.js')
                 ->prependFile($this->basePath() . '/js/jqGrid/js/i18n/grid.locale-es.js')
                 ->prependFile($this->basePath() . '/js/jqGrid/js/minified/jquery.jqGrid.min.js')
                 ->prependFile($this->basePath() . '/js/jqueryUI/jquery-ui.min.js')
-//                ->prependFile($this->basePath() . '/js/jqueryValidation/dist/jquery.validate.min.js')
-//                ->prependFile($this->basePath() . '/js/jqueryValidation/dist/additional-methods.min.js')
-//                ->prependFile($this->basePath() . '/js/jqueryValidation/dist/localization/messages_es_AR.min.js')
         ?>
+        <script type="text/javascript" src="../js/jqueryValidation/dist/jquery.validate.min.js"></script>    
+        <script type="text/javascript" src="../js/jqueryValidation/dist/additional-methods.min.js"></script>  
+        <script type="text/javascript" src="../js/jqueryValidation/dist/localization/messages_es_AR.min.js"></script> 
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <?php

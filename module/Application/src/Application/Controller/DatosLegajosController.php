@@ -172,8 +172,8 @@ class DatosLegajosController extends BaseController {
         try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $id = (int) $request->getPost('id');
+                if ($request->isGet()) {
+                    $id = (int) $request->getQuery('id');
                     $n7PropiedadesL = new N7PropiedadesL ();
                     $n7PropiedadesL = $this->getEntityManager()->find('Application\Entity\N7PropiedadesL', $id);
                     if ($n7PropiedadesL) {
@@ -251,8 +251,8 @@ class DatosLegajosController extends BaseController {
         try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $id = (int) $request->getPost('id');
+                if ($request->isGet()) {
+                    $id = (int) $request->getQuery('id');
                     $n7ValoresPosiblesLegajos = new N7ValoresPosiblesLegajos ();
                     $n7ValoresPosiblesLegajos = $this->getEntityManager()->find('Application\Entity\N7ValoresPosiblesLegajos', $id);
                     if ($n7ValoresPosiblesLegajos) {

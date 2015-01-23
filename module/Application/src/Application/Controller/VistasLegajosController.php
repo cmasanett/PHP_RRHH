@@ -73,8 +73,8 @@ class VistasLegajosController extends BaseController {
     public function loadPropGridAction() {
         if ($this->request->isXmlHttpRequest()) {
             $request = $this->getRequest();
-            if ($request->isPost()) {
-                $dataJson = $request->getPost('id', 0);
+            if ($request->isGet()) {
+                $dataJson = $request->getQuery('id', 0);
                 $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
             }
         }
@@ -104,8 +104,8 @@ class VistasLegajosController extends BaseController {
     public function loadDataGridAction() {
         if ($this->request->isXmlHttpRequest()) {
             $request = $this->getRequest();
-            if ($request->isPost()) {
-                $dataJson = $request->getPost('id', 0);
+            if ($request->isGet()) {
+                $dataJson = $request->getQuery('id', 0);
                 $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
             }
         }
@@ -230,8 +230,8 @@ class VistasLegajosController extends BaseController {
         try {
             if ($this->request->isXmlHttpRequest()) {
                 $request = $this->getRequest();
-                if ($request->isPost()) {
-                    $id = (int) $request->getPost('id');
+                if ($request->isGet()) {
+                    $id = (int) $request->getQuery('id');
 
                     $q = $this->getEntityManager()->createQuery('delete from Application\Entity\N7VistasPropiedadesL m where m.formularioId = ?1');
                     $q->setParameter(1, $id);

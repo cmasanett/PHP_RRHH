@@ -11,7 +11,7 @@
                 ->appendName('author', '')
         ?>
 
-<?php echo $this->headTitle(':: Nominas PHP ::' . $this->title)->setSeparator(' - ')->setAutoEscape(false) ?>
+        <?php echo $this->headTitle(':: Nominas PHP ::' . $this->title)->setSeparator(' - ')->setAutoEscape(false) ?>
 
         <!-- Le styles -->
         <?php
@@ -26,11 +26,8 @@
                 ->prependStylesheet($this->basePath() . '/js/jqueryUI/jquery-ui.theme.css')
         ?>
 
-        <!-- Scripts -->	    
-        <?php
-        echo $this->headScript()
-                ->prependFile($this->basePath() . '/js/jquery-1.11.0.min.js')
-        ?>
+        <!-- Scripts -->
+        <script src="../js/jquery-1.11.2.min.js"></script>
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <?php
@@ -57,7 +54,7 @@
             echo $flash->render('default', array('alert', 'alert-dismissable', 'alert-warning'));
             echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-success'));
             ?>
-        <?php echo $this->content; ?>
+            <?php echo $this->content; ?>
         </div>
         <?php echo $this->inlineScript() ?>
 
