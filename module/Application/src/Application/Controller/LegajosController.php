@@ -30,7 +30,7 @@ class LegajosController extends BaseController {
             $inactivo = "";
 
             foreach ($row as $r) {
-                $response ['rows'][$i]['id'] = $r->getId(); //id
+                $response['rows'][$i]['id'] = $r->getId(); //id
                 $response['rows'][$i]['cell'] = array(
                     $r->getId(),
                     $r->getEmpresaId(),
@@ -48,73 +48,6 @@ class LegajosController extends BaseController {
         }
     }
 
-//    public function loadLegajosGrid2Action() {
-//        $request = $this->getRequest();
-//
-//        $sidx = $request->getPost('sidx', 'id');
-//        $sord = $request->getPost('sord', 'ASC');
-//        $page = $request->getPost('page', 1);
-//        $limit = $request->getPost('rows', 1000);
-//
-//        try {
-//            $data = $this->getEntityManager()->getRepository('Application\Entity\N7Legajos')->findAll();
-//            $count = count($data);
-//
-//            if ($count > 0) {
-//                $total_pages = ceil($count / $limit);
-//            } else {
-//                $total_pages = 0;
-//            }
-//            if ($page > $total_pages) {
-//                $page = $total_pages;
-//            }
-//
-//            $start = $limit * $page - $limit;
-//            if ($start < 0) {
-//                $start = 0;
-//            }
-//
-//            $row = $this->getEntityManager()->getRepository('Application\Entity\N7Legajos')->findBy(array(), array($sidx => $sord), $limit, $start);
-//
-//            $response ['page'] = $page;
-//            $response ['total'] = $total_pages;
-//            $response ['records'] = $count;
-//            $i = 0;
-//
-////            $identi = $this->getAuthenticationService()->getStorage()->read();
-////            if ($identi != false && $identi != null) {
-////                $row0 = $this->getEntityManager()->getRepository('Application\Entity\N7Empresas')->findBy(array('id' => $identi->empresaCorrienteId));
-////                $qb1 = $this->getEntityManager()->createQueryBuilder();
-////                $qb1->select('p.id', 'p.descripcion', 'vp.soloLectura', 'p.tipoDeCampo')
-////                        ->from('Application\Entity\N7Legajos', 'l')
-////                        ->innerJoin('Application\Entity\N7PpdL', 'p', 'WITH', 'p.objetoId = l.id AND p.propiedadId = ?1')
-////                        ->where('l.empresaId = ?2');
-////                $qb1->setParameter(1, $row0->getDatoLegajoBaja());
-////                $qb1->setParameter(2, $identi->empresaCorrienteId);
-////                $query1 = $qb1->getQuery();
-////                $row1 = $query1->getArrayResult();
-////            }
-//            $inactivo = "";
-//
-//            foreach ($row as $r) {
-//                $response ['rows'][$i]['id'] = $r->getId(); //id
-//                $response['rows'][$i]['cell'] = array(
-//                    $r->getId(),
-//                    $r->getEmpresaId(),
-//                    $r->getLegajo(),
-//                    utf8_encode($r->getApellidoYNombre()),
-//                    $r->getFoto(),
-//                    $inactivo
-//                );
-//                $i ++;
-//            }
-//
-//            return $this->response->setContent(Json::encode($response));
-//        } catch (\Exception $ex) {
-//            $this->flashMessenger()->addMessage($ex->getMessage());
-//        }
-//    }
-
     public function loadPpdLegajoGridAction() {
         try {
             if ($this->request->isXmlHttpRequest()) {
@@ -129,13 +62,58 @@ class LegajosController extends BaseController {
                     }
                 }
             }
+
+//            $subQuery = $this->getEntityManager()->createQuery("
+//                SELECT pp0.valor 
+//                FROM Application\Entity\N7PpdL pp0 
+//                WHERE pp0.propiedadId = vp.propiedadId AND pp0.objetoId = ?1)
+//                SELECT pp.valor
+//                FROM Application\Entity\N7PpdL pp
+//                WHERE country.id = :country_id AND user.id = u.id
+//            ");
+
+//            $subQuery = $this->getEntityManager()->createQuery("
+//                SELECT pp.valor
+//                FROM Application\Entity\N7PpdL pp
+//                WHERE pp.propiedadId = vp.propiedadId AND pp.objetoId = ?1)
+//            ");
+//
+//            $queryBuilder = $this->getEntityManager()->createQueryBuilder('u');
+//            $queryBuilder
+//                    ->where($queryBuilder->expr()->exists($subQuery->getDql()))
+//                    ->setParameter(1, $id);
+//
+//            return $queryBuilder->getQuery()->getResult();
+
+//            $query = $this->getEntityManager()->createQuery(""
+//                    . "SELECT p.id, p.descripcion, "
+//                    . "(SELECT pp0.valor FROM Application\Entity\N7PpdL pp0 WHERE pp0.propiedadId = vp.propiedadId AND pp0.objetoId = ?1) contenido, "
+//                    . "(SELECT pp1.valor FROM Application\Entity\N7PpdL pp1 WHERE pp1.propiedadId = vp.propiedadId AND pp1.objetoId = ?1) contant, "
+//                    . "(SELECT pp2.id FROM Application\Entity\N7PpdL pp2 WHERE pp2.propiedadId = vp.propiedadId AND pp2.objetoId = ?1) pp_id, "
+//                    . "vp.soloLectura, p.tipoDeCampo "
+//                    . "FROM Application\Entity\N7VistasPropiedadesL vp "
+//                    . "LEFT JOIN Application\Entity\N7PropiedadesL p WITH p.id = vp.propiedadId "
+//                    . "LEFT JOIN Application\Entity\N7VistasLegajos v WITH v.id = vp.formularioId "
+//                    . "WHERE v.descripcion = ?2 "
+//                    . "ORDER BY vp.orden");
+//            $query->setParameter(1, $id);
+//            $query->setParameter(2, $vistaLegajoSel);
+//            $row1 = $query->getArrayResult();
+//            
             $qb1 = $this->getEntityManager()->createQueryBuilder();
-            $qb1->select('p.id', 'p.descripcion','pp.valor contenido','pp.valor contant','pp.id pp_id', 'vp.soloLectura', 'p.tipoDeCampo')
-                    ->from('Application\Entity\N7PpdL', 'pp')
-                    ->leftJoin('Application\Entity\N7VistasPropiedadesL', 'vp', 'WITH', 'vp.propiedadId = pp.propiedadId')
+            $qb1->select('p.id', 'p.descripcion', 'vp.soloLectura', 'p.tipoDeCampo')
+//                    ->addSelect('pp.valor contenido')
+//                    ->addSelect('pp.valor contant')
+//                    ->addSelect('pp.id pp_id')
+//                    ->from('Application\Entity\N7PpdL', 'pp')
+                    ->addSelect('(SELECT pp0.valor FROM Application\Entity\N7PpdL pp0 WHERE pp0.propiedadId = p.id AND pp0.objetoId = ?1) AS contenido')
+                    ->addSelect('(SELECT pp1.valor FROM Application\Entity\N7PpdL pp1 WHERE pp1.propiedadId = p.id AND pp1.objetoId = ?1) AS contant')
+                    ->addSelect('(SELECT pp2.id FROM Application\Entity\N7PpdL pp2 WHERE pp2.propiedadId = p.id AND pp2.objetoId = ?1) AS pp_id')
+                    ->from('Application\Entity\N7VistasPropiedadesL', 'vp')
                     ->leftJoin('Application\Entity\N7PropiedadesL', 'p', 'WITH', 'p.id = vp.propiedadId')
                     ->leftJoin('Application\Entity\N7VistasLegajos', 'v', 'WITH', 'v.id = vp.formularioId')
-                    ->where('pp.objetoId = ?1 AND v.id = ?2')
+//                    ->where('pp.propiedadId = vp.propiedadId AND pp.objetoId = ?1')
+                    ->where('v.id = ?2')
                     ->orderBy('vp.orden', 'ASC');
             $qb1->setParameter(1, $id);
             $qb1->setParameter(2, $vistaLegajoSel);
@@ -175,6 +153,7 @@ class LegajosController extends BaseController {
 //                        $pp_id = $row0[$i]->getId();
 //                    }
 //                }
+                
                 $response['rows'][$x] = array(
                     $j['id'],
                     utf8_encode($j['descripcion']),
@@ -193,37 +172,6 @@ class LegajosController extends BaseController {
             $this->flashMessenger()->addMessage($ex->getMessage());
         }
     }
-
-//    public function loadDataGridAction() {
-//        if ($this->request->isXmlHttpRequest()) {
-//            $request = $this->getRequest();
-//            if ($request->isGet()) {
-//                $dataJson = $request->getQuery('id', 0);
-//                $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
-//            }
-//        }
-//
-//        try {
-//            $row = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(array('propiedad' => $id));
-//
-//            $response['rows'] = array();
-//            $i = 0;
-//
-//            foreach ($row as $r) {
-//                $response['rows'][$i] = array(
-//                    $r->getId(),
-//                    $r->getPropiedad()->getId(),
-//                    utf8_encode($r->getValorPosible()),
-//                    utf8_encode($r->getSignificado())
-//                );
-//                $i ++;
-//            }
-//
-//            return $this->response->setContent(Json::encode(array('type' => 'success', 'data' => $response['rows'])));
-//        } catch (\Exception $ex) {
-//            $this->flashMessenger()->addMessage($ex->getMessage());
-//        }
-//    }
 
     public function editGridItemAction() {
         try {
@@ -314,8 +262,6 @@ class LegajosController extends BaseController {
             $i = 0;
 
             foreach ($data as $res) {
-//                echo '<option value="'.$row['drink_name'].'">' . $row['drink_name'] . "</option>";
-//                $selectData [$res->getId()] = $res->getDescripcion();
                 $selectData[$i]["id"] = $res->getId();
                 $selectData[$i]["value"] = $res->getDescripcion();
                 $i++;
@@ -327,33 +273,6 @@ class LegajosController extends BaseController {
         }
     }
 
-//    public function loadSelectValorPosibleAction() {
-//        if ($this->request->isXmlHttpRequest()) {
-//            $request = $this->getRequest();
-//            if ($request->isGet()) {
-//                $dataJson = $request->getQuery('id', 0);
-//                $id = ($dataJson > 0) ? Json::decode($dataJson, true) : 0;
-//            }
-//        }
-//
-//        try {
-//            $data = $this->getEntityManager()->getRepository('Application\Entity\N7ValoresPosiblesLegajos')->findBy(array('propiedad' => $id), array('valorPosible' => 'ASC'));
-//
-//            $selectData = array();
-//            $i = 0;
-//
-//            foreach ($data as $res) {
-//                $selectData[$i]["id"] = $res->getValorPosible();
-//                $selectData[$i]["value"] = utf8_encode($res->getValorPosible() . " - " . $res->getSignificado());
-//                $i++;
-//            }
-//
-//            return $this->response->setContent(Json::encode(array('type' => 'success', 'data' => $selectData)));
-//        } catch (\Exception $ex) {
-//            $this->flashMessenger()->addMessage($ex->getMessage());
-//        }
-//    }
-
     public function editGridItemValAction() {
         try {
             if ($this->request->isXmlHttpRequest()) {
@@ -361,7 +280,7 @@ class LegajosController extends BaseController {
                 if ($request->isPost()) {
                     $data = Json::decode($request->getPost('data'), true);
                     if ($data) {
-                        foreach ($data as $r) {
+                        foreach ($data['dataGridDatosPpdLegajo'] as $r) {
                             if ($r['contant'] != $r['contenido']) {
                                 if ($r['pp_id'] != "") {
                                     $n7PpdL = new N7PpdL ();
@@ -370,33 +289,16 @@ class LegajosController extends BaseController {
                                         $n7PpdL->setValor(utf8_decode($r['contenido']));
                                         $this->getEntityManager()->persist($n7PpdL);
                                         $this->getEntityManager()->flush();
-
-//                                        return $this->response->setContent(Json::encode(array(
-//                                                            'type' => 'editPpdLegajo',
-//                                                            'success' => true
-//                                        )));
                                     }
                                 } else {
                                     $n7PpdL = new N7PpdL ();
-                                    $n7PpdL->setObjetoId($r['objetoId']);
-                                    $n7PpdL->setPropiedadId($r['id']);
+                                    $n7PpdL->setObjetoId($data['objetoId']);
+                                    $n7PpdL->setPropiedadId($r['propiedad_id']);
                                     $n7PpdL->setValor(utf8_decode($r['contenido']));
                                     $this->getEntityManager()->persist($n7PpdL);
                                     $this->getEntityManager()->flush();
-
-//                                    return $this->response->setContent(Json::encode(array(
-//                                                        'data' => $n7PpdL->getId(),
-//                                                        'type' => 'addPpdLegajo',
-//                                                        'success' => true
-//                                    )));
                                 }
                             }
-//                            else {
-//                                return $this->response->setContent(Json::encode(array(
-//                                                    'type' => 'PpdLegajo',
-//                                                    'success' => true
-//                                )));
-//                            }
                         }
 
                         return $this->response->setContent(Json::encode(array(

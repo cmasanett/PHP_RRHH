@@ -32,7 +32,7 @@ if ($identity) {
         <!-- Styles -->
         <?php
         echo $this->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico'))
-                ->prependStylesheet($this->basePath() . '/css/style.css')
+//                ->prependStylesheet($this->basePath() . '/css/style.css')
                 //<!-- Custom styles for this template -->
                 ->prependStylesheet($this->basePath() . '/css/dashboard.css')
                 //<!-- Bootstrap core CSS -->
@@ -94,7 +94,7 @@ if ($identity) {
                     <?php echo $this->menuWidget(); ?>
                 </div>
                 <div class="col-sm-10 col-md-offset-2 main">
-                    <div class="container-fluid">
+                    <div class="container-fluid" style="padding-top:30px">
                         <?php echo $this->content; ?>
                     </div>
                 </div>

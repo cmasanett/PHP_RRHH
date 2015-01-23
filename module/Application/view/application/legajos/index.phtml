@@ -1,7 +1,7 @@
 <?php
 $title = 'Administración de Legajos';
 ?>
-<h1 class="page-header" style="padding-top:20px"><?php echo $this->escapeHtml($title); ?></h1>
+<h1 class="page-header"><?php echo $this->escapeHtml($title); ?></h1>
 <?php
 $flash = $this->flashMessenger();
 $flash->setMessageOpenFormat('<div%s>
@@ -226,9 +226,17 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             //rowNum: 1000,
             rownumbers: true,
             datatype: "local",
-            colNames: ["Id", "SL", "Dato", "Valor", "Contant", "PPId", "Tipo", "ListaValorPosible"],
+            colNames: ["Id", "PropiedadId", "SL", "Dato", "Valor", "Contant", "PPId", "Tipo", "ListaValorPosible"],
             colModel: [
                 {name: 'id', index: 'id',
+                    width: 10,
+                    align: "center",
+                    sortable: false,
+                    sorttype: 'int',
+                    editable: false,
+                    hidden: true
+                },
+                {name: 'propiedad_id', index: 'propiedad_id',
                     width: 10,
                     align: "center",
                     sortable: false,
@@ -337,7 +345,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 }
             },
             onCellSelect: function (rowid, iCol, cellcontent, e) {
-                if (iCol == 4) {
+                if (iCol == 5) {
                     var dataPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
                     if (dataPpdLegajo['solo_lectura'] != "S") {
                         var listaValorposible = JSON.parse(dataPpdLegajo['lista_valorposible']);
@@ -423,16 +431,18 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             var rowidLegajos = $("#gridLegajos").jqGrid('getGridParam', 'selrow');
             if (rowidLegajos != null) {
                 hideOrShow(0);
-                //$("#btnSaveData")
                 var dataGridDatosPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getGridParam', 'data');
                 if (dataGridDatosPpdLegajo.length > 0) {
-                    dataGridDatosPpdLegajo['objetoId'] = rowidLegajos;
                     if (checkConsistency(dataGridDatosPpdLegajo)) {
+                        var data = {
+                                "objetoId": rowidLegajos,
+                                "dataGridDatosPpdLegajo": dataGridDatosPpdLegajo
+                            };
                         $.ajax({
                             url: "<?php echo $this->url('legajos', array('action' => 'editGridItemVal')); ?>",
                             global: false,
                             type: "POST",
-                            data: "data=" + JSON.stringify(dataGridDatosPpdLegajo),
+                            data: "data=" + JSON.stringify(data),
                             dataType: "json",
                             async: true,
                             success: function (result) {
@@ -750,6 +760,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                             for (var i = 0; i < result.data.length; i++) {
                                 var dataLocal = {
                                     "id": result.data[i][0],
+                                    "propiedad_id": result.data[i][0],
                                     "descripcion": result.data[i][1],
                                     "contenido": result.data[i][2],
                                     "contant": result.data[i][3],
