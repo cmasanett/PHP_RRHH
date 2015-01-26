@@ -8,20 +8,20 @@ SELECT
         WHERE
             pp.propiedad_id = p.id
                 AND pp.objeto_id = 3) AS contenido,
-    -- (SELECT 
---             pp.valor
---         FROM
---             zend_php_demo.n7_ppd_l pp
---         WHERE
---             pp.propiedad_id = vp.propiedad_id
---                 AND pp.objeto_id = 3) AS contant,
---     (SELECT 
---             pp.id
---         FROM
---             zend_php_demo.n7_ppd_l pp
---         WHERE
---             pp.propiedad_id = vp.propiedad_id
---                 AND pp.objeto_id = 3) AS pp_id,
+    (SELECT 
+            pp.valor
+        FROM
+            zend_php_demo.n7_ppd_l pp
+        WHERE
+            pp.propiedad_id = vp.propiedad_id
+                AND pp.objeto_id = 3) AS contant,
+    (SELECT 
+            pp.id
+        FROM
+            zend_php_demo.n7_ppd_l pp
+        WHERE
+            pp.propiedad_id = vp.propiedad_id
+                AND pp.objeto_id = 3) AS pp_id,
     vp.solo_lectura,
     p.tipo_de_campo
 FROM

@@ -24,7 +24,7 @@ class LegajosController extends BaseController {
     public function loadLegajosGridAction() {
         try {
             $row = $data = $this->getEntityManager()->getRepository('Application\Entity\N7Legajos')->findAll();
-            
+
             $response['rows'] = array();
             $i = 0;
 
@@ -72,7 +72,6 @@ class LegajosController extends BaseController {
 //                FROM Application\Entity\N7PpdL pp
 //                WHERE country.id = :country_id AND user.id = u.id
 //            ");
-
 //            $subQuery = $this->getEntityManager()->createQuery("
 //                SELECT pp.valor
 //                FROM Application\Entity\N7PpdL pp
@@ -85,7 +84,6 @@ class LegajosController extends BaseController {
 //                    ->setParameter(1, $id);
 //
 //            return $queryBuilder->getQuery()->getResult();
-
 //            $query = $this->getEntityManager()->createQuery(""
 //                    . "SELECT p.id, p.descripcion, "
 //                    . "(SELECT pp0.valor FROM Application\Entity\N7PpdL pp0 WHERE pp0.propiedadId = vp.propiedadId AND pp0.objetoId = ?1) contenido, "
@@ -101,51 +99,66 @@ class LegajosController extends BaseController {
 //            $query->setParameter(2, $vistaLegajoSel);
 //            $row1 = $query->getArrayResult();
 //            
-            $qb1 = $this->getEntityManager()->createQueryBuilder();
-            $qb1->select('p.id', 'p.descripcion', 'vp.soloLectura', 'p.tipoDeCampo')
+//            //DbAdapter
+//            $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+//            $select = $this->dbAdapter->createStatement("");
+//            $row1 = $select->execute();
+
+            $qb0 = $this->getEntityManager()->createQueryBuilder();
+            $qb0->select('p.id', 'p.descripcion', 'vp.soloLectura', 'p.tipoDeCampo')
 //                    ->addSelect('pp.valor contenido')
 //                    ->addSelect('pp.valor contant')
 //                    ->addSelect('pp.id pp_id')
 //                    ->from('Application\Entity\N7PpdL', 'pp')
-                    ->addSelect('(SELECT pp0.valor FROM Application\Entity\N7PpdL pp0 WHERE pp0.propiedadId = p.id AND pp0.objetoId = ?1) AS contenido')
-                    ->addSelect('(SELECT pp1.valor FROM Application\Entity\N7PpdL pp1 WHERE pp1.propiedadId = p.id AND pp1.objetoId = ?1) AS contant')
-                    ->addSelect('(SELECT pp2.id FROM Application\Entity\N7PpdL pp2 WHERE pp2.propiedadId = p.id AND pp2.objetoId = ?1) AS pp_id')
+//                    ->addSelect('(SELECT pp0.valor FROM Application\Entity\N7PpdL pp0 WHERE pp0.propiedadId = p.id AND pp0.objetoId = ?1) AS contenido')
+//                    ->addSelect('(SELECT pp1.valor FROM Application\Entity\N7PpdL pp1 WHERE pp1.propiedadId = p.id AND pp1.objetoId = ?1) AS contant')
+//                    ->addSelect('(SELECT pp2.id FROM Application\Entity\N7PpdL pp2 WHERE pp2.propiedadId = p.id AND pp2.objetoId = ?1) AS pp_id')
                     ->from('Application\Entity\N7VistasPropiedadesL', 'vp')
                     ->leftJoin('Application\Entity\N7PropiedadesL', 'p', 'WITH', 'p.id = vp.propiedadId')
                     ->leftJoin('Application\Entity\N7VistasLegajos', 'v', 'WITH', 'v.id = vp.formularioId')
 //                    ->where('pp.propiedadId = vp.propiedadId AND pp.objetoId = ?1')
                     ->where('v.id = ?2')
                     ->orderBy('vp.orden', 'ASC');
-            $qb1->setParameter(1, $id);
-            $qb1->setParameter(2, $vistaLegajoSel);
-            $query1 = $qb1->getQuery();
+//            $qb0->setParameter(1, $id);
+            $qb0->setParameter(2, $vistaLegajoSel);
+            $query0 = $qb0->getQuery();
+            $row0 = $query0->getArrayResult();
+
+            $query1 = $this->getEntityManager()->createQuery('SELECT pp FROM Application\Entity\N7PpdL pp WHERE pp.objetoId = ?1');
+            $query1->setParameter(1, $id);
             $row1 = $query1->getArrayResult();
 
-            //DbAdapter
-//            $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
-//            $select = $this->dbAdapter->createStatement("");
-//            $row1 = $select->execute();
-//            
-//            
+            $query2 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7ValoresPosiblesLegajos u');
+//            $query2->setParameter(1, $j['id']);
+            $row2 = $query2->getResult();
+
             $response['rows'] = array();
             $x = 0;
 
-            foreach ($row1 as $j) {
+            foreach ($row0 as $j) {
 //                $contenido = utf8_encode($j['valor']);
 //                $contant =  utf8_encode($j['valor']);
 //                $pp_id =  $j['pp.id'];
+                $contenido = "";
+                $contant = "";
+                $pp_id = "";
 
-                $query2 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7ValoresPosiblesLegajos u WHERE u.propiedad = ?1');
-                $query2->setParameter(1, $j['id']);
-                $row2 = $query2->getResult();
+//                $query2 = $this->getEntityManager()->createQuery('SELECT u FROM Application\Entity\N7ValoresPosiblesLegajos u WHERE u.propiedad = ?1');
+//                $query2->setParameter(1, $j['id']);
+//                $row2 = $query2->getArrayResult();
 
                 $lista = "";
                 $lista_valorposible = array();
                 $d = 0;
 
                 foreach ($row2 as $res) {
-                    $lista_valorposible[$d]["value"] = $res->getValorPosible();
-                    $lista_valorposible[$d]["desc"] = $res->getValorPosible() . " - " . $res->getSignificado();
+//                    if ($j['id'] == $res['propiedadId']) {
+                    if ($j['id'] == $res->getPropiedad()->getId()) {
+                        $lista_valorposible[$d]["value"] = $res->getValorPosible();
+                        $lista_valorposible[$d]["desc"] = $res->getValorPosible() . " - " . $res->getSignificado();
+//                        $lista_valorposible[$d]["value"] = $res['valorPosible'];
+//                        $lista_valorposible[$d]["desc"] = $res['valorPosible'] . " - " . $res['significado'];
+                    }
                     $d++;
                 }
 
@@ -153,20 +166,27 @@ class LegajosController extends BaseController {
                     $lista = $lista_valorposible;
                 }
 
-//                for ($i = 0; $i < count($row0); $i++) {
-//                    if ($j['id'] == $row0[$i]->getPropiedadId()) {
+                for ($i = 0; $i < count($row1); $i++) {
+                    if ($j['id'] == $row1[$i]['propiedadId']) {
+//                    if ($j['id'] == $row1[$i]->getPropiedadId) {
 //                        $contenido = utf8_encode($row0[$i]->getValor());
 //                        $contant = utf8_encode($row0[$i]->getValor());
 //                        $pp_id = $row0[$i]->getId();
-//                    }
-//                }
-                
+                        $contenido = utf8_encode($row1[$i]['valor']);
+                        $contant = utf8_encode($row1[$i]['valor']);
+                        $pp_id = $row0[$i]['id'];
+                    }
+                }
+
                 $response['rows'][$x] = array(
                     $j['id'],
                     utf8_encode($j['descripcion']),
-                    utf8_encode($j['contenido']),
-                    utf8_encode($j['contant']),
-                    $j['pp_id'],
+//                    utf8_encode($j['contenido']),
+//                    utf8_encode($j['contant']),
+                    $contenido,
+                    $contant,
+                    $pp_id,
+//                    $j['pp_id'],
                     $j['soloLectura'],
                     $j['tipoDeCampo'],
                     $lista

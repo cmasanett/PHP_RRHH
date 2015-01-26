@@ -373,7 +373,18 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             }
         });
         $("#gridDatosPpdLegajo").navGrid("#pagerDatosPpdLegajo",
-                {edit: false, add: false, del: false, search: false, refresh: false, view: false});
+                {add: false, edit: false, del: false, search: false, refresh: false, view: false},
+        {beforeShowForm: function (form) {
+                var dlgDiv = $("#gridDatosPpdLegajo" + grid[0].id);
+                var parentDiv = dlgDiv.parent();
+                var dlgWidth = dlgDiv.width();
+                var parentWidth = parentDiv.width();
+                var dlgHeight = dlgDiv.height();
+                var parentHeight = parentDiv.height();
+                dlgDiv[0].style.top = Math.round((parentHeight - dlgHeight) / 2) + "px";
+                dlgDiv[0].style.left = Math.round((parentWidth - dlgWidth) / 2) + "px";
+            }
+        });
         $("#gridDatosPpdLegajo").navButtonAdd("#pagerDatosPpdLegajo", {
             caption: "Borrar filtros",
             title: "Borrar filtros",
@@ -435,9 +446,9 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
                 if (dataGridDatosPpdLegajo.length > 0) {
                     if (checkConsistency(dataGridDatosPpdLegajo)) {
                         var data = {
-                                "objetoId": rowidLegajos,
-                                "dataGridDatosPpdLegajo": dataGridDatosPpdLegajo
-                            };
+                            "objetoId": rowidLegajos,
+                            "dataGridDatosPpdLegajo": dataGridDatosPpdLegajo
+                        };
                         $.ajax({
                             url: "<?php echo $this->url('legajos', array('action' => 'editGridItemVal')); ?>",
                             global: false,
@@ -656,24 +667,36 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
         var dataPpdLegajo = $("#gridDatosPpdLegajo").jqGrid('getRowData', rowid);
         switch (dataPpdLegajo['tipo'].toUpperCase()) {
             case "F":
-                if (!validaFechaDDMMAAAA(value)) {
-                    return [false, " - Formato de fecha erróneo."];
+                if (value != "") {
+                    if (!validaFechaDDMMAAAA(value)) {
+                        return [false, " Formato de fecha erróneo."];
+                    } else {
+                        return [true, ""];
+                    }
                 } else {
                     return [true, ""];
                 }
                 break;
             case "N":
-                var patt = /^[0-9]+$/;
-                if (!patt.test(value)) {
-                    return [false, " - Valor incorrecto para el tipo de campo."];
+                if (value != "") {
+                    var patt = /^[0-9]+$/;
+                    if (!patt.test(value)) {
+                        return [false, " Valor incorrecto para el tipo de campo."];
+                    } else {
+                        return [true, ""];
+                    }
                 } else {
                     return [true, ""];
                 }
                 break;
             case "C":
-                var patt = /^[0-9A-Za-z\s\-]+$/;
-                if (!patt.test(value)) {
-                    return [false, " - Valor incorrecto para el tipo de campo."];
+                if (value != "") {
+                    var patt = /^[0-9A-Za-z\s\-]+$/;
+                    if (!patt.test(value)) {
+                        return [false, " Valor incorrecto para el tipo de campo."];
+                    } else {
+                        return [true, ""];
+                    }
                 } else {
                     return [true, ""];
                 }
