@@ -22,41 +22,15 @@ class VistasLegajosController extends BaseController {
     }
 
     public function loadViewGridAction() {
-        $request = $this->getRequest();
-
-        $sidx = $request->getPost('sidx', 'id');
-        $sord = $request->getPost('sord', 'ASC');
-        $page = $request->getPost('page', 1);
-        $limit = $request->getPost('rows', 1000);
-
         try {
-            $data = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findAll();
-            $count = count($data);
-
-            if ($count > 0) {
-                $total_pages = ceil($count / $limit);
-            } else {
-                $total_pages = 0;
-            }
-            if ($page > $total_pages) {
-                $page = $total_pages;
-            }
-
-            $start = $limit * $page - $limit;
-            if ($start < 0) {
-                $start = 0;
-            }
-
-            $row = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findBy(array(), array($sidx => $sord), $limit, $start);
-
-            $response ['page'] = $page;
-            $response ['total'] = $total_pages;
-            $response ['records'] = $count;
+            $row = $this->getEntityManager()->getRepository('Application\Entity\N7VistasLegajos')->findAll();
+            
+            $response['rows'] = array();
             $i = 0;
 
             foreach ($row as $r) {
-                $response ['rows'][$i]['id'] = $r->getId(); //id
-                $response ['rows'][$i]['cell'] = array(
+                $response['rows'][$i]['id'] = $r->getId(); //id
+                $response['rows'][$i]['cell'] = array(
                     $r->getId(),
                     utf8_encode($r->getDescripcion()),
                     $r->getExtranetPermitido()
@@ -84,11 +58,11 @@ class VistasLegajosController extends BaseController {
             $query1->setParameter(1, $id);
             $row = $query1->getResult();
 
-            $response ['rows'] = array();
+            $response['rows'] = array();
             $i = 0;
 
             foreach ($row as $r) {
-                $response ['rows'][$i] = array(
+                $response['rows'][$i] = array(
                     $r->getId(),
                     utf8_encode($r->getDescripcion()),
                     $r->getTipoDeCampo()

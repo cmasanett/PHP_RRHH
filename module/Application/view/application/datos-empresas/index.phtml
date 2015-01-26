@@ -125,7 +125,7 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridDatosEmpresa")[0].clearToolbar();
-                gridReload('gridDatosEmpresa');
+//                gridReload('gridDatosEmpresa');
             }
         });
         $('#gridDatosEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});

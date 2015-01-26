@@ -24,6 +24,7 @@ class LegajosController extends BaseController {
     public function loadLegajosGridAction() {
         try {
             $row = $data = $this->getEntityManager()->getRepository('Application\Entity\N7Legajos')->findAll();
+            
             $response['rows'] = array();
             $i = 0;
 
@@ -120,6 +121,12 @@ class LegajosController extends BaseController {
             $query1 = $qb1->getQuery();
             $row1 = $query1->getArrayResult();
 
+            //DbAdapter
+//            $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
+//            $select = $this->dbAdapter->createStatement("");
+//            $row1 = $select->execute();
+//            
+//            
             $response['rows'] = array();
             $x = 0;
 

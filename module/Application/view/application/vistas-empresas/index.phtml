@@ -113,7 +113,6 @@ echo $flash->render('success', array('alert', 'alert-dismissable', 'alert-succes
             buttonicon: 'ui-icon-refresh',
             onClickButton: function () {
                 jQuery("#gridVistasEmpresa")[0].clearToolbar();
-                gridReload('gridVistasEmpresa');
             }
         });
         $('#gridVistasEmpresa').jqGrid('filterToolbar', {stringResult: true, searchOnEnter: false, autoSearch: false, defaultSearch: 'cn', ignoreCase: true});
