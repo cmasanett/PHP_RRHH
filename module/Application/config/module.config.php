@@ -166,6 +166,14 @@ return ['router' => ['routes' => ['home' => ['type' => 'Zend\Mvc\Router\Http\Lit
                 ),
             ),
         ),
+        'configuration' => array(
+            'orm_default' => array(
+//                'generate_proxies' => true,
+                'query_cache' => 'apc',
+                'result_cache' => 'apc',
+                'metadata_cache' => 'apc'
+            )
+        ),
         'authentication' => array(
             'orm_default' => array(
                 'object_manager' => 'Doctrine\ORM\EntityManager',

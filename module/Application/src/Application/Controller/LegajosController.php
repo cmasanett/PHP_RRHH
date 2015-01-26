@@ -103,7 +103,7 @@ class LegajosController extends BaseController {
 //            $this->dbAdapter = $this->getServiceLocator()->get('Zend\Db\Adapter');
 //            $select = $this->dbAdapter->createStatement("");
 //            $row1 = $select->execute();
-
+            
             $qb0 = $this->getEntityManager()->createQueryBuilder();
             $qb0->select('p.id', 'p.descripcion', 'vp.soloLectura', 'p.tipoDeCampo')
 //                    ->addSelect('pp.valor contenido')

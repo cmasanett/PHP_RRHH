@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 21-01-2015 a las 16:53:29
+-- Tiempo de generación: 26-01-2015 a las 19:03:02
 -- Versión del servidor: 5.6.20
 -- Versión de PHP: 5.5.15
 
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `n7_legajos` (
 
 INSERT INTO `n7_legajos` (`id`, `empresa_id`, `legajo`, `apellido_y_nombre`, `foto`) VALUES
 (1, 1, '1', 'PEREZ JUAN', ''),
-(3, 1, '3', 'GODOY MARCOS', ''),
+(3, 1, '45', 'GODOY MARCOS', ''),
 (4, 1, '140', 'ZANABRIA HECTOR ANDRES', '');
 
 -- --------------------------------------------------------
@@ -165,7 +165,7 @@ CREATE TABLE IF NOT EXISTS `n7_ppd_l` (
   `objeto_id` int(11) unsigned NOT NULL,
   `propiedad_id` int(11) unsigned NOT NULL,
   `valor` varchar(120) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=13 ;
 
 --
 -- Volcado de datos para la tabla `n7_ppd_l`
@@ -173,13 +173,17 @@ CREATE TABLE IF NOT EXISTS `n7_ppd_l` (
 
 INSERT INTO `n7_ppd_l` (`id`, `objeto_id`, `propiedad_id`, `valor`) VALUES
 (1, 1, 3, '1'),
-(2, 1, 120, ''),
+(2, 1, 120, '01/01/2014'),
 (3, 1, 52, ''),
-(4, 1, 46, ''),
-(5, 1, 37, ''),
-(6, 1, 68, ''),
+(4, 1, 46, '123456'),
+(5, 1, 37, '999'),
+(6, 1, 68, '456'),
 (7, 1, 72, ''),
-(8, 1, 88, '');
+(8, 1, 88, ''),
+(9, 3, 3, '1'),
+(10, 3, 68, ''),
+(11, 3, 120, '01/01/1990'),
+(12, 3, 46, '111');
 
 -- --------------------------------------------------------
 
@@ -696,7 +700,7 @@ CREATE TABLE IF NOT EXISTS `n7_valores_posibles_legajos` (
   `propiedad_id` int(11) unsigned NOT NULL,
   `valor_posible` varchar(120) COLLATE utf8_spanish_ci NOT NULL,
   `significado` varchar(120) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=4 ;
 
 --
 -- Volcado de datos para la tabla `n7_valores_posibles_legajos`
@@ -813,7 +817,7 @@ CREATE TABLE IF NOT EXISTS `n7_vistas_propiedades_l` (
   `formulario_id` int(11) unsigned NOT NULL,
   `orden` smallint(5) unsigned NOT NULL,
   `solo_lectura` char(1) COLLATE utf8_spanish_ci NOT NULL
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=40 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci AUTO_INCREMENT=41 ;
 
 --
 -- Volcado de datos para la tabla `n7_vistas_propiedades_l`
@@ -827,7 +831,8 @@ INSERT INTO `n7_vistas_propiedades_l` (`id`, `propiedad_id`, `formulario_id`, `o
 (36, 37, 4, 5, 'N'),
 (37, 68, 4, 6, 'N'),
 (38, 72, 4, 7, 'S'),
-(39, 88, 4, 8, 'S');
+(39, 88, 4, 8, 'S'),
+(40, 1, 1, 1, 'N');
 
 --
 -- Índices para tablas volcadas
@@ -969,7 +974,7 @@ MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=22;
 -- AUTO_INCREMENT de la tabla `n7_ppd_l`
 --
 ALTER TABLE `n7_ppd_l`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=9;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT de la tabla `n7_propiedades_e`
 --
@@ -1004,7 +1009,7 @@ MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 -- AUTO_INCREMENT de la tabla `n7_valores_posibles_legajos`
 --
 ALTER TABLE `n7_valores_posibles_legajos`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=5;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `n7_vistas_empresas`
 --
@@ -1034,7 +1039,7 @@ MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT;
 -- AUTO_INCREMENT de la tabla `n7_vistas_propiedades_l`
 --
 ALTER TABLE `n7_vistas_propiedades_l`
-MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=40;
+MODIFY `id` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=41;
 --
 -- Restricciones para tablas volcadas
 --
